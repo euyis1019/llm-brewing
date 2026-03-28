@@ -47,3 +47,6 @@ brewing_output/
 *.safetensors
 *.ckpt
 *.h5
+
+CLAUDE.md
+uv.lock
