@@ -1,4 +1,7 @@
+# ── Eval config: 用已训练好的 probe 在 eval split 上推理 ──
+# 没有写 mode，默认 mode: eval
 benchmark: CUE-Bench
+
 subsets:
 - value_tracking
 - computing
@@ -6,12 +9,24 @@ subsets:
 - function_call
 - loop
 - loop_unrolled
+
 model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+
+# eval 模式下同时跑两种方法：probing 检测 information availability，CSD 检测 readiness
 methods:
 - linear_probing
 - csd
+
 output_root: brewing_output
+
+# eval 模式下需要指向预生成的 eval 数据目录
 data_dir: /home/gyf/CUE/data/colm_v1/eval
+
 seed: 42
+
+# eval_only: 不允许隐式训练，必须已有 probe artifact，否则报错
+# auto:      找不到 artifact 就自动训练（不推荐，train/eval 应该分开跑）
+# force:     强制重新训练（覆盖已有 artifact）
 fit_policy: eval_only
+
 batch_size: 8
