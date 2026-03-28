@@ -288,6 +288,9 @@ class RunConfig:
     device: str | None = None  # Auto-detect
     use_fixture: bool = False  # If True, use fixture samples only
 
+    # Model weights
+    model_cache_dir: str | None = None  # Path to local HF model cache
+
     # Quantization
     quantization: str | None = None  # None, "int8", "int4"
 

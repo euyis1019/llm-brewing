@@ -48,13 +48,15 @@ def needs_model_online(config: RunConfig) -> bool:
 
 
 def build_model_load_kwargs(config: RunConfig) -> dict[str, Any]:
-    """Build kwargs for AutoModelForCausalLM.from_pretrained based on config."""
+    """Build kwargs for nnsight LanguageModel / HF from_pretrained."""
     import torch
 
     load_kwargs: dict[str, Any] = {
         "device_map": "auto",
-        "output_hidden_states": True,
     }
+
+    if config.model_cache_dir is not None:
+        load_kwargs["cache_dir"] = config.model_cache_dir
 
     if config.quantization == "int8":
         from transformers import BitsAndBytesConfig
@@ -104,14 +106,12 @@ def main(argv: list[str] | None = None):
     if needs_model_online(config):
         logging.info("Loading model: %s", config.model_id)
         try:
-            from transformers import AutoModelForCausalLM, AutoTokenizer
+            from nnsight import LanguageModel
 
-            tokenizer = AutoTokenizer.from_pretrained(config.model_id)
             load_kwargs = build_model_load_kwargs(config)
-            model = AutoModelForCausalLM.from_pretrained(
-                config.model_id, **load_kwargs
-            )
-            logging.info("Model loaded successfully")
+            model = LanguageModel(config.model_id, **load_kwargs)
+            tokenizer = model.tokenizer
+            logging.info("Model loaded as nnsight LanguageModel")
         except Exception as e:
             logging.warning(
                 "Could not load model: %s. Running with synthetic cache.", e
