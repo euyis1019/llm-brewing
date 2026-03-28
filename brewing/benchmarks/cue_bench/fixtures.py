@@ -1,0 +1,98 @@
+"""Fixture samples for CUE-Bench (1+ per subset, for testing)."""
+
+from __future__ import annotations
+
+from brewing.schema import Sample
+
+FIXTURE_SAMPLES: list[Sample] = [
+    Sample(
+        id="value_tracking_fixture_000",
+        benchmark="CUE-Bench",
+        subset="value_tracking",
+        prompt='u = 7\nd = u\nc = d\n# The value of c is "',
+        answer="7",
+        difficulty={"mechanism": "function_chain", "depth": 1, "distractors": 0},
+        metadata={"result_var": "c", "sample_idx": 0},
+    ),
+    Sample(
+        id="value_tracking_fixture_001",
+        benchmark="CUE-Bench",
+        subset="value_tracking",
+        prompt='a = 3\nb = a\nc = b\n# The value of c is "',
+        answer="3",
+        difficulty={"mechanism": "function_chain", "depth": 1, "distractors": 0},
+        metadata={"result_var": "c", "sample_idx": 1},
+    ),
+    Sample(
+        id="value_tracking_fixture_002",
+        benchmark="CUE-Bench",
+        subset="value_tracking",
+        prompt='x = 9\ny = x\nz = y\n# The value of z is "',
+        answer="9",
+        difficulty={"mechanism": "container", "depth": 1, "distractors": 0},
+        metadata={"result_var": "z", "sample_idx": 2},
+    ),
+    Sample(
+        id="value_tracking_fixture_003",
+        benchmark="CUE-Bench",
+        subset="value_tracking",
+        prompt='m = 1\nn = m\np = n\n# The value of p is "',
+        answer="1",
+        difficulty={"mechanism": "method_chain", "depth": 1, "distractors": 0},
+        metadata={"result_var": "p", "sample_idx": 3},
+    ),
+    Sample(
+        id="value_tracking_fixture_004",
+        benchmark="CUE-Bench",
+        subset="value_tracking",
+        prompt='q = 5\nr = q\ns = r\n# The value of s is "',
+        answer="5",
+        difficulty={"mechanism": "function_chain", "depth": 2, "distractors": 0},
+        metadata={"result_var": "s", "sample_idx": 4},
+    ),
+    Sample(
+        id="computing_fixture_000",
+        benchmark="CUE-Bench",
+        subset="computing",
+        prompt='u = 2\nd = u + 1\na = d + 2\n# The value of a is "',
+        answer="5",
+        difficulty={"structure": "func_arithmetic", "steps": 2, "operators": "add_sub"},
+        metadata={"init_value": 2, "chain": ["u=2", "d=u+1", "a=d+2"]},
+    ),
+    Sample(
+        id="conditional_fixture_000",
+        benchmark="CUE-Bench",
+        subset="conditional",
+        prompt='z = 5\nif z > 3:\n    d = 2\nelse:\n    d = 8\n# The value of d is "',
+        answer="2",
+        difficulty={"branch_type": "if_else", "depth": 1, "condition_type": "numeric"},
+        metadata={"execution_path": "if_branch", "init_value": 5},
+    ),
+    Sample(
+        id="function_call_fixture_000",
+        benchmark="CUE-Bench",
+        subset="function_call",
+        prompt='def f(x):\n    return x\na = 3\nb = f(a)\n# The value of b is "',
+        answer="3",
+        difficulty={"mechanism": "arithmetic", "depth": 1, "distractors": 0},
+        metadata={"func_name": "f"},
+    ),
+    Sample(
+        id="loop_fixture_000",
+        benchmark="CUE-Bench",
+        subset="loop",
+        prompt='a = 1\nfor i in range(3):\n    a = a + 1\n# The value of a is "',
+        answer="4",
+        difficulty={"body_type": "simple_acc", "iterations": 3, "init_offset": "0"},
+        metadata={"init_value": 1, "var_name": "a"},
+    ),
+    Sample(
+        id="loop_unrolled_fixture_000",
+        benchmark="CUE-Bench",
+        subset="loop_unrolled",
+        prompt='a = 1\na = a + 1\na = a + 1\na = a + 1\n# The value of a is "',
+        answer="4",
+        difficulty={"body_type": "simple_acc", "iterations": 3, "init_offset": "0"},
+        metadata={"init_value": 1, "var_name": "a"},
+    ),
+]

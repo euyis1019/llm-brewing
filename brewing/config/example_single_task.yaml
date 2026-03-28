@@ -1,0 +1,10 @@
+benchmark: CUE-Bench
+model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+subsets:
+- value_tracking
+methods:
+- linear_probing
+output_root: brewing_output
+seed: 42
+fit_policy: eval_only
+use_fixture: true

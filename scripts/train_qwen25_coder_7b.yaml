@@ -1,0 +1,17 @@
+model_id: /home/gyf/CUE/models/Qwen/Qwen2.5-Coder-7B
+subsets:
+  - value_tracking
+  - computing
+  - conditional
+  - function_call
+  - loop
+  - loop_unrolled
+output_root: brewing_output/colm/qwen25_coder_7b
+seed: 42
+# samples_per_config: null  # null = default (150 per config, ~4050 per task)
+batch_size: 8
+overwrite: false
+probe_params:
+  solver: lbfgs
+  C: 1.0
+  max_iter: 1000

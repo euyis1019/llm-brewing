@@ -1,0 +1,17 @@
+benchmark: CUE-Bench
+subsets:
+- value_tracking
+model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+methods:
+- linear_probing
+output_root: brewing_output
+data_dir: /home/gyf/CUE/data/colm_v1/eval
+seed: 42
+fit_policy: eval_only
+batch_size: 8
+method_configs:
+  linear_probing:
+    probe_params:
+      solver: lbfgs
+      C: 1.0
+      max_iter: 1000

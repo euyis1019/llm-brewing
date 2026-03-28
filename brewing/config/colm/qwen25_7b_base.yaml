@@ -1,0 +1,17 @@
+benchmark: CUE-Bench
+subsets:
+- value_tracking
+- computing
+- conditional
+- function_call
+- loop
+- loop_unrolled
+model_id: Qwen/Qwen2.5-7B-Instruct
+methods:
+- linear_probing
+- csd
+output_root: brewing_output
+data_dir: /home/gyf/CUE/data/colm_v1/eval
+seed: 42
+fit_policy: eval_only
+batch_size: 8
