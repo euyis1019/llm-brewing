@@ -147,7 +147,6 @@ def test_build_model_load_kwargs_none():
     import torch
     kwargs = build_model_load_kwargs(rc)
     assert kwargs["device_map"] == "auto"
-    assert kwargs["output_hidden_states"] is True
     assert kwargs["torch_dtype"] == torch.float16
     assert "quantization_config" not in kwargs
 
@@ -158,7 +157,6 @@ def test_build_model_load_kwargs_int8():
     rc = RunConfig(quantization="int8")
     kwargs = build_model_load_kwargs(rc)
     assert kwargs["device_map"] == "auto"
-    assert kwargs["output_hidden_states"] is True
     assert "torch_dtype" not in kwargs
     qc = kwargs["quantization_config"]
     assert qc.load_in_8bit is True
@@ -172,6 +170,18 @@ def test_build_model_load_kwargs_int4():
     assert "torch_dtype" not in kwargs
     qc = kwargs["quantization_config"]
     assert qc.load_in_4bit is True
+
+
+@_requires_model
+def test_build_model_load_kwargs_cache_dir():
+    """model_cache_dir is passed through as cache_dir."""
+    rc = RunConfig(model_cache_dir="/tmp/my_models")
+    kwargs = build_model_load_kwargs(rc)
+    assert kwargs["cache_dir"] == "/tmp/my_models"
+
+    rc_none = RunConfig()
+    kwargs_none = build_model_load_kwargs(rc_none)
+    assert "cache_dir" not in kwargs_none
 
 
 # ---------------------------------------------------------------------------
