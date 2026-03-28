@@ -262,9 +262,13 @@ class DiagnosticResult:
 # RunConfig — configuration for a single Brewing run
 # ---------------------------------------------------------------------------
 
+VALID_MODES = ("cache_only", "train_probing", "eval", "diagnostics")
+
+
 @dataclass
 class RunConfig:
     """Configuration for a single Brewing run."""
+    mode: str = "eval"  # cache_only | train_probing | eval | diagnostics
     benchmark: str = "CUE-Bench"
     subsets: list[str] | None = None  # None = all subsets
     model_id: str = "Qwen/Qwen2.5-Coder-7B-Instruct"
@@ -302,6 +306,11 @@ class RunConfig:
     }
 
     def __post_init__(self):
+        if self.mode not in VALID_MODES:
+            raise ValueError(
+                f"Invalid mode={self.mode!r}. "
+                f"Must be one of: {VALID_MODES}"
+            )
         if self.quantization not in self._VALID_QUANTIZATIONS:
             raise ValueError(
                 f"Invalid quantization={self.quantization!r}. "

@@ -1,0 +1,22 @@
+# Example: loading model weights from a local directory
+#
+# model_cache_dir points to a local HuggingFace cache or a directory
+# containing pre-downloaded model weights. If omitted, the default
+# HF cache (~/.cache/huggingface/hub/) is used.
+#
+# Usage:
+#   python -m brewing --config brewing/config/example_local_model.yaml
+
+benchmark: CUE-Bench
+subsets:
+- value_tracking
+- computing
+model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+model_cache_dir: /home/gyf/CUE/models   # local weights path
+methods:
+- linear_probing
+- csd
+output_root: brewing_output
+seed: 42
+batch_size: 8
+fit_policy: eval_only

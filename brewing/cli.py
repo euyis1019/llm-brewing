@@ -39,7 +39,12 @@ def load_config(config_path: str | Path) -> RunConfig:
 
 
 def needs_model_online(config: RunConfig) -> bool:
-    """Check whether any requested method requires the model to be loaded."""
+    """Check whether the configured mode requires the model to be loaded."""
+    if config.mode in ("cache_only", "train_probing"):
+        return True
+    if config.mode == "diagnostics":
+        return False
+    # mode == "eval": check methods
     for method_name in config.methods:
         method_cls = get_method_class(method_name)
         if method_cls().requirements().needs_model_online:
