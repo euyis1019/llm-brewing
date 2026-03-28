@@ -1,0 +1,12 @@
+model_id: /home/gyf/CUE/models/Qwen/Qwen2.5-Coder-7B
+subsets:
+  - value_tracking
+output_root: brewing_output/smoke_test
+seed: 42
+samples_per_config: 2   # ~54 samples total, just for smoke testing
+batch_size: 8
+overwrite: true
+probe_params:
+  solver: lbfgs
+  C: 1.0
+  max_iter: 1000
