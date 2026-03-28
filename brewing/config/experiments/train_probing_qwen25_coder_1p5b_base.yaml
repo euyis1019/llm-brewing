@@ -1,0 +1,32 @@
+# ── Pipeline 模式 ──
+# cache_only:     只提取 hidden states，不训练不评估
+# train_probing:  用 train split 的 cache 训练 linear probe（每层一个 LogisticRegression）
+# eval:           用已训练好的 probe 对 eval split 做推理，产出 MethodResult
+# diagnostics:    从落盘的 MethodResult 跑 S3 诊断（FPCL/FJC/Outcome），不需要模型
+mode: train_probing
+
+benchmark: CUE-Bench
+
+# 要处理的任务子集，注释掉某行可以跳过该任务
+subsets:
+- value_tracking
+- computing
+- conditional
+- function_call
+- loop
+- loop_unrolled
+
+# Base 模型（非 Instruct），和 Instruct 版本会产出不同的 probe artifact
+model_id: Qwen/Qwen2.5-Coder-1.5B
+
+output_root: brewing_output
+seed: 42
+batch_size: 16
+
+method_configs:
+  linear_probing:
+    probe_params:
+      solver: lbfgs
+      C: 1.0
+      max_iter: 1000
+    overwrite: false

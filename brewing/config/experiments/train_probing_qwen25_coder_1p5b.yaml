@@ -1,0 +1,40 @@
+# ── Pipeline 模式 ──
+# cache_only:     只提取 hidden states，不训练不评估
+# train_probing:  用 train split 的 cache 训练 linear probe（每层一个 LogisticRegression）
+# eval:           用已训练好的 probe 对 eval split 做推理，产出 MethodResult
+# diagnostics:    从落盘的 MethodResult 跑 S3 诊断（FPCL/FJC/Outcome），不需要模型
+mode: train_probing
+
+benchmark: CUE-Bench
+
+# 要处理的任务子集，注释掉某行可以跳过该任务
+# 留空（subsets: null）则自动跑所有 6 个任务
+subsets:
+- value_tracking
+- computing
+- conditional
+- function_call
+- loop
+- loop_unrolled
+
+# HuggingFace model ID，也决定了去哪个目录找 cache
+model_id: Qwen/Qwen2.5-Coder-1.5B-Instruct
+
+# 所有产出（datasets / caches / artifacts / results）的根目录
+output_root: brewing_output
+
+# 数据生成的随机种子，也用于定位 cache 路径（.../seed42/...）
+seed: 42
+
+# nnsight forward pass 的 batch size（train_probing 模式下如果 cache 已存在则无效）
+batch_size: 16
+
+# ── Probe 训练参数 ──
+method_configs:
+  linear_probing:
+    probe_params:
+      solver: lbfgs       # sklearn LogisticRegression 的优化器，lbfgs 适合中小规模
+      C: 1.0              # 正则化强度的倒数，越大正则越弱；1.0 是默认值
+      max_iter: 1000       # 最大迭代次数，一般 1000 够收敛
+    # 是否覆盖已有的 probe artifact；false = 发现已训练好就跳过
+    overwrite: false
