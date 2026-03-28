@@ -62,7 +62,7 @@ flowchart TB
         MR1b["Probe MethodResult"] --> Diag["outcome.py\nrun_diagnostics()"]
         MR2b["CSD MethodResult"] --> Diag
         Preds["model_predictions\n(from Cache)"] --> Diag
-        Diag --> DR["DiagnosticResult\nFPCL / FJC / Δ_brew / Outcome"]
+        Diag --> DR["DiagnosticResult\nFPCL / FJC / Δ_brew / Outcome\n+ group_by_difficulty"]
     end
 
     S0 --> S1
@@ -98,7 +98,7 @@ graph TD
     Methods --> NNOps
     Methods --> RM
 
-    DiagMod["diagnostics/<br/>outcome.py + metrics.py"] -.->|"读磁盘文件"| RM
+    DiagMod["diagnostics/<br/>outcome.py + metrics.py<br/>+ group_by_difficulty"] -.->|"读磁盘文件"| RM
 
     Schema["schema/<br/>types.py + results.py + benchmark.py<br/>纯数据结构"] ---|"被所有模块依赖"| Orch
     Schema ---|"被所有模块依赖"| RM
@@ -139,6 +139,8 @@ classDiagram
         +list~str~ sample_ids
         +dict generation_config
         +int|None seed
+        +str|None version
+        +str created_at
     }
 
     class HiddenStateCache {
@@ -257,6 +259,7 @@ classDiagram
     direction TB
 
     class RunConfig {
+        +str mode  «"cache_only"|"train_probing"|"eval"|"diagnostics"»
         +str benchmark
         +list~str~|None subsets
         +str model_id
@@ -264,11 +267,15 @@ classDiagram
         +str output_root
         +str|None data_dir
         +int seed
+        +int|None samples_per_config
         +str fit_policy  «"eval_only"»
         +dict method_configs
         +int batch_size
-        +str|None quantization
+        +str|None device
         +bool use_fixture
+        +str|None model_cache_dir
+        +str|None quantization
+        +benchmark_path_safe() str
     }
 
     class ResourceKey {
@@ -396,7 +403,7 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph "Data Flow"
-        VT["value_tracking<br/>(pure_copying)<br/>值传递追踪"]
+        VT["value_tracking<br/>值传递追踪"]
         CP["computing<br/>多步算术"]
     end
     subgraph "Control Flow"
@@ -449,3 +456,5 @@ graph LR
 | 5 | **FitArtifact.train_cache_id** 永远是 None | `linear_probing.py:277` | 死字段 |
 | 6 | **MethodConfig.config** 是 untyped dict | `results.py` | 无 schema 校验，silent misconfiguration |
 | 7 | **N_CLASSES=11 硬编码** | `linear_probing.py` | 应从 answer_space 推导 |
+| 8 | **resolve_artifact_with_policy()** 中 auto/force 模式无调用者 | `resources.py:265` | 死代码 |
+| 9 | **无训练脚本**：`LinearProbing.train()` 已实现但无配套的 CLI/脚本入口 | 缺失 | 训练需手动写 Python 调用 |
