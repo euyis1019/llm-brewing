@@ -15,10 +15,8 @@ Important runtime contract:
   - `LinearProbing.run(...)` is evaluation-only and requires an existing
     serialized probe artifact.
 
-COLM config (locked):
-  - LogisticRegression(C=1.0, solver='lbfgs', max_iter=1000)
-  - 11-class: digits 0-9 + residual class (index 10)
-  - Train/eval split is handled outside Brewing
+Implementation: PyTorch nn.Linear trained with Adam on GPU (if available),
+wrapped in a sklearn-compatible interface for predict/predict_proba.
 """
 
 from __future__ import annotations
@@ -28,6 +26,8 @@ import time
 from typing import Any
 
 import numpy as np
+import torch
+from torch import nn
 
 from brewing.schema import (
     FitArtifact, FitPolicy, FitStatus, Granularity,
@@ -41,9 +41,10 @@ from brewing.resources import ResourceKey, ResourceManager
 logger = logging.getLogger(__name__)
 
 DEFAULT_PROBE_PARAMS = {
-    "solver": "lbfgs",
-    "C": 1.0,
-    "max_iter": 1000,
+    "lr": 1e-3,
+    "epochs": 2000,
+    "batch_size": 512,
+    "weight_decay": 1e-2,
 }
 
 # Answer space for CUE-Bench: digits 0-9 + residual
@@ -63,6 +64,58 @@ def _encode_labels(answers: list[str], answer_space: list[str]) -> np.ndarray:
     return np.array([space_map.get(a, residual_idx) for a in answers])
 
 
+def _get_probe_device() -> torch.device:
+    """Pick the best available device for probe training."""
+    if torch.cuda.is_available():
+        return torch.device("cuda:0")
+    return torch.device("cpu")
+
+
+class LinearProbe:
+    """A single-layer linear probe with sklearn-compatible interface.
+
+    Wraps nn.Linear so it can be pickled, and exposes predict /
+    predict_proba for evaluation code.
+    """
+
+    def __init__(self, in_features: int, n_classes: int):
+        self.in_features = in_features
+        self.n_classes = n_classes
+        self.linear = nn.Linear(in_features, n_classes)
+        # Standardization stats (set during fit)
+        self.mean: np.ndarray | None = None
+        self.std: np.ndarray | None = None
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        """Predict class labels for samples in X."""
+        X = self._standardize(X)
+        with torch.no_grad():
+            logits = self.linear(torch.from_numpy(X).float().to(self.linear.weight.device))
+            return logits.argmax(dim=1).cpu().numpy()
+
+    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        """Predict class probabilities for samples in X."""
+        X = self._standardize(X)
+        with torch.no_grad():
+            logits = self.linear(torch.from_numpy(X).float().to(self.linear.weight.device))
+            return torch.softmax(logits, dim=1).cpu().numpy()
+
+    def score(self, X: np.ndarray, y: np.ndarray) -> float:
+        """Return accuracy on (X, y)."""
+        preds = self.predict(X)
+        return float(np.mean(preds == y))
+
+    def _standardize(self, X: np.ndarray) -> np.ndarray:
+        if self.mean is not None and self.std is not None:
+            return (X - self.mean) / self.std
+        return X
+
+    def to_cpu(self):
+        """Move linear layer to CPU for serialization."""
+        self.linear = self.linear.cpu()
+        return self
+
+
 def _artifact_key_from_config(config: MethodConfig, model_id: str, split: str = "train") -> ResourceKey:
     """Build a ResourceKey for artifact resolution from method config."""
     return ResourceKey(
@@ -76,7 +129,7 @@ def _artifact_key_from_config(config: MethodConfig, model_id: str, split: str = 
 
 
 class LinearProbing(CacheOnlyMethod):
-    """Per-layer logistic regression probe."""
+    """Per-layer linear probe (PyTorch nn.Linear + Adam)."""
 
     name = "linear_probing"
 
@@ -229,39 +282,104 @@ class LinearProbing(CacheOnlyMethod):
         probe_params: dict,
         artifact_key: ResourceKey,
     ) -> tuple[FitArtifact, list]:
-        from sklearn.linear_model import LogisticRegression
+        from tqdm import tqdm
 
         labels = _encode_labels(
             [s.answer for s in train_samples], answer_space
         )
         n_layers = train_cache.n_layers
+        n_samples = len(train_samples)
+        hidden_dim = train_cache.hidden_dim
+        n_classes = len(answer_space) + 1  # +1 for residual
+
+        lr = probe_params.get("lr", 1e-3)
+        epochs = probe_params.get("epochs", 2000)
+        batch_size = probe_params.get("batch_size", 512)
+        weight_decay = probe_params.get("weight_decay", 1e-2)
+        device = _get_probe_device()
 
         logger.info(
-            "Fitting %d probes on %d samples (model=%s)",
-            n_layers, len(train_samples), train_cache.model_id,
+            "Fitting %d probes on %d samples (model=%s, device=%s, epochs=%d)",
+            n_layers, n_samples, train_cache.model_id, device, epochs,
         )
 
-        probes = []
+        y_tensor = torch.from_numpy(labels).long().to(device)
+
+        probes: list[LinearProbe] = []
         fit_metrics: dict[str, Any] = {"per_layer": {}}
         t0 = time.time()
 
-        for layer_idx in range(n_layers):
-            X = train_cache.hidden_states[:, layer_idx, :]  # (N, D)
-            clf = LogisticRegression(**probe_params)
-            clf.fit(X, labels)
+        layer_pbar = tqdm(
+            range(n_layers),
+            desc=f"Training probes ({n_layers} layers × {n_samples} samples)",
+            unit="layer",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}] {postfix}",
+        )
 
-            train_acc = float(clf.score(X, labels))
+        for layer_idx in layer_pbar:
+            X_np = train_cache.hidden_states[:, layer_idx, :]  # (N, D)
+
+            # Standardize
+            mean = X_np.mean(axis=0)
+            std = X_np.std(axis=0) + 1e-8
+            X_scaled = (X_np - mean) / std
+
+            X_tensor = torch.from_numpy(X_scaled).float().to(device)
+
+            # Build probe
+            probe = LinearProbe(hidden_dim, n_classes)
+            probe.mean = mean
+            probe.std = std
+            probe.linear = probe.linear.to(device)
+
+            optimizer = torch.optim.Adam(probe.linear.parameters(), lr=lr, weight_decay=weight_decay)
+            loss_fn = nn.CrossEntropyLoss()
+
+            # Training loop
+            probe.linear.train()
+            use_minibatch = n_samples > batch_size
+
+            for epoch in range(epochs):
+                if use_minibatch:
+                    perm = torch.randperm(n_samples, device=device)
+                    epoch_loss = 0.0
+                    for start in range(0, n_samples, batch_size):
+                        idx = perm[start:start + batch_size]
+                        optimizer.zero_grad()
+                        loss = loss_fn(probe.linear(X_tensor[idx]), y_tensor[idx])
+                        loss.backward()
+                        optimizer.step()
+                        epoch_loss += loss.item()
+                else:
+                    optimizer.zero_grad()
+                    loss = loss_fn(probe.linear(X_tensor), y_tensor)
+                    loss.backward()
+                    optimizer.step()
+
+            # Eval
+            probe.linear.eval()
+            with torch.no_grad():
+                preds = probe.linear(X_tensor).argmax(dim=1)
+                train_acc = float((preds == y_tensor).float().mean().item())
+
             fit_metrics["per_layer"][str(layer_idx)] = {
                 "train_accuracy": train_acc,
-                "n_iter": int(clf.n_iter_[0]) if hasattr(clf, "n_iter_") else None,
+                "epochs": epochs,
             }
-            probes.append(clf)
+
+            # Move to CPU for serialization
+            probe.to_cpu()
+            probes.append(probe)
+
+            layer_pbar.set_postfix_str(
+                f"L{layer_idx} acc={train_acc:.1%}"
+            )
 
         fit_metrics["total_time_s"] = time.time() - t0
         fit_metrics["n_layers"] = n_layers
-        fit_metrics["n_train"] = len(train_samples)
+        fit_metrics["n_train"] = n_samples
+        fit_metrics["device"] = str(device)
 
-        # artifact_id is kept for metadata/serialization compatibility
         artifact_id = FitArtifact.make_artifact_id(
             method="linear_probing",
             model_id=train_cache.model_id,
@@ -278,7 +396,7 @@ class LinearProbing(CacheOnlyMethod):
             fit_config=probe_params,
             fit_metrics=fit_metrics,
             metadata={
-                "n_classes": N_CLASSES,
+                "n_classes": n_classes,
                 "answer_space": answer_space,
             },
         )

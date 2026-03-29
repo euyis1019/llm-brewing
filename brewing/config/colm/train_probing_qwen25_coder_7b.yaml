@@ -17,6 +17,7 @@ subsets:
 
 # 7B base 模型，hidden_dim=3584，batch_size 调小一点防止 OOM
 model_id: Qwen/Qwen2.5-Coder-7B
+model_cache_dir: /home/gyf/CUE/models
 
 output_root: brewing_output
 seed: 42
@@ -26,7 +27,8 @@ batch_size: 8
 method_configs:
   linear_probing:
     probe_params:
-      solver: lbfgs
-      C: 1.0
-      max_iter: 1000
+      lr: 0.001
+      epochs: 2000
+      batch_size: 512
     overwrite: false
+    validate_on_eval: true

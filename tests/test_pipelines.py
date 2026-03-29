@@ -1,5 +1,7 @@
 """Tests for pipeline factory and individual pipeline modes."""
 
+from unittest.mock import patch
+
 import pytest
 
 import brewing.benchmarks  # noqa: F401
@@ -19,6 +21,25 @@ from brewing.pipelines import (
 )
 from brewing.resources import ResourceManager
 from brewing.registry import get_benchmark
+from tests.helpers import make_synthetic_cache
+
+
+def _mock_resolve_hidden_cache(self, key, samples, model, tokenizer):
+    """Test-only: build a synthetic cache instead of requiring a real model."""
+    existing = self.resources.resolve_cache(key)
+    if existing is not None:
+        return existing
+    cache = make_synthetic_cache(
+        n_samples=len(samples),
+        n_layers=28,
+        hidden_dim=64,
+        sample_ids=[s.id for s in samples],
+        model_id=self.config.model_id,
+        answers=[s.answer for s in samples],
+        seed=self.config.seed,
+    )
+    self.resources.save_cache(key, cache)
+    return cache
 
 
 # ---------------------------------------------------------------------------
@@ -91,6 +112,7 @@ def test_create_pipeline_unknown_mode(tmp_path):
 # Orchestrator delegates to pipeline
 # ---------------------------------------------------------------------------
 
+@patch.object(PipelineBase, "resolve_hidden_cache", _mock_resolve_hidden_cache)
 def test_orchestrator_eval_mode_fixture(tmp_path):
     """Default mode=eval runs the same fixture pipeline as before."""
     rc = RunConfig(
@@ -107,6 +129,7 @@ def test_orchestrator_eval_mode_fixture(tmp_path):
     assert "value_tracking" in result["subsets"]
 
 
+@patch.object(PipelineBase, "resolve_hidden_cache", _mock_resolve_hidden_cache)
 def test_orchestrator_cache_only_mode(tmp_path):
     """cache_only mode runs S0+S1 and produces dataset + cache."""
     rc = RunConfig(
@@ -124,6 +147,7 @@ def test_orchestrator_cache_only_mode(tmp_path):
     assert not any(k.startswith("method_") for k in subset_r)
 
 
+@patch.object(PipelineBase, "resolve_hidden_cache", _mock_resolve_hidden_cache)
 def test_orchestrator_train_mode(tmp_path):
     """train_probing mode runs S0+S1+fit and produces artifact."""
     rc = RunConfig(
@@ -171,3 +195,53 @@ def test_needs_model_eval_with_csd():
     from brewing.cli import needs_model_online
     rc = RunConfig(mode="eval", methods=["linear_probing", "csd"])
     assert needs_model_online(rc) is True
+
+
+# ---------------------------------------------------------------------------
+# TrainPipeline: validate_on_eval
+# ---------------------------------------------------------------------------
+
+@patch.object(PipelineBase, "resolve_hidden_cache", _mock_resolve_hidden_cache)
+def test_train_with_validate_on_eval(tmp_path):
+    """train_probing with validate_on_eval=True also reports eval accuracy."""
+    rc = RunConfig(
+        mode="train_probing",
+        output_root=str(tmp_path / "out"),
+        subsets=["value_tracking"],
+        use_fixture=True,
+        method_configs={
+            "linear_probing": {
+                "validate_on_eval": True,
+            },
+        },
+    )
+    orch = Orchestrator(rc)
+    result = orch.run()
+    subset_r = result["subsets"]["value_tracking"]
+    assert subset_r.get("fit_status") == "trained"
+    # Validation metrics should be present
+    ev = subset_r.get("eval_validation")
+    assert ev is not None
+    assert "per_layer_accuracy" in ev
+    assert "best_layer" in ev
+    assert "best_accuracy" in ev
+    assert "n_eval_samples" in ev
+    assert ev["n_eval_samples"] > 0
+    # Accuracies should be in [0, 1]
+    assert 0.0 <= ev["best_accuracy"] <= 1.0
+
+
+@patch.object(PipelineBase, "resolve_hidden_cache", _mock_resolve_hidden_cache)
+def test_train_without_validate_on_eval(tmp_path):
+    """train_probing with validate_on_eval=False (default) skips eval."""
+    rc = RunConfig(
+        mode="train_probing",
+        output_root=str(tmp_path / "out"),
+        subsets=["value_tracking"],
+        use_fixture=True,
+    )
+    orch = Orchestrator(rc)
+    result = orch.run()
+    subset_r = result["subsets"]["value_tracking"]
+    assert subset_r.get("fit_status") == "trained"
+    assert "eval_validation" not in subset_r

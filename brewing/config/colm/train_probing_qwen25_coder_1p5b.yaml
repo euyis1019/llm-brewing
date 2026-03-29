@@ -19,6 +19,7 @@ subsets:
 
 # HuggingFace model ID，也决定了去哪个目录找 cache
 model_id: Qwen/Qwen2.5-Coder-1.5B-Instruct
+model_cache_dir: /home/gyf/CUE/models
 
 # 所有产出（datasets / caches / artifacts / results）的根目录
 output_root: brewing_output
@@ -33,8 +34,10 @@ batch_size: 16
 method_configs:
   linear_probing:
     probe_params:
-      solver: lbfgs       # sklearn LogisticRegression 的优化器，lbfgs 适合中小规模
-      C: 1.0              # 正则化强度的倒数，越大正则越弱；1.0 是默认值
-      max_iter: 1000       # 最大迭代次数，一般 1000 够收敛
+      lr: 0.001            # Adam 学习率
+      epochs: 2000         # 训练轮数，2000 轮 ~1s/层 (GPU)
+      batch_size: 512      # mini-batch 大小，样本数<512 时自动退化为 full-batch
     # 是否覆盖已有的 probe artifact；false = 发现已训练好就跳过
     overwrite: false
+    # 训练后在 eval split 上跑一次推理，报告 per-layer accuracy
+    validate_on_eval: true
