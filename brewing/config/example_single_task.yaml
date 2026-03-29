@@ -1,5 +1,6 @@
 benchmark: CUE-Bench
 model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+model_cache_dir: /home/gyf/CUE/models
 subsets:
 - value_tracking
 methods:
