@@ -259,10 +259,93 @@ class DiagnosticResult:
 
 
 # ---------------------------------------------------------------------------
+# SampleCausalResult / CausalValidationResult
+# ---------------------------------------------------------------------------
+
+@dataclass
+class SampleCausalResult:
+    """Per-sample result from a causal validation experiment."""
+    sample_id: str
+    selected: bool
+    skip_reason: str | None = None  # why this sample was not selected
+
+    # Intervention details (only set when selected=True)
+    source_layer: int | None = None
+    target_layer: int | None = None
+    round_idx: int | None = None  # for multi-round experiments (re-injection)
+
+    original_output: str | None = None
+    intervened_output: str | None = None
+    original_correct: bool | None = None
+    intervened_correct: bool | None = None
+
+    effect_label: str | None = None  # "flipped", "maintained", "other"
+    extras: dict = field(default_factory=dict)
+
+    def to_dict(self) -> dict:
+        return {k: v for k, v in asdict(self).items()}
+
+    @classmethod
+    def from_dict(cls, d: dict) -> SampleCausalResult:
+        return cls(**{k: v for k, v in d.items() if k in cls.__dataclass_fields__})
+
+
+@dataclass
+class CausalValidationResult:
+    """Full result of a causal validation experiment."""
+    experiment: str  # e.g. "activation_patching_fjc"
+    model_id: str
+    eval_dataset_id: str
+    benchmark: str
+    subset: str | None = None
+
+    sample_results: list[SampleCausalResult] = field(default_factory=list)
+
+    # Summary metrics
+    summary: dict = field(default_factory=dict)
+    # e.g. {"n_selected": 10, "n_effective": 8, "n_flipped": 5, "flip_rate": 0.625}
+
+    extras: dict = field(default_factory=dict)
+
+    def save(self, path: Path) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        d: dict[str, Any] = {
+            "experiment": self.experiment,
+            "model_id": self.model_id,
+            "eval_dataset_id": self.eval_dataset_id,
+            "benchmark": self.benchmark,
+            "subset": self.subset,
+            "sample_results": [sr.to_dict() for sr in self.sample_results],
+            "summary": self.summary,
+            "extras": self.extras,
+        }
+        with open(path, "w") as f:
+            json.dump(d, f, indent=2)
+
+    @classmethod
+    def load(cls, path: Path) -> CausalValidationResult:
+        with open(path) as f:
+            d = json.load(f)
+        return cls(
+            experiment=d["experiment"],
+            model_id=d["model_id"],
+            eval_dataset_id=d["eval_dataset_id"],
+            benchmark=d["benchmark"],
+            subset=d.get("subset"),
+            sample_results=[
+                SampleCausalResult.from_dict(sr)
+                for sr in d.get("sample_results", [])
+            ],
+            summary=d.get("summary", {}),
+            extras=d.get("extras", {}),
+        )
+
+
+# ---------------------------------------------------------------------------
 # RunConfig — configuration for a single Brewing run
 # ---------------------------------------------------------------------------
 
-VALID_MODES = ("cache_only", "train_probing", "eval", "diagnostics")
+VALID_MODES = ("cache_only", "train_probing", "eval", "diagnostics", "causal_validation")
 
 
 @dataclass
@@ -271,6 +354,7 @@ class RunConfig:
     mode: str = "eval"  # cache_only | train_probing | eval | diagnostics
     benchmark: str = "CUE-Bench"
     subsets: list[str] | None = None  # None = all subsets
+    splits: list[str] | None = None  # None = pipeline default (e.g. ["eval"]); cache_only uses ["train", "eval"]
     model_id: str = "Qwen/Qwen2.5-Coder-7B-Instruct"
     methods: list[str] = field(default_factory=lambda: ["linear_probing", "csd"])
     output_root: str = "brewing_output"
@@ -295,6 +379,9 @@ class RunConfig:
     # Model weights
     model_cache_dir: str | None = None  # Path to local HF model cache
 
+    # Causal validation config (for mode="causal_validation")
+    causal_validation: dict = field(default_factory=dict)
+
     # Quantization
     quantization: str | None = None  # None, "int8", "int4"
 
@@ -306,6 +393,8 @@ class RunConfig:
     }
 
     def __post_init__(self):
+        import warnings
+
         if self.mode not in VALID_MODES:
             raise ValueError(
                 f"Invalid mode={self.mode!r}. "
@@ -322,6 +411,21 @@ class RunConfig:
                 "Automatic train/eval splitting has been removed from Brewing. "
                 "Prepare train/eval datasets externally and train probing "
                 "artifacts in a separate script."
+            )
+        if self.mode == "train_probing" and self.data_dir is None:
+            warnings.warn(
+                "mode='train_probing' with data_dir=None: training data will be "
+                "dynamically generated or loaded from output_root. Set data_dir "
+                "to point to the official train split for reproducible experiments.",
+                UserWarning,
+                stacklevel=2,
+            )
+        if self.mode == "diagnostics" and self.methods:
+            warnings.warn(
+                "mode='diagnostics' ignores the 'methods' field. Diagnostics "
+                "loads probe and CSD results from disk, it does not run methods.",
+                UserWarning,
+                stacklevel=2,
             )
 
     @property

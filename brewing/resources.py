@@ -40,8 +40,9 @@ from typing import Any
 import numpy as np
 
 from .schema import (
-    DatasetManifest, DatasetPurpose, DiagnosticResult, FitArtifact, FitPolicy,
-    HiddenStateCache, MethodResult, Sample, load_samples, save_samples,
+    CausalValidationResult, DatasetManifest, DatasetPurpose, DiagnosticResult,
+    FitArtifact, FitPolicy, HiddenStateCache, MethodResult, Sample,
+    load_samples, save_samples,
 )
 
 logger = logging.getLogger(__name__)
@@ -334,3 +335,32 @@ class ResourceManager:
         logger.info("Saved diagnostic for %s/%s/%s",
                      key.model_id, key.task, key.split)
         return dp
+
+    # =================================================================
+    # Causal validation results
+    # =================================================================
+
+    def causal_result_dir(self, key: ResourceKey) -> Path:
+        return (self.output_root / "causal" /
+                key.benchmark / key.split / key.task / f"seed{key.seed}" /
+                key.model_id_safe)
+
+    def causal_result_path(self, key: ResourceKey, experiment: str) -> Path:
+        return self.causal_result_dir(key) / f"{experiment}.json"
+
+    def resolve_causal_result(
+        self, key: ResourceKey, experiment: str,
+    ) -> CausalValidationResult | None:
+        cp = self.causal_result_path(key, experiment)
+        if cp.exists():
+            return CausalValidationResult.load(cp)
+        return None
+
+    def save_causal_result(
+        self, key: ResourceKey, experiment: str, result: CausalValidationResult,
+    ) -> Path:
+        cp = self.causal_result_path(key, experiment)
+        result.save(cp)
+        logger.info("Saved causal result for %s/%s/%s/%s",
+                     experiment, key.model_id, key.task, key.split)
+        return cp
