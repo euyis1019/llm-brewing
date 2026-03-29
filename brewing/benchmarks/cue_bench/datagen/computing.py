@@ -451,9 +451,8 @@ def generate_dataset(
                 for idx in range(samples_per_config):
                     sample = gen_fn(steps, operators)
                     if sample is not None:
-                        op_tag = operators[0]
                         sample["id"] = (
-                            f"comp_{structure}_s{steps}_{op_tag}_{idx:03d}"
+                            f"comp_{structure}_s{steps}_{operators}_{idx:03d}"
                         )
                         sample["metadata"]["sample_idx"] = idx
                         dataset.append(sample)
