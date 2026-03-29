@@ -11,6 +11,7 @@ from typing import Any, TYPE_CHECKING
 
 from .base import PipelineBase
 from .cache_only import CacheOnlyPipeline
+from .causal_validation import CausalValidationPipeline
 from .diagnostics import DiagnosticsPipeline
 from .eval import EvalPipeline
 from .train import TrainPipeline
@@ -24,6 +25,7 @@ PIPELINE_REGISTRY: dict[str, type[PipelineBase]] = {
     "train_probing": TrainPipeline,
     "eval": EvalPipeline,
     "diagnostics": DiagnosticsPipeline,
+    "causal_validation": CausalValidationPipeline,
 }
 
 
@@ -45,6 +47,7 @@ def create_pipeline(
 __all__ = [
     "PipelineBase",
     "CacheOnlyPipeline",
+    "CausalValidationPipeline",
     "DiagnosticsPipeline",
     "EvalPipeline",
     "TrainPipeline",

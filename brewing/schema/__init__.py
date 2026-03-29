@@ -28,11 +28,13 @@ from .types import (
     save_samples,
 )
 from .results import (
+    CausalValidationResult,
     DiagnosticResult,
     MethodConfig,
     MethodRequirements,
     MethodResult,
     RunConfig,
+    SampleCausalResult,
     SampleDiagnostic,
     SampleMethodResult,
 )
@@ -58,6 +60,8 @@ __all__ = [
     "RunConfig",
     # diagnostics
     "DiagnosticResult", "SampleDiagnostic",
+    # causal validation
+    "CausalValidationResult", "SampleCausalResult",
     # compat
     "check_compatibility",
 ]
