@@ -68,9 +68,9 @@ def build_hidden_cache(
     all_hidden_states = []
     model_predictions = []
 
-    # Backend detection: nnsight LanguageModel exposes .trace() and .layers.
-    # This is a narrow check — see module docstring for limitations.
-    is_nnsight_model = hasattr(model, "trace") and hasattr(model, "layers")
+    # Backend detection: nnsight LanguageModel exposes .trace().
+    # Layer access path varies by architecture (model.layers, model.model.layers, etc.)
+    is_nnsight_model = hasattr(model, "trace")
 
     for batch_start in range(0, len(samples), batch_size):
         batch_samples = samples[batch_start:batch_start + batch_size]
@@ -139,9 +139,12 @@ def _extract_hf(
     hidden_layers = outputs.hidden_states[1:]  # L layers
     n_layers = len(hidden_layers)
 
-    # Get last token position for each sample (accounting for padding)
-    attention_mask = inputs["attention_mask"]
-    last_positions = attention_mask.sum(dim=1) - 1  # (batch,)
+    # Left-padding: all real tokens are right-aligned, so last token is
+    # always at the final position (seq_len - 1) for every sample.
+    seq_len = inputs["input_ids"].shape[1]
+    last_positions = torch.full(
+        (len(prompts),), seq_len - 1, dtype=torch.long, device=device
+    )
 
     batch_size = len(prompts)
     hidden_dim = hidden_layers[0].shape[-1]
@@ -181,6 +184,11 @@ def _extract_nnsight(
     import torch
     from brewing.nnsight_ops import get_token_activations
 
+    # Ensure left-padding so idx=-1 always picks the last real token
+    model.tokenizer.padding_side = "left"
+    if model.tokenizer.pad_token is None:
+        model.tokenizer.pad_token = model.tokenizer.eos_token
+
     # get_token_activations returns shape (num_layers, num_prompts, hidden_size)
     # It handles tokenization and padding internally
     activations = get_token_activations(
@@ -199,18 +207,12 @@ def _extract_nnsight(
         logits = model.output.logits.save()
 
     predictions = []
-    logits_val = logits.value
+    logits_val = logits.value if hasattr(logits, 'value') else logits
 
-    # nnsight LanguageModel exposes .tokenizer
-    tok = model.tokenizer
-    inputs = tok(prompts, return_tensors="pt", padding=True)
-    attention_mask = inputs["attention_mask"].to(logits_val.device)
-    last_positions = attention_mask.sum(dim=1) - 1
-
+    # Left-padding: last real token is always at position -1
     for sample_idx in range(len(prompts)):
-        pos = last_positions[sample_idx]
-        pred_id = logits_val[sample_idx, pos].argmax().item()
-        pred_token = tok.decode([pred_id]).strip()
+        pred_id = logits_val[sample_idx, -1].argmax().item()
+        pred_token = model.tokenizer.decode([pred_id]).strip()
         predictions.append(pred_token)
 
     return batch_hs, predictions
