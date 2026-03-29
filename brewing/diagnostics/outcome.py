@@ -208,6 +208,7 @@ def run_diagnostics_from_disk(
     cache_path: Path | str | None = None,
     samples_path: Path | str | None = None,
     output_path: Path | str | None = None,
+    allow_no_cache: bool = False,
 ) -> DiagnosticResult:
     """Run diagnostics from persisted files on disk.
 
@@ -321,6 +322,17 @@ def run_diagnostics_from_disk(
             for sid, pred in zip(cache.sample_ids, cache.model_predictions)
         }
         n_layers = cache.n_layers
+    elif not allow_no_cache:
+        raise FileNotFoundError(
+            "Eval cache not found. Diagnostics require the eval cache for "
+            "model_predictions (needed for outcome classification). "
+            "Pass allow_no_cache=True to run without it (outcomes will be biased)."
+        )
+    else:
+        logger.warning(
+            "Running diagnostics without eval cache. model_predictions will be "
+            "empty — all samples with FJC will be classified as Overprocessed."
+        )
 
     # --- Run diagnostics (pure computation) ---
     diag = run_diagnostics(
