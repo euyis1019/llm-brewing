@@ -147,7 +147,7 @@ def test_build_model_load_kwargs_none():
     import torch
     kwargs = build_model_load_kwargs(rc)
     assert kwargs["device_map"] == "auto"
-    assert kwargs["torch_dtype"] == torch.float16
+    assert kwargs["dtype"] == torch.float16
     assert "quantization_config" not in kwargs
 
 
@@ -157,7 +157,7 @@ def test_build_model_load_kwargs_int8():
     rc = RunConfig(quantization="int8")
     kwargs = build_model_load_kwargs(rc)
     assert kwargs["device_map"] == "auto"
-    assert "torch_dtype" not in kwargs
+    assert kwargs["dtype"]  # dtype always present
     qc = kwargs["quantization_config"]
     assert qc.load_in_8bit is True
 
@@ -167,7 +167,7 @@ def test_build_model_load_kwargs_int4():
     """int4 -> BitsAndBytesConfig(load_in_4bit=True)."""
     rc = RunConfig(quantization="int4")
     kwargs = build_model_load_kwargs(rc)
-    assert "torch_dtype" not in kwargs
+    assert kwargs["dtype"]  # dtype always present
     qc = kwargs["quantization_config"]
     assert qc.load_in_4bit is True
 

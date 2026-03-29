@@ -13,6 +13,7 @@ from brewing.orchestrator import Orchestrator
 from brewing.pipelines import (
     PipelineBase,
     CacheOnlyPipeline,
+    CausalValidationPipeline,
     DiagnosticsPipeline,
     EvalPipeline,
     TrainPipeline,
@@ -52,7 +53,7 @@ def test_mode_default_is_eval():
 
 
 def test_mode_valid_values():
-    for mode in ("cache_only", "train_probing", "eval", "diagnostics"):
+    for mode in ("cache_only", "train_probing", "eval", "diagnostics", "causal_validation"):
         rc = RunConfig(mode=mode)
         assert rc.mode == mode
 
@@ -78,7 +79,7 @@ def test_mode_backward_compat_no_mode_field(tmp_path):
 
 def test_pipeline_registry_has_all_modes():
     assert set(PIPELINE_REGISTRY.keys()) == {
-        "cache_only", "train_probing", "eval", "diagnostics",
+        "cache_only", "train_probing", "eval", "diagnostics", "causal_validation",
     }
 
 
@@ -91,6 +92,7 @@ def test_create_pipeline_returns_correct_type(tmp_path):
         ("cache_only", CacheOnlyPipeline),
         ("train_probing", TrainPipeline),
         ("diagnostics", DiagnosticsPipeline),
+        ("causal_validation", CausalValidationPipeline),
     ]:
         rc = RunConfig(mode=mode, output_root=str(tmp_path / "out"))
         pipeline = create_pipeline(rc, rm, bm)
@@ -141,10 +143,10 @@ def test_orchestrator_cache_only_mode(tmp_path):
     orch = Orchestrator(rc)
     result = orch.run()
     subset_r = result["subsets"]["value_tracking"]
-    assert "n_eval_samples" in subset_r
-    assert "n_layers" in subset_r
-    # No method results should appear
-    assert not any(k.startswith("method_") for k in subset_r)
+    # Default splits for cache_only is ["eval"]
+    assert "eval" in subset_r
+    assert "n_samples" in subset_r["eval"]
+    assert "n_layers" in subset_r["eval"]
 
 
 @patch.object(PipelineBase, "resolve_hidden_cache", _mock_resolve_hidden_cache)

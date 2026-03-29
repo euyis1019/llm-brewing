@@ -1,11 +1,14 @@
-"""Tests for diagnostics engine."""
+"""Tests for diagnostics engine and dataset loading."""
+
+import json
+import warnings
 
 import numpy as np
 import pytest
 
 from brewing.schema import (
     DatasetManifest, DatasetPurpose, Granularity, HiddenStateCache,
-    MethodResult, Outcome, Sample, SampleMethodResult, save_samples,
+    MethodResult, Outcome, RunConfig, Sample, SampleMethodResult, save_samples,
 )
 from brewing.diagnostics import (
     classify_outcome, compute_csd_tail_confidence, compute_fjc,
@@ -242,3 +245,125 @@ class TestRunDiagnosticsFromDisk:
         """Error when neither explicit paths nor key are provided."""
         with pytest.raises(ValueError, match="model_id and eval_dataset_id"):
             run_diagnostics_from_disk(results_dir=tmp_path)
+
+    def test_missing_cache_raises_by_default(self, tmp_path):
+        """Without cache, diagnostics should raise FileNotFoundError."""
+        rm, model_id, ds_key, cache_key, probe_key, csd_key = self._persist_test_data(tmp_path)
+
+        # Delete the cache file so it can't be found
+        cache_file = rm.cache_path(cache_key)
+        cache_file.unlink()
+        meta_file = cache_file.with_suffix(".meta.json")
+        if meta_file.exists():
+            meta_file.unlink()
+
+        with pytest.raises(FileNotFoundError, match="Eval cache not found"):
+            run_diagnostics_from_disk(
+                results_dir=tmp_path,
+                key=cache_key,
+            )
+
+    def test_missing_cache_allowed_with_flag(self, tmp_path):
+        """With allow_no_cache=True, diagnostics should run (with bias warning)."""
+        rm, model_id, ds_key, cache_key, probe_key, csd_key = self._persist_test_data(tmp_path)
+
+        # Delete the cache
+        cache_file = rm.cache_path(cache_key)
+        cache_file.unlink()
+        meta_file = cache_file.with_suffix(".meta.json")
+        if meta_file.exists():
+            meta_file.unlink()
+
+        diag = run_diagnostics_from_disk(
+            results_dir=tmp_path,
+            key=cache_key,
+            allow_no_cache=True,
+        )
+        # Should complete but all FJC samples become Overprocessed (empty model_output)
+        assert len(diag.sample_diagnostics) == 2
+
+
+class TestLoadGeneratedDatasetSplit:
+    """Tests for load_generated_dataset split parameter."""
+
+    def _write_samples(self, path, samples):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(samples))
+
+    def _sample_data(self, answer="5"):
+        return [{
+            "id": "test_001",
+            "prompt": "x = 5\n# What is x?",
+            "code": "x = 5",
+            "answer": answer,
+            "metadata": {},
+        }]
+
+    def test_split_eval_reads_only_eval(self, tmp_path):
+        from brewing.benchmarks.cue_bench import load_generated_dataset
+
+        self._write_samples(tmp_path / "eval" / "value_tracking.json", self._sample_data("5"))
+        self._write_samples(tmp_path / "train" / "value_tracking.json", self._sample_data("9"))
+
+        samples = load_generated_dataset(tmp_path, "value_tracking", split="eval")
+        assert len(samples) == 1
+        assert samples[0].answer == "5"
+
+    def test_split_train_reads_only_train(self, tmp_path):
+        from brewing.benchmarks.cue_bench import load_generated_dataset
+
+        self._write_samples(tmp_path / "eval" / "value_tracking.json", self._sample_data("5"))
+        self._write_samples(tmp_path / "train" / "value_tracking.json", self._sample_data("9"))
+
+        samples = load_generated_dataset(tmp_path, "value_tracking", split="train")
+        assert len(samples) == 1
+        assert samples[0].answer == "9"
+
+    def test_split_raises_if_not_found(self, tmp_path):
+        from brewing.benchmarks.cue_bench import load_generated_dataset
+
+        with pytest.raises(FileNotFoundError, match="split 'eval'"):
+            load_generated_dataset(tmp_path, "value_tracking", split="eval")
+
+    def test_no_split_uses_legacy_fallback(self, tmp_path):
+        from brewing.benchmarks.cue_bench import load_generated_dataset
+
+        # Only train/ exists — legacy fallback should find it
+        self._write_samples(tmp_path / "train" / "value_tracking.json", self._sample_data("9"))
+
+        samples = load_generated_dataset(tmp_path, "value_tracking", split=None)
+        assert len(samples) == 1
+        assert samples[0].answer == "9"
+
+
+class TestRunConfigValidation:
+    """Tests for RunConfig validation warnings."""
+
+    def test_train_probing_no_data_dir_warns(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            RunConfig(
+                model_id="test",
+                mode="train_probing",
+                data_dir=None,
+            )
+            user_warnings = [x for x in w if issubclass(x.category, UserWarning)]
+            assert any("train_probing" in str(x.message) for x in user_warnings)
+
+    def test_diagnostics_with_methods_warns(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            RunConfig(
+                model_id="test",
+                mode="diagnostics",
+                methods=["linear_probing", "csd"],
+            )
+            user_warnings = [x for x in w if issubclass(x.category, UserWarning)]
+            assert any("diagnostics" in str(x.message) for x in user_warnings)
+
+    def test_eval_mode_no_warnings(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            RunConfig(model_id="test", mode="eval")
+            user_warnings = [x for x in w if issubclass(x.category, UserWarning)]
+            assert len(user_warnings) == 0
