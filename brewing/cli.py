@@ -21,7 +21,7 @@ from typing import Any
 import yaml
 
 from brewing.schema import RunConfig
-from brewing.registry import get_method_class
+from brewing.registry import get_benchmark, get_method_class
 
 
 def load_config(config_path: str | Path) -> RunConfig:
@@ -38,10 +38,44 @@ def load_config(config_path: str | Path) -> RunConfig:
     return RunConfig(**config_dict)
 
 
+def _all_caches_exist(config: RunConfig) -> bool:
+    """Check whether all required hidden-state caches already exist on disk."""
+    from brewing.resources import ResourceManager, ResourceKey
+
+    rm = ResourceManager(config.output_root)
+    benchmark_safe = config.benchmark_path_safe
+    subsets = config.subsets
+
+    if subsets is None:
+        benchmark = get_benchmark(config.benchmark)
+        subsets = benchmark.subset_names
+
+    splits = ["train"] if config.mode == "train_probing" else ["eval"]
+    # train_probing with validate_on_eval also needs eval caches
+    if config.mode == "train_probing":
+        lp_config = config.method_configs.get("linear_probing", {})
+        if lp_config.get("validate_on_eval", False):
+            splits.append("eval")
+
+    for split in splits:
+        for subset in subsets:
+            key = ResourceKey(
+                benchmark=benchmark_safe,
+                split=split,
+                task=subset,
+                seed=config.seed,
+                model_id=config.model_id,
+            )
+            if not rm.cache_path(key).exists():
+                return False
+    return True
+
+
 def needs_model_online(config: RunConfig) -> bool:
     """Check whether the configured mode requires the model to be loaded."""
     if config.mode in ("cache_only", "train_probing"):
-        return True
+        # Model is only needed if some caches are missing
+        return not _all_caches_exist(config)
     if config.mode == "diagnostics":
         return False
     # mode == "eval": check methods
@@ -96,7 +130,7 @@ def main(argv: list[str] | None = None):
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
 
-    # Ensure benchmarks and methods are registered
+    # Ensure benchmarks and methods are registered, Eric: Lazy load can be done?
     import brewing.benchmarks  # noqa: F401
     import brewing.methods.linear_probing  # noqa: F401
     import brewing.methods.csd  # noqa: F401
@@ -108,7 +142,7 @@ def main(argv: list[str] | None = None):
     model = None
     tokenizer = None
 
-    if needs_model_online(config):
+    if needs_model_online(config):# Depends on mode
         logging.info("Loading model: %s", config.model_id)
         try:
             from nnsight import LanguageModel
@@ -118,9 +152,9 @@ def main(argv: list[str] | None = None):
             tokenizer = model.tokenizer
             logging.info("Model loaded as nnsight LanguageModel")
         except Exception as e:
-            logging.warning(
-                "Could not load model: %s. Running with synthetic cache.", e
-            )
+            raise RuntimeError(
+                f"Failed to load model '{config.model_id}': {e}"
+            ) from e
 
     # Run
     from brewing.orchestrator import Orchestrator

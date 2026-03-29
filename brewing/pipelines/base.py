@@ -90,12 +90,14 @@ class PipelineBase(ABC):
                     seed=self.config.seed,
                     samples_per_config=self.config.samples_per_config,
                 )
-            except (ImportError, ValueError):
-                from brewing.benchmarks.cue_bench import FIXTURE_SAMPLES
-                samples = [s for s in FIXTURE_SAMPLES if s.subset == subset_name]
-                logger.warning(
-                    "datagen not available for '%s', using fixture", subset_name
-                )
+            except ImportError as e:
+                raise RuntimeError(
+                    f"datagen module not available for '{subset_name}': {e}"
+                ) from e
+            except ValueError as e:
+                raise RuntimeError(
+                    f"datagen failed for '{subset_name}': {e}"
+                ) from e
 
         manifest = DatasetManifest(
             dataset_id=key.dataset_id,
@@ -140,18 +142,9 @@ class PipelineBase(ABC):
                 device=self.config.device,
             )
         else:
-            from tests.helpers import make_synthetic_cache
-            logger.warning(
-                "No model available, creating synthetic cache (testing-only fallback)"
-            )
-            cache = make_synthetic_cache(
-                n_samples=len(samples),
-                n_layers=28,
-                hidden_dim=64,
-                sample_ids=[s.id for s in samples],
-                model_id=self.config.model_id,
-                answers=[s.answer for s in samples],
-                seed=self.config.seed,
+            raise RuntimeError(
+                "Model and tokenizer are required to build hidden state cache "
+                f"but were not provided. model={model}, tokenizer={tokenizer}"
             )
 
         self.resources.save_cache(key, cache)

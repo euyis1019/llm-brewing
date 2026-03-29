@@ -117,11 +117,14 @@ def build_eval_dataset(
                 samples_per_config=samples_per_config,
             )
             all_samples.extend(generated)
-        except (ImportError, ValueError):
-            # If datagen is not available, use fixture
-            for s in FIXTURE_SAMPLES:
-                if s.subset == subset_name:
-                    all_samples.append(s)
+        except ImportError as e:
+            raise RuntimeError(
+                f"datagen module not available for '{subset_name}': {e}"
+            ) from e
+        except ValueError as e:
+            raise RuntimeError(
+                f"datagen failed for '{subset_name}': {e}"
+            ) from e
 
     version = f"eval-seed{seed}"
     if samples_per_config is not None:
