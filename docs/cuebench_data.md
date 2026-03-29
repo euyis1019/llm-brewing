@@ -44,10 +44,16 @@ CUE-Bench 包含 6 个代码推理任务，每个任务 4050 个样本，共 243
 ```
 Brewing/
 ├── brewing/benchmarks/cue_bench/
-│   ├── data/                           # datagen 原始输出
+│   ├── data/                           # datagen 原始输出（git-tracked）
 │   │   ├── train/{task}.json           # 3240 samples/task
 │   │   └── eval/{task}.json            #  810 samples/task
-│   └── datagen/                        # 生成器代码
+│   ├── datagen/                        # 生成器代码
+│   └── fixtures.py                     # 9 个测试用小样本（无 datagen 时 fallback）
+│
+├── brewing/config/experiments/               # 论文实验 YAML config
+│   ├── qwen25_coder_7b.yaml           # mode=eval（默认）
+│   ├── train_probing_qwen25_coder_7b.yaml  # mode=train_probing
+│   └── ...                            # 9 个模型的 eval + train 配置
 │
 └── brewing_output/datasets/cuebench/   # pipeline 落盘（Brewing Sample 格式）
     ├── train/{task}/seed42/
@@ -62,6 +68,15 @@ Brewing/
 
 - `cue_bench/data/` — datagen 直接输出，保留 `code` 字段，维度在 `metadata` 里
 - `brewing_output/` — 经 adapter 转换的 `Sample` 格式，维度拆到 `difficulty` 字段，附 manifest
+
+### 数据加载优先级
+
+`PipelineBase.resolve_dataset()` 按以下顺序尝试：
+
+1. **已落盘** — `brewing_output/datasets/` 下有对应 ResourceKey 的 manifest + samples → 直接加载
+2. **data_dir** — 若 YAML config 中指定了 `data_dir`，从该路径加载 JSON（尝试 `{dir}/{task}.json` → `{dir}/eval/{task}.json` → `{dir}/train/{task}.json`）
+3. **动态生成** — 调用 datagen 模块 `generate_dataset()` 在内存中生成
+4. **Fixture fallback** — datagen 不可用时，使用 `fixtures.py` 中的 9 个最小样本
 
 ---
 
@@ -200,3 +215,34 @@ Legacy 数据位于 `legacy/{task}/data/dataset.json`，已归档不再使用。
 | retry 上限 | 200 次/sample |
 | 生成器 | `Brewing/brewing/benchmarks/cue_bench/datagen/{task}.py` |
 | 入口 | `python -m brewing.benchmarks.cue_bench.datagen.generate` |
+
+---
+
+## Fixture 样本
+
+`fixtures.py` 包含 10 个手写最小样本（value_tracking 5 个，其余各 1 个），用于：
+- 单元测试（无 datagen 依赖）
+- datagen 不可用时的 fallback
+
+---
+
+## 实验配置
+
+`config/experiments/` 目录包含论文实验的完整 YAML 配置，每个模型有 eval 和 train_probing 两种：
+
+```
+config/experiments/
+├── qwen25_coder_0p5b.yaml
+├── qwen25_coder_1p5b.yaml
+├── qwen25_coder_3b.yaml
+├── qwen25_coder_7b.yaml             # mode=eval（默认）
+├── qwen25_coder_14b_int8.yaml       # 带 int8 量化
+├── qwen25_7b_base.yaml              # Base vs Instruct 对照
+├── codellama_7b.yaml
+├── deepseek_coder_6p7b.yaml
+├── llama31_8b.yaml
+├── train_probing_qwen25_coder_1p5b.yaml   # mode=train_probing
+├── train_probing_qwen25_coder_3b.yaml
+├── train_probing_qwen25_coder_7b.yaml
+└── train_probing_qwen25_coder_1p5b_base.yaml
+```

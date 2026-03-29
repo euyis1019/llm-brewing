@@ -76,9 +76,11 @@ flowchart TB
 ```
 
 **关键设计决策**：
-- S0-S2 由 `Orchestrator` 统一驱动
-- S3 与 pipeline **完全解耦**，通过 `run_diagnostics_from_disk()` 从磁盘文件独立运行
-- Probing 的训练（`LinearProbing.train()`）在主 pipeline **之外**单独执行，主 pipeline 只做 eval_only
+- `Orchestrator` 是 thin dispatcher，通过 `pipelines/create_pipeline()` 派发到四种 pipeline 子类
+- `PipelineBase` 提供共享的 S0/S1 resolve-or-build 逻辑
+- 四种 mode：`cache_only`（S0→S1）/ `train_probing`（S0→S1→fit）/ `eval`（S0→S1→S2）/ `diagnostics`（S3）
+- Probe 训练现在是一等 pipeline mode（`TrainPipeline`），支持 YAML config 驱动 + `validate_on_eval`
+- S3 与 pipeline **完全解耦**，`DiagnosticsPipeline` 只是 `run_diagnostics_from_disk()` 的 wrapper
 
 ---
 
@@ -86,10 +88,23 @@ flowchart TB
 
 ```mermaid
 graph TD
-    CLI["cli.py<br/>CLI 入口"] --> Orch["orchestrator.py<br/>S0-S2 调度"]
-    Orch --> Reg["registry.py<br/>Benchmark/Method 查找"]
-    Orch --> RM["resources.py<br/>ResourceManager<br/>resolve-or-build"]
-    Orch --> CB["cache_builder.py<br/>Hidden state 提取"]
+    CLI["cli.py<br/>CLI 入口"] --> Orch["orchestrator.py<br/>thin dispatcher"]
+    Orch --> PipeFactory["pipelines/<br/>create_pipeline()"]
+    PipeFactory --> CachePipe["cache_only.py"]
+    PipeFactory --> TrainPipe["train.py<br/>S0→S1→fit<br/>+ validate_on_eval"]
+    PipeFactory --> EvalPipe["eval.py<br/>S0→S1→S2"]
+    PipeFactory --> DiagPipe["diagnostics.py<br/>S3 only"]
+
+    subgraph "pipelines/ (PipelineBase)"
+        CachePipe
+        TrainPipe
+        EvalPipe
+        DiagPipe
+    end
+
+    EvalPipe --> Reg["registry.py<br/>Benchmark/Method 查找"]
+    EvalPipe --> RM["resources.py<br/>ResourceManager"]
+    EvalPipe --> CB["cache_builder.py<br/>Hidden state 提取"]
 
     Reg --> BenchSpec["benchmarks/cue_bench/<br/>spec.py + builder.py + adapter.py"]
     Reg --> Methods["methods/<br/>linear_probing.py + csd.py"]
@@ -100,13 +115,13 @@ graph TD
 
     DiagMod["diagnostics/<br/>outcome.py + metrics.py<br/>+ group_by_difficulty"] -.->|"读磁盘文件"| RM
 
-    Schema["schema/<br/>types.py + results.py + benchmark.py<br/>纯数据结构"] ---|"被所有模块依赖"| Orch
+    Schema["schema/<br/>types.py + results.py + benchmark.py<br/>纯数据结构"] ---|"被所有模块依赖"| EvalPipe
     Schema ---|"被所有模块依赖"| RM
     Schema ---|"被所有模块依赖"| Methods
     Schema ---|"被所有模块依赖"| DiagMod
 
     style Schema fill:#f3e5f5,stroke:#9c27b0
-    style Orch fill:#e8f5e9,stroke:#4caf50
+    style PipeFactory fill:#e8f5e9,stroke:#4caf50
     style RM fill:#fff3e0,stroke:#ff9800
     style DiagMod fill:#fce4ec,stroke:#e91e63
 ```
@@ -354,8 +369,8 @@ graph TD
     end
 
     subgraph "Probing 生命周期"
-        LP --> Train["train()\n外部脚本调用\n→ FitArtifact + model.pkl"]
-        LP --> Eval["run()\nOrchestrator 调用\neval_only, 加载 artifact"]
+        LP --> Train["train()\nTrainPipeline 调用\n(mode=train_probing)\n→ FitArtifact + model.pkl"]
+        LP --> Eval["run()\nEvalPipeline 调用\n(mode=eval)\neval_only, 加载 artifact"]
     end
 
     style AM fill:#f5f5f5,stroke:#999
@@ -457,4 +472,3 @@ graph LR
 | 6 | **MethodConfig.config** 是 untyped dict | `results.py` | 无 schema 校验，silent misconfiguration |
 | 7 | **N_CLASSES=11 硬编码** | `linear_probing.py` | 应从 answer_space 推导 |
 | 8 | **resolve_artifact_with_policy()** 中 auto/force 模式无调用者 | `resources.py:265` | 死代码 |
-| 9 | **无训练脚本**：`LinearProbing.train()` 已实现但无配套的 CLI/脚本入口 | 缺失 | 训练需手动写 Python 调用 |

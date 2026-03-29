@@ -15,10 +15,11 @@ Brewing 的完整 pipeline 由四个阶段组成（S0–S3），但并不是每�
 | **Pipeline 评测** | `eval` | S0 → S1 → S2 | 视方法而定（见下文） | 在 eval split 上运行 Probing + CSD，产出 MethodResult |
 | **诊断后处理** | `diagnostics` | S3 only | 不需要 | 从磁盘加载 MethodResult，计算 Outcome 分类与诊断指标 |
 
-> **阶段解耦**：S0–S2 各阶段均采用 **resolve-or-build** 模式——如果磁盘上已有对应产物则直接加载跳过，否则才构建。
+> **架构**：`Orchestrator` 是 thin dispatcher，通过 `pipelines/create_pipeline()` 派发到四个 `PipelineBase` 子类。所有 pipeline 共享 `PipelineBase` 中的 S0/S1 resolve-or-build 逻辑。
 >
-> - **S3 本身就是独立入口**（`run_diagnostics_from_disk()`），不经过 Orchestrator
-> - 合法的 mode 值定义在 `VALID_MODES = ("cache_only", "train_probing", "eval", "diagnostics")`
+> - S0–S2 各阶段均采用 **resolve-or-build** 模式——磁盘上有则加载，否则构建
+> - S3（`DiagnosticsPipeline`）是 `run_diagnostics_from_disk()` 的 wrapper
+> - 合法 mode 值：`VALID_MODES = ("cache_only", "train_probing", "eval", "diagnostics")`
 
 ```mermaid
 flowchart LR
@@ -58,7 +59,17 @@ flowchart LR
 
 ### 使用
 
-设置 `mode: cache_only`，Orchestrator 会在完成 S0+S1 后停止，S2 循环不执行。
+```yaml
+mode: cache_only
+benchmark: CUE-Bench
+subsets: [computing]
+model_id: Qwen/Qwen2.5-Coder-1.5B
+output_root: brewing_output
+seed: 42
+batch_size: 16
+```
+
+`CacheOnlyPipeline` 遍历所有 subsets，resolve/build dataset 和 cache 后即停止。
 
 ---
 
@@ -70,6 +81,30 @@ flowchart LR
 
 ### 入口
 
+**推荐方式 — YAML config + CLI**：
+
+```yaml
+# config/experiments/train_probing_qwen25_coder_7b.yaml
+mode: train_probing
+benchmark: CUE-Bench
+subsets: [value_tracking, computing, conditional, function_call, loop, loop_unrolled]
+model_id: Qwen/Qwen2.5-Coder-7B
+output_root: brewing_output
+seed: 42
+batch_size: 8
+method_configs:
+  linear_probing:
+    probe_params: {solver: lbfgs, C: 1.0, max_iter: 1000}
+    overwrite: false
+    validate_on_eval: true   # 训练后在 eval split 上报告 per-layer accuracy
+```
+
+```bash
+python -m brewing --config config/experiments/train_probing_qwen25_coder_7b.yaml
+```
+
+**Python API**（与 YAML 等价）：
+
 ```python
 from brewing.methods.linear_probing import LinearProbing
 from brewing.resources import ResourceManager, ResourceKey
@@ -77,7 +112,7 @@ from brewing.resources import ResourceManager, ResourceKey
 probing = LinearProbing()
 artifact_key = ResourceKey(
     benchmark="cuebench", split="train", task="computing",
-    seed=42, model_id="Qwen/Qwen2.5-Coder-7B-Instruct",
+    seed=42, model_id="Qwen/Qwen2.5-Coder-7B",
     method="linear_probing",
 )
 artifact, probes = probing.train(
@@ -89,7 +124,14 @@ artifact, probes = probing.train(
 )
 ```
 
-> **注意**：训练 **不** 经过 Orchestrator——它是一个独立的显式调用。这是设计决策：把训练与评测彻底分离，避免 pipeline 中出现隐式训练。
+### 实现
+
+`TrainPipeline`（`pipelines/train.py`）驱动完整流程：
+
+1. **S0**: resolve/build train dataset
+2. **S1**: resolve/build train hidden state cache
+3. **Fit**: 调用 `LinearProbing.train()` 训练 per-layer probes
+4. **Validate**（可选）：若 `validate_on_eval: true`，在 eval split 上跑一次 predict，报告 per-layer accuracy、best layer、mean accuracy
 
 ### 前置依赖
 
@@ -146,11 +188,15 @@ orchestrator = Orchestrator(config)
 summary = orchestrator.run(model=model, tokenizer=tokenizer)
 ```
 
-或通过 CLI：
+或通过 CLI（`mode` 默认为 `eval`，YAML 中可省略）：
 
 ```bash
-python -m brewing --config config.yaml
+python -m brewing --config config/experiments/qwen25_coder_7b.yaml
 ```
+
+### 架构
+
+`EvalPipeline`（`pipelines/eval.py`）继承 `PipelineBase` 的 S0/S1 共享逻辑，在此基础上执行 S2 方法循环。
 
 ### S2 中两类方法的区别
 
@@ -266,7 +312,13 @@ diagnostic_result = run_diagnostics_from_disk(
 )
 ```
 
-> S3 **完全解耦**于主 pipeline——不需要模型、不需要 Orchestrator。需要 cache 文件仅用于获取 model_predictions 和 n_layers。
+> S3 **完全解耦**于主 pipeline——不需要模型。`DiagnosticsPipeline` 是 `run_diagnostics_from_disk()` 的 wrapper，支持通过 YAML config + CLI 批量跑：
+>
+> ```bash
+> python -m brewing --config diagnostics_config.yaml  # mode: diagnostics
+> ```
+>
+> 需要 cache 文件仅用于获取 model_predictions 和 n_layers。
 
 ### 计算内容
 
@@ -355,3 +407,30 @@ train_cache ───┤             eval_cache ───┤
 | FitArtifact (probes) | 不可以 | N/A | 跨 split 使用（train→eval） | S2 Probing eval |
 | MethodResult | 不可以 | N/A | 不可以 | S3 诊断 |
 | DiagnosticResult | N/A | N/A | N/A | 论文图表、分析脚本 |
+
+---
+
+## Dry Run（无 GPU 端到端验证）
+
+设置 `use_fixture: true` 并且 **不传 model/tokenizer** 即可在没有 GPU 的环境下跑通完整 pipeline，验证配置和代码路径是否正确。
+
+```yaml
+# example_single_task.yaml
+benchmark: CUE-Bench
+model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+subsets: [value_tracking]
+methods: [linear_probing]
+output_root: brewing_output
+seed: 42
+fit_policy: eval_only
+use_fixture: true
+```
+
+两层 fallback 机制：
+
+| 阶段 | 正常路径 | Dry run fallback | 触发条件 |
+|------|---------|-----------------|---------|
+| **S0 数据集** | `data_dir` 加载 / datagen 生成（4050 samples） | `fixtures.py` 中 10 个手写样本 | `use_fixture: true`，或 datagen 不可用 |
+| **S1 Cache** | 模型 forward pass 提取 hidden states | `make_synthetic_cache()` 随机 hidden states | model/tokenizer 为 None |
+
+> **注意**：dry run 产出的 cache 是随机数据，分析结果无意义——仅用于验证 pipeline 流程和配置正确性。
