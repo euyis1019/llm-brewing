@@ -79,8 +79,9 @@ class PipelineBase(ABC):
             samples = [s for s in FIXTURE_SAMPLES if s.subset == subset_name]
         elif self.config.data_dir:
             from brewing.benchmarks.cue_bench import load_generated_dataset
+            split = purpose.value if purpose != DatasetPurpose.CALIBRATION else None
             samples = load_generated_dataset(
-                Path(self.config.data_dir), subset_name
+                Path(self.config.data_dir), subset_name, split=split,
             )
         else:
             try:

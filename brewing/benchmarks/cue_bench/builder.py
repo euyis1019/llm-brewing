@@ -20,12 +20,16 @@ from .spec import CUE_BENCH
 def load_generated_dataset(
     data_dir: Path,
     task_name: str | None = None,
+    split: str | None = None,
 ) -> list[Sample]:
     """Load datagen output files and convert to Brewing Samples.
 
     Args:
         data_dir: Directory containing JSON files from datagen
         task_name: If given, load only this task. Otherwise load all.
+        split: If given ("train" or "eval"), only look in ``{data_dir}/{split}/``.
+            Raises FileNotFoundError if the file is not found under that split.
+            If None, falls back to the legacy search order for backward compat.
 
     Returns:
         List of Sample objects
@@ -35,14 +39,23 @@ def load_generated_dataset(
 
     for tn in tasks:
         subset_name = _DATAGEN_TO_SUBSET.get(tn, tn)
-        # Try direct path first, then eval/ and train/ subdirectories
-        path = data_dir / f"{tn}.json"
-        if not path.exists():
-            path = data_dir / "eval" / f"{tn}.json"
-        if not path.exists():
-            path = data_dir / "train" / f"{tn}.json"
-        if not path.exists():
-            continue
+
+        if split is not None:
+            path = data_dir / split / f"{tn}.json"
+            if not path.exists():
+                raise FileNotFoundError(
+                    f"Dataset file not found for task '{tn}', split '{split}': {path}"
+                )
+        else:
+            # Legacy fallback: direct path, then eval/, then train/
+            path = data_dir / f"{tn}.json"
+            if not path.exists():
+                path = data_dir / "eval" / f"{tn}.json"
+            if not path.exists():
+                path = data_dir / "train" / f"{tn}.json"
+            if not path.exists():
+                continue
+
         with open(path) as f:
             raw_samples = json.load(f)
         for raw in raw_samples:
@@ -105,7 +118,7 @@ def build_eval_dataset(
     for subset_name in subsets:
         # Try loading from disk first
         if data_dir is not None:
-            loaded = load_generated_dataset(data_dir, subset_name)
+            loaded = load_generated_dataset(data_dir, subset_name, split="eval")
             if loaded:
                 all_samples.extend(loaded)
                 continue
