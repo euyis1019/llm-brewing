@@ -16,4 +16,3 @@ data_dir: /home/gyf/CUE/data/data_v1/eval
 seed: 42
 fit_policy: eval_only
 batch_size: 4
-quantization: int8
