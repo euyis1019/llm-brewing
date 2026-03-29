@@ -2,6 +2,7 @@ benchmark: CUE-Bench
 subsets:
 - value_tracking
 model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+model_cache_dir: /home/gyf/CUE/models
 methods:
 - linear_probing
 output_root: brewing_output
