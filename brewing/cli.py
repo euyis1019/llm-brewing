@@ -50,12 +50,15 @@ def _all_caches_exist(config: RunConfig) -> bool:
         benchmark = get_benchmark(config.benchmark)
         subsets = benchmark.subset_names
 
-    splits = ["train"] if config.mode == "train_probing" else ["eval"]
-    # train_probing with validate_on_eval also needs eval caches
-    if config.mode == "train_probing":
+    if config.splits:
+        splits = config.splits
+    elif config.mode == "train_probing":
+        splits = ["train"]
         lp_config = config.method_configs.get("linear_probing", {})
         if lp_config.get("validate_on_eval", False):
             splits.append("eval")
+    else:
+        splits = ["eval"]
 
     for split in splits:
         for subset in subsets:
@@ -74,10 +77,13 @@ def _all_caches_exist(config: RunConfig) -> bool:
 def needs_model_online(config: RunConfig) -> bool:
     """Check whether the configured mode requires the model to be loaded."""
     if config.mode in ("cache_only", "train_probing"):
-        # Model is only needed if some caches are missing
-        return not _all_caches_exist(config)
+        if not _all_caches_exist(config):
+            return True
+        return False
     if config.mode == "diagnostics":
         return False
+    if config.mode == "causal_validation":
+        return True  # always needs model for interventions
     # mode == "eval": check methods
     for method_name in config.methods:
         method_cls = get_method_class(method_name)
@@ -92,6 +98,7 @@ def build_model_load_kwargs(config: RunConfig) -> dict[str, Any]:
 
     load_kwargs: dict[str, Any] = {
         "device_map": "auto",
+        "dtype": torch.float16,
     }
 
     if config.model_cache_dir is not None:
@@ -103,8 +110,6 @@ def build_model_load_kwargs(config: RunConfig) -> dict[str, Any]:
     elif config.quantization == "int4":
         from transformers import BitsAndBytesConfig
         load_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True)
-    else:
-        load_kwargs["torch_dtype"] = torch.float16
 
     return load_kwargs
 
@@ -142,15 +147,32 @@ def main(argv: list[str] | None = None):
     model = None
     tokenizer = None
 
-    if needs_model_online(config):# Depends on mode
+    if needs_model_online(config):  # Depends on mode
         logging.info("Loading model: %s", config.model_id)
         try:
-            from nnsight import LanguageModel
-
             load_kwargs = build_model_load_kwargs(config)
-            model = LanguageModel(config.model_id, **load_kwargs)
-            tokenizer = model.tokenizer
-            logging.info("Model loaded as nnsight LanguageModel")
+            # cache_only mode: plain HF model (no nnsight trace overhead)
+            # other modes: nnsight LanguageModel (needed for interventions)
+            if config.mode == "cache_only":
+                from transformers import AutoModelForCausalLM, AutoTokenizer
+
+                hf_kwargs = {k: v for k, v in load_kwargs.items()
+                             if k != "dtype"}
+                hf_kwargs["torch_dtype"] = load_kwargs.get("dtype")
+                model = AutoModelForCausalLM.from_pretrained(
+                    config.model_id, **hf_kwargs,
+                )
+                tokenizer = AutoTokenizer.from_pretrained(
+                    config.model_id,
+                    cache_dir=load_kwargs.get("cache_dir"),
+                )
+                logging.info("Model loaded as HF AutoModelForCausalLM (cache_only)")
+            else:
+                from nnsight import LanguageModel
+
+                model = LanguageModel(config.model_id, **load_kwargs)
+                tokenizer = model.tokenizer
+                logging.info("Model loaded as nnsight LanguageModel")
         except Exception as e:
             raise RuntimeError(
                 f"Failed to load model '{config.model_id}': {e}"

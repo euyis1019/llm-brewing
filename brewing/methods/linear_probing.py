@@ -15,8 +15,9 @@ Important runtime contract:
   - `LinearProbing.run(...)` is evaluation-only and requires an existing
     serialized probe artifact.
 
-Implementation: PyTorch nn.Linear trained with Adam on GPU (if available),
-wrapped in a sklearn-compatible interface for predict/predict_proba.
+Implementation: PyTorch nn.Linear (or optional MLP) trained with Adam on
+GPU (if available), wrapped in a sklearn-compatible interface for
+predict/predict_proba.
 """
 
 from __future__ import annotations
@@ -44,24 +45,29 @@ DEFAULT_PROBE_PARAMS = {
     "lr": 1e-3,
     "epochs": 2000,
     "batch_size": 512,
-    "weight_decay": 1e-2,
+    "weight_decay": 0.1,
 }
 
-# Answer space for CUE-Bench: digits 0-9 + residual
+# Answer space for CUE-Bench: digits 0-9
 DIGIT_CLASSES = [str(d) for d in range(10)]
-RESIDUAL_CLASS = "__residual__"
-ALL_CLASSES = DIGIT_CLASSES + [RESIDUAL_CLASS]
-N_CLASSES = len(ALL_CLASSES)
+N_CLASSES = len(DIGIT_CLASSES)
 
 
 def _encode_labels(answers: list[str], answer_space: list[str]) -> np.ndarray:
     """Encode string answers to integer labels.
 
-    Answers not in answer_space get mapped to len(answer_space) (residual).
+    Answers not in answer_space raise ValueError.
     """
     space_map = {a: i for i, a in enumerate(answer_space)}
-    residual_idx = len(answer_space)
-    return np.array([space_map.get(a, residual_idx) for a in answers])
+    labels = []
+    for a in answers:
+        if a not in space_map:
+            raise ValueError(
+                f"Answer '{a}' not in answer_space {answer_space}. "
+                "All samples must have valid answers."
+            )
+        labels.append(space_map[a])
+    return np.array(labels)
 
 
 def _get_probe_device() -> torch.device:
@@ -71,39 +77,30 @@ def _get_probe_device() -> torch.device:
     return torch.device("cpu")
 
 
-class LinearProbe:
-    """A single-layer linear probe with sklearn-compatible interface.
+class _ProbeBase:
+    """Shared predict/score/standardize logic for all probe types."""
 
-    Wraps nn.Linear so it can be pickled, and exposes predict /
-    predict_proba for evaluation code.
-    """
+    mean: np.ndarray | None
+    std: np.ndarray | None
 
-    def __init__(self, in_features: int, n_classes: int):
-        self.in_features = in_features
-        self.n_classes = n_classes
-        self.linear = nn.Linear(in_features, n_classes)
-        # Standardization stats (set during fit)
-        self.mean: np.ndarray | None = None
-        self.std: np.ndarray | None = None
+    @property
+    def model(self) -> nn.Module:
+        raise NotImplementedError
 
     def predict(self, X: np.ndarray) -> np.ndarray:
-        """Predict class labels for samples in X."""
         X = self._standardize(X)
         with torch.no_grad():
-            logits = self.linear(torch.from_numpy(X).float().to(self.linear.weight.device))
+            logits = self.model(torch.from_numpy(X).float().to(next(self.model.parameters()).device))
             return logits.argmax(dim=1).cpu().numpy()
 
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
-        """Predict class probabilities for samples in X."""
         X = self._standardize(X)
         with torch.no_grad():
-            logits = self.linear(torch.from_numpy(X).float().to(self.linear.weight.device))
+            logits = self.model(torch.from_numpy(X).float().to(next(self.model.parameters()).device))
             return torch.softmax(logits, dim=1).cpu().numpy()
 
     def score(self, X: np.ndarray, y: np.ndarray) -> float:
-        """Return accuracy on (X, y)."""
-        preds = self.predict(X)
-        return float(np.mean(preds == y))
+        return float(np.mean(self.predict(X) == y))
 
     def _standardize(self, X: np.ndarray) -> np.ndarray:
         if self.mean is not None and self.std is not None:
@@ -111,16 +108,59 @@ class LinearProbe:
         return X
 
     def to_cpu(self):
-        """Move linear layer to CPU for serialization."""
-        self.linear = self.linear.cpu()
+        self.model.cpu()
         return self
 
 
-def _artifact_key_from_config(config: MethodConfig, model_id: str, split: str = "train") -> ResourceKey:
-    """Build a ResourceKey for artifact resolution from method config."""
+class LinearProbe(_ProbeBase):
+    """Single-layer linear probe."""
+
+    def __init__(self, in_features: int, n_classes: int):
+        self.in_features = in_features
+        self.n_classes = n_classes
+        self.linear = nn.Linear(in_features, n_classes)
+        self.mean: np.ndarray | None = None
+        self.std: np.ndarray | None = None
+
+    @property
+    def model(self) -> nn.Module:
+        return self.linear
+
+
+class MLPProbe(_ProbeBase):
+    """Two-layer MLP probe (hidden_dim // 4)."""
+
+    def __init__(self, in_features: int, n_classes: int):
+        self.in_features = in_features
+        self.n_classes = n_classes
+        self.net = nn.Sequential(
+            nn.Linear(in_features, in_features // 4),
+            nn.ReLU(),
+            nn.Linear(in_features // 4, n_classes),
+        )
+        self.mean: np.ndarray | None = None
+        self.std: np.ndarray | None = None
+
+    @property
+    def model(self) -> nn.Module:
+        return self.net
+
+
+def _make_probe(probe_type: str, in_features: int, n_classes: int):
+    if probe_type == "mlp":
+        return MLPProbe(in_features, n_classes)
+    return LinearProbe(in_features, n_classes)
+
+
+def _artifact_key_from_config(config: MethodConfig, model_id: str) -> ResourceKey:
+    """Build a ResourceKey for artifact resolution from method config.
+
+    Artifact paths are split-agnostic (a trained probe is not tied to a
+    particular data split), so ``split`` defaults to a neutral value.
+    """
     return ResourceKey(
         benchmark=config.config.get("resource_key_benchmark", "cuebench"),
-        split=split,
+        split="artifact",
         task=config.config.get("resource_key_task", "unknown"),
         seed=config.config.get("resource_key_seed", 42),
         model_id=model_id,
@@ -169,7 +209,7 @@ class LinearProbing(CacheOnlyMethod):
         n_layers = eval_cache.n_layers
 
         # ---- Resolve artifact via ResourceKey ----
-        artifact_key = _artifact_key_from_config(config, eval_cache.model_id, split="train")
+        artifact_key = _artifact_key_from_config(config, eval_cache.model_id)
 
         artifact = resources.resolve_artifact(artifact_key)
         if artifact is None:
@@ -203,11 +243,7 @@ class LinearProbing(CacheOnlyMethod):
                 pred_idx = int(probe.predict(x)[0])
                 proba = probe.predict_proba(x)[0]
 
-                pred_label = (
-                    answer_space[pred_idx]
-                    if pred_idx < len(answer_space)
-                    else RESIDUAL_CLASS
-                )
+                pred_label = answer_space[pred_idx]
                 correct = float(pred_label == sample.answer)
 
                 layer_preds.append(pred_label)
@@ -244,6 +280,7 @@ class LinearProbing(CacheOnlyMethod):
         probe_params: dict | None = None,
         answer_space: list[str] | None = None,
         overwrite: bool = False,
+        probe_type: str = "linear",
     ) -> tuple[FitArtifact, list]:
         """Train probes explicitly and persist the resulting artifact.
 
@@ -270,6 +307,7 @@ class LinearProbing(CacheOnlyMethod):
             answer_space=answer_space,
             probe_params=probe_params,
             artifact_key=artifact_key,
+            probe_type=probe_type,
         )
         resources.save_artifact(artifact_key, artifact, probes)
         return artifact, probes
@@ -281,6 +319,7 @@ class LinearProbing(CacheOnlyMethod):
         answer_space: list[str],
         probe_params: dict,
         artifact_key: ResourceKey,
+        probe_type: str = "linear",
     ) -> tuple[FitArtifact, list]:
         from tqdm import tqdm
 
@@ -290,7 +329,7 @@ class LinearProbing(CacheOnlyMethod):
         n_layers = train_cache.n_layers
         n_samples = len(train_samples)
         hidden_dim = train_cache.hidden_dim
-        n_classes = len(answer_space) + 1  # +1 for residual
+        n_classes = len(answer_space)
 
         lr = probe_params.get("lr", 1e-3)
         epochs = probe_params.get("epochs", 2000)
@@ -316,55 +355,95 @@ class LinearProbing(CacheOnlyMethod):
             bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}] {postfix}",
         )
 
+        # Split off 10% of training data for early stopping validation
+        from sklearn.model_selection import train_test_split
+        patience = probe_params.get("patience", 50)
+
+        split_indices = np.arange(n_samples)
+        try:
+            tr_idx, es_idx = train_test_split(
+                split_indices, test_size=0.1, random_state=42, stratify=labels,
+            )
+        except ValueError:
+            # Stratified split fails when some classes have <2 members (e.g. fixtures)
+            tr_idx, es_idx = train_test_split(
+                split_indices, test_size=0.1, random_state=42,
+            )
+
         for layer_idx in layer_pbar:
             X_np = train_cache.hidden_states[:, layer_idx, :]  # (N, D)
 
-            # Standardize
-            mean = X_np.mean(axis=0)
-            std = X_np.std(axis=0) + 1e-8
+            # Standardize on train split only
+            mean = X_np[tr_idx].mean(axis=0)
+            std = X_np[tr_idx].std(axis=0) + 1e-8
             X_scaled = (X_np - mean) / std
 
-            X_tensor = torch.from_numpy(X_scaled).float().to(device)
+            X_tr = torch.from_numpy(X_scaled[tr_idx]).float().to(device)
+            y_tr = y_tensor[tr_idx]
+            X_es = torch.from_numpy(X_scaled[es_idx]).float().to(device)
+            y_es = y_tensor[es_idx]
+
+            n_tr = len(tr_idx)
 
             # Build probe
-            probe = LinearProbe(hidden_dim, n_classes)
+            probe = _make_probe(probe_type, hidden_dim, n_classes)
             probe.mean = mean
             probe.std = std
-            probe.linear = probe.linear.to(device)
+            probe.model.to(device)
 
-            optimizer = torch.optim.Adam(probe.linear.parameters(), lr=lr, weight_decay=weight_decay)
+            optimizer = torch.optim.Adam(probe.model.parameters(), lr=lr, weight_decay=weight_decay)
             loss_fn = nn.CrossEntropyLoss()
 
-            # Training loop
-            probe.linear.train()
-            use_minibatch = n_samples > batch_size
+            # Training loop with early stopping
+            probe.model.train()
+            use_minibatch = n_tr > batch_size
+            best_val_loss = float("inf")
+            best_state = None
+            wait = 0
+            stopped_epoch = epochs
 
             for epoch in range(epochs):
                 if use_minibatch:
-                    perm = torch.randperm(n_samples, device=device)
-                    epoch_loss = 0.0
-                    for start in range(0, n_samples, batch_size):
+                    perm = torch.randperm(n_tr, device=device)
+                    for start in range(0, n_tr, batch_size):
                         idx = perm[start:start + batch_size]
                         optimizer.zero_grad()
-                        loss = loss_fn(probe.linear(X_tensor[idx]), y_tensor[idx])
-                        loss.backward()
+                        loss_fn(probe.model(X_tr[idx]), y_tr[idx]).backward()
                         optimizer.step()
-                        epoch_loss += loss.item()
                 else:
                     optimizer.zero_grad()
-                    loss = loss_fn(probe.linear(X_tensor), y_tensor)
-                    loss.backward()
+                    loss_fn(probe.model(X_tr), y_tr).backward()
                     optimizer.step()
 
-            # Eval
-            probe.linear.eval()
+                # Check validation loss every epoch
+                with torch.no_grad():
+                    val_loss = loss_fn(probe.model(X_es), y_es).item()
+
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    best_state = {k: v.clone() for k, v in probe.model.state_dict().items()}
+                    wait = 0
+                else:
+                    wait += 1
+                    if wait >= patience:
+                        stopped_epoch = epoch + 1
+                        break
+
+            # Restore best weights
+            if best_state is not None:
+                probe.model.load_state_dict(best_state)
+
+            # Eval on full training set
+            probe.model.eval()
+            X_all = torch.from_numpy(X_scaled).float().to(device)
             with torch.no_grad():
-                preds = probe.linear(X_tensor).argmax(dim=1)
+                preds = probe.model(X_all).argmax(dim=1)
                 train_acc = float((preds == y_tensor).float().mean().item())
 
             fit_metrics["per_layer"][str(layer_idx)] = {
                 "train_accuracy": train_acc,
-                "epochs": epochs,
+                "stopped_epoch": stopped_epoch,
+                "best_val_loss": round(best_val_loss, 4),
             }
 
             # Move to CPU for serialization
@@ -372,7 +451,7 @@ class LinearProbing(CacheOnlyMethod):
             probes.append(probe)
 
             layer_pbar.set_postfix_str(
-                f"L{layer_idx} acc={train_acc:.1%}"
+                f"L{layer_idx} acc={train_acc:.1%} ep={stopped_epoch}"
             )
 
         fit_metrics["total_time_s"] = time.time() - t0
@@ -398,6 +477,7 @@ class LinearProbing(CacheOnlyMethod):
             metadata={
                 "n_classes": n_classes,
                 "answer_space": answer_space,
+                "probe_type": probe_type,
             },
         )
 
