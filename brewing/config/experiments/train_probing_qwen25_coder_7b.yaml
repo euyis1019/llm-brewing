@@ -9,11 +9,6 @@ benchmark: CUE-Bench
 
 subsets:
 - value_tracking
-- computing
-- conditional
-- function_call
-- loop
-- loop_unrolled
 
 # 7B base 模型，hidden_dim=3584，batch_size 调小一点防止 OOM
 model_id: Qwen/Qwen2.5-Coder-7B
@@ -30,5 +25,5 @@ method_configs:
       lr: 0.001
       epochs: 2000
       batch_size: 512
-    overwrite: false
+    overwrite: true
     validate_on_eval: true

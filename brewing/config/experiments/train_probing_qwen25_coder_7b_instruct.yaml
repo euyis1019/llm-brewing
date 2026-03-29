@@ -1,12 +1,17 @@
+mode: train_probing
 benchmark: CUE-Bench
 subsets:
 - value_tracking
 model_id: Qwen/Qwen2.5-Coder-7B-Instruct
 model_cache_dir: /home/gyf/CUE/models
-methods:
-- linear_probing
 output_root: brewing_output
-data_dir: /home/gyf/CUE/data/data_v1/eval
 seed: 42
-fit_policy: eval_only
 batch_size: 8
+method_configs:
+  linear_probing:
+    probe_params:
+      lr: 0.001
+      epochs: 2000
+      batch_size: 512
+    overwrite: true
+    validate_on_eval: true

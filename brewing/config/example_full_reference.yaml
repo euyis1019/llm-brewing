@@ -1,0 +1,100 @@
+# ═══════════════════════════════════════════════════════════════════════
+# Brewing Config — 完整参数参考
+# ═══════════════════════════════════════════════════════════════════════
+# 这个文件列出了所有可用参数及其默认值，不能直接运行。
+# 复制后按需裁剪使用。
+
+# ── 1. Pipeline 模式 ──────────────────────────────────────────────────
+# 决定 pipeline 做什么。一个 config 只能有一个 mode。
+#
+#   cache_only     S0→S1：生成数据集 + 提取 hidden states，不做分析
+#   train_probing  S0→S1→fit：训练 probe artifact（需要 train cache）
+#   eval           S0→S1→S2：用已训练好的 probe/CSD 对 eval 数据做推理
+#   diagnostics    S3：从落盘的 MethodResult 跑诊断（不需要模型和 cache）
+mode: eval
+
+# ── 2. 数据选择 ───────────────────────────────────────────────────────
+benchmark: CUE-Bench
+
+# 要处理的任务子集。null = 全部 6 个。
+# 可用值：value_tracking, computing, conditional, function_call, loop, loop_unrolled
+subsets:
+- value_tracking
+- computing
+- conditional
+- function_call
+- loop
+- loop_unrolled
+
+# ── 3. 模型 ──────────────────────────────────────────────────────────
+model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+
+# 本地模型权重目录（HuggingFace cache 格式）。
+# 省略则用 HF 默认 cache (~/.cache/huggingface/hub/)
+model_cache_dir: /home/gyf/CUE/models
+
+# 量化。null = fp16，"int8" / "int4" 需要 bitsandbytes。
+quantization: null
+
+# ── 4. 数据集来源 ────────────────────────────────────────────────────
+# 预生成数据的目录。eval 模式通常需要指定。
+# train_probing 模式下如果 train dataset 已在 brewing_output/ 中可省略。
+data_dir: /home/gyf/CUE/data/data_v1/eval
+
+seed: 42
+
+# 每个 difficulty config 的样本数。null = 使用 datagen 默认值 (150)。
+samples_per_config: null
+
+# ── 5. 输出 ──────────────────────────────────────────────────────────
+# 所有产出的根目录。内部按 benchmark/split/task/seed/model 分层。
+output_root: brewing_output
+
+# ── 6. 执行参数 ──────────────────────────────────────────────────────
+# nnsight forward pass 的 batch size。影响 GPU 显存。
+# cache 已存在时此参数无效。
+batch_size: 8
+
+# 设备。null = 自动检测（优先 CUDA）。
+device: null
+
+# true = 使用内置 fixture 小样本（10 samples，仅测试用）。
+use_fixture: false
+
+# ── 7. 分析方法（eval 模式专用）───────────────────────────────────────
+# eval 模式下要执行的方法列表。
+methods:
+- linear_probing
+- csd
+
+# Probe artifact 加载策略（eval 模式专用）：
+#   eval_only  必须已有 artifact，否则报错（推荐）
+#   auto       找不到 artifact 就自动训练（不推荐）
+#   force      强制重新训练
+fit_policy: eval_only
+
+# ── 8. method_configs — 方法级参数 ────────────────────────────────────
+method_configs:
+  linear_probing:
+
+    # ─── probe 架构 ───
+    # "linear": nn.Linear(D, 11)
+    # "mlp":    nn.Linear(D, D//4) → ReLU → nn.Linear(D//4, 11)
+    probe_type: linear
+
+    # ─── 训练参数（train_probing 模式专用）───
+    probe_params:
+      lr: 0.001              # Adam 学习率
+      epochs: 2000           # 最大训练轮数（有 early stopping）
+      batch_size: 512        # probe 训练的 mini-batch 大小
+      weight_decay: 0.1      # L2 正则化（Adam weight_decay）
+      patience: 50           # early stopping 耐心：连续 N 轮 val loss 不降就停
+
+    # 是否覆盖已有 probe artifact。
+    # 首次训练用 true，确认无误后改回 false 防止误覆盖。
+    overwrite: false
+
+    # ─── 训练后验证（train_probing 模式专用）───
+    # true = 训练后在 eval split 上跑一次推理，报告 per-layer accuracy。
+    # 需要 eval cache 已存在。
+    validate_on_eval: false
