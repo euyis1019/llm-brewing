@@ -76,6 +76,7 @@ class TrainPipeline(PipelineBase):
             else DIGIT_CLASSES,
         )
         overwrite = lp_config.get("overwrite", False)
+        probe_type = lp_config.get("probe_type", "linear")
 
         artifact_key = self.make_key(
             subset_name, "train", method="linear_probing"
@@ -89,6 +90,7 @@ class TrainPipeline(PipelineBase):
             probe_params=probe_params,
             answer_space=answer_space,
             overwrite=overwrite,
+            probe_type=probe_type,
         )
         result["artifact_id"] = artifact.artifact_id
         result["fit_status"] = "trained"
