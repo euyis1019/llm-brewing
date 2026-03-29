@@ -151,26 +151,33 @@ def main(argv: list[str] | None = None):
         logging.info("Loading model: %s", config.model_id)
         try:
             load_kwargs = build_model_load_kwargs(config)
+
+            # Resolve local model path: model_cache_dir/org/model_name
+            model_path: str = config.model_id
+            if config.model_cache_dir is not None:
+                from pathlib import Path
+                local = Path(config.model_cache_dir) / config.model_id
+                if local.is_dir():
+                    model_path = str(local)
+                    logging.info("Using local model path: %s", model_path)
+
             # cache_only mode: plain HF model (no nnsight trace overhead)
             # other modes: nnsight LanguageModel (needed for interventions)
             if config.mode == "cache_only":
                 from transformers import AutoModelForCausalLM, AutoTokenizer
 
                 hf_kwargs = {k: v for k, v in load_kwargs.items()
-                             if k != "dtype"}
+                             if k not in ("dtype", "cache_dir")}
                 hf_kwargs["torch_dtype"] = load_kwargs.get("dtype")
                 model = AutoModelForCausalLM.from_pretrained(
-                    config.model_id, **hf_kwargs,
+                    model_path, **hf_kwargs,
                 )
-                tokenizer = AutoTokenizer.from_pretrained(
-                    config.model_id,
-                    cache_dir=load_kwargs.get("cache_dir"),
-                )
+                tokenizer = AutoTokenizer.from_pretrained(model_path)
                 logging.info("Model loaded as HF AutoModelForCausalLM (cache_only)")
             else:
                 from nnsight import LanguageModel
 
-                model = LanguageModel(config.model_id, **load_kwargs)
+                model = LanguageModel(model_path, **load_kwargs)
                 tokenizer = model.tokenizer
                 logging.info("Model loaded as nnsight LanguageModel")
         except Exception as e:
