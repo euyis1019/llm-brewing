@@ -10,14 +10,10 @@ benchmark: CUE-Bench
 # 要处理的任务子集，注释掉某行可以跳过该任务
 subsets:
 - value_tracking
-- computing
-- conditional
-- function_call
-- loop
-- loop_unrolled
 
 # Base 模型（非 Instruct），和 Instruct 版本会产出不同的 probe artifact
 model_id: Qwen/Qwen2.5-Coder-1.5B
+model_cache_dir: /home/gyf/CUE/models
 
 output_root: brewing_output
 seed: 42
@@ -26,7 +22,9 @@ batch_size: 16
 method_configs:
   linear_probing:
     probe_params:
-      solver: lbfgs
-      C: 1.0
-      max_iter: 1000
-    overwrite: false
+      lr: 0.001
+      epochs: 2000
+      batch_size: 512
+    overwrite: true
+    # 训练后在 eval split 上跑一次推理，报告 per-layer accuracy
+    validate_on_eval: true
