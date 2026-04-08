@@ -73,8 +73,8 @@ def main():
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    MODEL_BASE = "/home/gyf/CUE/models"
-    # Map HF model_id to local path (Qwen/Qwen2.5-Coder-7B -> /home/gyf/CUE/models/Qwen/Qwen2.5-Coder-7B)
+    MODEL_BASE = "/path/to/cue/models"
+    # Map HF model_id to local path (Qwen/Qwen2.5-Coder-7B -> /path/to/cue/models/Qwen/Qwen2.5-Coder-7B)
     local_path = f"{MODEL_BASE}/{model_id}"
 
     load_kwargs = {"device_map": "auto", "torch_dtype": torch.float16}

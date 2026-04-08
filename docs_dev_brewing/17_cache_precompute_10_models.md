@@ -48,7 +48,7 @@
 `brewing/config/colm/cache_*.yaml` x 10，统一格式：
 - `mode: cache_only`
 - `splits: [train, eval]`
-- `model_cache_dir: /home/gyf/CUE/models`
+- `model_cache_dir: /path/to/cue/models`
 - `seed: 42`
 
 ## 结果

@@ -142,7 +142,7 @@ CLI 不变——`python -m brewing --config config.yaml` 依旧工作。
 ```yaml
 mode: train_probing
 model_id: Qwen/Qwen2.5-Coder-7B-Instruct
-data_dir: /home/gyf/CUE/data/colm_v1/train    # 指向 train split
+data_dir: /path/to/cue/data/colm_v1/train    # 指向 train split
 subsets:
 - value_tracking
 - computing

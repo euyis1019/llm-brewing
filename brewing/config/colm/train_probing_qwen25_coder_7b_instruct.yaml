@@ -3,7 +3,7 @@ benchmark: CUE-Bench
 subsets:
 - value_tracking
 model_id: Qwen/Qwen2.5-Coder-7B-Instruct
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 output_root: brewing_output
 seed: 42
 batch_size: 8

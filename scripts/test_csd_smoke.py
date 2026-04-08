@@ -28,7 +28,7 @@ MODEL_MAP = {
     "7B":   "Qwen/Qwen2.5-Coder-7B",
     "14B":  "Qwen/Qwen2.5-Coder-14B",
 }
-MODEL_DIR = Path("/home/gyf/CUE/models")
+MODEL_DIR = Path("/path/to/cue/models")
 OUTPUT_ROOT = Path("brewing_output")
 DATA_DIR = Path("brewing/benchmarks/cue_bench/data/eval")
 CACHE_ROOT = OUTPUT_ROOT / "caches" / "cuebench" / "eval"

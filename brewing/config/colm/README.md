@@ -1,11 +1,11 @@
 # COLM Batch Configs
 
 These YAML files are the default batch configs for the 9 models in
-`/home/gyf/CUE/COLM_REQUIREMENTS.md`.
+`/path/to/cue/COLM_REQUIREMENTS.md`.
 
 Conventions:
 
-- `data_dir` points to `/home/gyf/CUE/data/colm_v1/eval`
+- `data_dir` points to `/path/to/cue/data/colm_v1/eval`
 - each run covers all 6 CUE-Bench subsets
 - all models share `output_root: brewing_output` (hierarchical layout separates by benchmark/task/model)
 - probing is evaluation-only in the main run

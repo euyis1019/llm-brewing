@@ -14,11 +14,11 @@ subsets:
 - loop_unrolled
 
 model_id: Qwen/Qwen2.5-Coder-7B
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 
 output_root: brewing_output
 
-data_dir: /home/gyf/CUE/data/colm_v1/eval
+data_dir: /path/to/cue/data/colm_v1/eval
 
 seed: 42
 batch_size: 8

@@ -23,9 +23,9 @@ CACHE_ROOT = Path("brewing_output/caches/cuebench")
 
 TASKS = ["value_tracking", "computing", "conditional", "function_call", "loop", "loop_unrolled"]
 MODELS = {
-    "1.5B":   ("Qwen/Qwen2.5-Coder-1.5B",   "/home/gyf/CUE/models/Qwen/Qwen2.5-Coder-1.5B"),
-    "3B":     ("Qwen/Qwen2.5-Coder-3B",      "/home/gyf/CUE/models/Qwen/Qwen2.5-Coder-3B"),
-    "7B":     ("Qwen/Qwen2.5-Coder-7B",      "/home/gyf/CUE/models/Qwen/Qwen2.5-Coder-7B"),
+    "1.5B":   ("Qwen/Qwen2.5-Coder-1.5B",   "/path/to/cue/models/Qwen/Qwen2.5-Coder-1.5B"),
+    "3B":     ("Qwen/Qwen2.5-Coder-3B",      "/path/to/cue/models/Qwen/Qwen2.5-Coder-3B"),
+    "7B":     ("Qwen/Qwen2.5-Coder-7B",      "/path/to/cue/models/Qwen/Qwen2.5-Coder-7B"),
 }
 
 

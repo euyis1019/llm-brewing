@@ -38,7 +38,7 @@ mode: cache_only
 benchmark: CUE-Bench
 subsets: [value_tracking, computing]
 model_id: Qwen/Qwen2.5-Coder-7B
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 output_root: brewing_output
 seed: 42
 batch_size: 8
@@ -56,7 +56,7 @@ mode: train_probing
 benchmark: CUE-Bench
 subsets: [value_tracking]
 model_id: Qwen/Qwen2.5-Coder-1.5B-Instruct
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 output_root: brewing_output
 seed: 42
 batch_size: 16
@@ -85,10 +85,10 @@ mode: eval                    # 默认值，可以省略
 benchmark: CUE-Bench
 subsets: [value_tracking, computing, conditional, function_call, loop, loop_unrolled]
 model_id: Qwen/Qwen2.5-Coder-7B-Instruct
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 methods: [linear_probing, csd]
 output_root: brewing_output
-data_dir: /home/gyf/CUE/data/colm_v1/eval
+data_dir: /path/to/cue/data/colm_v1/eval
 seed: 42
 fit_policy: eval_only
 batch_size: 8
@@ -149,6 +149,6 @@ python -m brewing --config config_diagnostics.yaml
 ## 注意事项
 
 - 一个 config 对应一个模型。多模型用多个 config 文件。
-- `model_cache_dir` 指向本地 HF 权重目录，所有实验模型在 `/home/gyf/CUE/models`。
+- `model_cache_dir` 指向本地 HF 权重目录，所有实验模型在 `/path/to/cue/models`。
 - `batch_size`（顶层）控制 nnsight forward pass 显存；`probe_params.batch_size` 控制 probe 训练 batch。
 - `overwrite: true` 用于重新训练，确认无误后改回 `false`。

@@ -1,6 +1,6 @@
 benchmark: CUE-Bench
 model_id: Qwen/Qwen2.5-Coder-7B-Instruct
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 methods:
 - linear_probing
 - csd

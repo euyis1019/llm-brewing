@@ -11,7 +11,7 @@ subsets:
 - loop_unrolled
 
 model_id: Qwen/Qwen2.5-Coder-7B
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 
 # eval 模式下同时跑两种方法：probing 检测 information availability，CSD 检测 readiness
 methods:
@@ -21,7 +21,7 @@ methods:
 output_root: brewing_output
 
 # eval 模式下需要指向预生成的 eval 数据目录
-data_dir: /home/gyf/CUE/data/colm_v1/eval
+data_dir: /path/to/cue/data/colm_v1/eval
 
 seed: 42
 

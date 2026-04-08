@@ -3,7 +3,7 @@ benchmark: CUE-Bench
 subsets: [value_tracking, computing, conditional, function_call, loop, loop_unrolled]
 splits: [train, eval]
 model_id: codellama/CodeLlama-7b-hf
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 output_root: brewing_output
 seed: 42
 batch_size: 16

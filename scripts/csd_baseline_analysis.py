@@ -12,7 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 BASE = Path(__file__).resolve().parent.parent / "brewing_output"
-MODEL_CACHE = Path("/home/gyf/CUE/models")
+MODEL_CACHE = Path("/path/to/cue/models")
 SEED = "seed42"
 MODEL_DIR = "Qwen__Qwen2.5-Coder-7B"
 MODEL_ID = "Qwen/Qwen2.5-Coder-7B"

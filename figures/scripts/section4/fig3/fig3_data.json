@@ -1,6 +1,6 @@
 {
   "description": "Figure 3 data \u2014 Cross-model comparison (computing task)",
-  "source": "diagnostics.json from /data/brewing_output/results/cuebench/eval/computing/seed42/",
+  "source": "diagnostics.json from /path/to/brewing_output/results/cuebench/eval/computing/seed42/",
   "task": "computing",
   "filters": {
     "panel_a": "FJC > 0 (exclude FJC=0 bias). CodeLlama: also exclude answer in {0,8} (CSD L0/L1 bias)",

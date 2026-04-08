@@ -31,7 +31,7 @@ model_id: Qwen/Qwen2.5-Coder-7B-Instruct
 
 # 本地模型权重目录（HuggingFace cache 格式）。
 # 省略则用 HF 默认 cache (~/.cache/huggingface/hub/)
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 
 # 量化。null = fp16，"int8" / "int4" 需要 bitsandbytes。
 quantization: null
@@ -39,7 +39,7 @@ quantization: null
 # ── 4. 数据集来源 ────────────────────────────────────────────────────
 # 预生成数据的目录。eval 模式通常需要指定。
 # train_probing 模式下如果 train dataset 已在 brewing_output/ 中可省略。
-data_dir: /home/gyf/CUE/data/colm_v1/eval
+data_dir: /path/to/cue/data/colm_v1/eval
 
 seed: 42
 
