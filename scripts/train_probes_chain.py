@@ -2,8 +2,8 @@
 """Train per-layer linear probes using chain_ pooled data and save artifacts.
 
 chain_ naming convention:
-  chain_train = original train (3240) + 4/5 of eval (648) = 3888 samples
-  chain_es    = held-out 1/5 of eval (162) — used inside _fit_probes for ES
+  chain_train = original train (3240) + 5/6 of eval (675) = 3915 samples
+  chain_es    = held-out 1/6 of eval (135) — used inside _fit_probes for ES
   eval (full) = all 810 eval samples — used for final accuracy reporting
 
 This script does NOT modify framework code. It constructs a pooled
@@ -33,22 +33,38 @@ TASKS = [
     "function_call", "loop", "loop_unrolled",
 ]
 MODELS = {
-    "0.5B":      "Qwen/Qwen2.5-Coder-0.5B",
-    "1.5B":      "Qwen/Qwen2.5-Coder-1.5B",
-    "3B":        "Qwen/Qwen2.5-Coder-3B",
-    "7B":        "Qwen/Qwen2.5-Coder-7B",
-    "Qwen3-0.6B": "Qwen/Qwen3-0.6B-Base",
-    "Qwen3-1.7B": "Qwen/Qwen3-1.7B-Base",
+    # Qwen2.5-Coder series
+    "Coder-0.5B":   "Qwen/Qwen2.5-Coder-0.5B",
+    "Coder-1.5B":   "Qwen/Qwen2.5-Coder-1.5B",
+    "Coder-3B":     "Qwen/Qwen2.5-Coder-3B",
+    "Coder-7B":     "Qwen/Qwen2.5-Coder-7B",
+    "Coder-14B":    "Qwen/Qwen2.5-Coder-14B",
+    # Qwen2.5 (non-Coder) series
+    "Q2.5-0.5B":    "Qwen/Qwen2.5-0.5B",
+    "Q2.5-1.5B":    "Qwen/Qwen2.5-1.5B",
+    "Q2.5-3B":      "Qwen/Qwen2.5-3B",
+    "Q2.5-7B":      "Qwen/Qwen2.5-7B",
+    "Q2.5-14B":     "Qwen/Qwen2.5-14B",
+    # Qwen3-Base series
+    "Qwen3-0.6B":   "Qwen/Qwen3-0.6B-Base",
+    "Qwen3-1.7B":   "Qwen/Qwen3-1.7B-Base",
+    "Qwen3-4B":     "Qwen/Qwen3-4B-Base",
+    "Qwen3-8B":     "Qwen/Qwen3-8B-Base",
+    "Qwen3-14B":    "Qwen/Qwen3-14B-Base",
+    # Other families
+    "DS-6.7B":      "deepseek-ai/deepseek-coder-6.7b-base",
+    "CodeLlama-7B": "codellama/CodeLlama-7b-hf",
+    "Llama2-7B":    "meta-llama/Llama-2-7b-hf",
 }
 
 CHAIN_PROBE_PARAMS = {
     "lr": 1e-3,
     "weight_decay": 0.05,
     "epochs": 1000,
-    "patience": 50,
+    "patience": 35,
     "batch_size": 99999,  # full-batch: set larger than any dataset
 }
-EVAL_POOL_RATIO = 4 / 5  # 4/5 eval goes into chain_train
+EVAL_POOL_RATIO = 5 / 6  # 5/6 eval goes into chain_train
 CHAIN_SEED = 42
 
 

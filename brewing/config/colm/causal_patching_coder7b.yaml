@@ -1,0 +1,36 @@
+# Causal validation: Activation Patching at FJC
+# Model: Qwen2.5-Coder-7B (28 layers)
+# 前提: S0-S3 (数据集/cache/probing/CSD/diagnostics) 已全部跑完
+
+mode: causal_validation
+benchmark: CUE-Bench
+
+subsets:
+- value_tracking
+- computing
+- conditional
+- function_call
+- loop
+- loop_unrolled
+
+model_id: Qwen/Qwen2.5-Coder-7B
+model_cache_dir: /home/gyf/CUE/models
+
+output_root: brewing_output
+
+data_dir: /home/gyf/CUE/data/colm_v1/eval
+
+seed: 42
+batch_size: 8
+
+causal_validation:
+  experiments:
+    - activation_patching_fjc
+  activation_patching_fjc:
+    intervention:
+      target_prompt: '# The value of x is "'
+      target_position: -1
+      # Global argmax (answer_space omitted = None): genuine causal sufficiency.
+      # Also run at offset layers for contrast (FJC is causally privileged
+      # if flip_rate at offset=0 > other offsets).
+      layer_offsets: [-8, -4, -2, 0, 2, 4]

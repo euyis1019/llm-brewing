@@ -30,12 +30,19 @@ MISRESOLVED_THRESHOLD = 0.5
 
 
 def classify_outcome(
+    fpcl: int | None,
     fjc: int | None,
     model_output: str,
     answer: str,
     csd_tail_confidence: float,
 ) -> Outcome:
-    """Classify a sample into one of four outcomes."""
+    """Classify a sample into one of four outcomes (or NO_BREWING).
+
+    If FPCL is None, probing never found the answer at any layer — brewing
+    never started, so the four-outcome taxonomy does not apply.
+    """
+    if fpcl is None:
+        return Outcome.NO_BREWING
     if fjc is not None:
         if model_output == answer:
             return Outcome.RESOLVED
@@ -61,7 +68,7 @@ def diagnose_sample(
     delta_brew = (fjc - fpcl) if (fjc is not None and fpcl is not None) else None
 
     csd_tail_conf = compute_csd_tail_confidence(csd_result, n_layers)
-    outcome = classify_outcome(fjc, model_output, sample.answer, csd_tail_conf)
+    outcome = classify_outcome(fpcl, fjc, model_output, sample.answer, csd_tail_conf)
 
     return SampleDiagnostic(
         sample_id=sample.id,
@@ -127,13 +134,18 @@ def run_diagnostics(
         )
         sample_diagnostics.append(diag)
 
-    # Compute aggregates
+    # Compute aggregates — outcome_distribution excludes NO_BREWING samples
     outcome_counts = Counter(sd.outcome for sd in sample_diagnostics)
-    total = len(sample_diagnostics) or 1
+    n_no_brewing = outcome_counts.get(Outcome.NO_BREWING, 0)
+    brewing_total = len(sample_diagnostics) - n_no_brewing
+    denom = brewing_total or 1
+    BREWING_OUTCOMES = [Outcome.RESOLVED, Outcome.OVERPROCESSED, Outcome.MISRESOLVED, Outcome.UNRESOLVED]
     outcome_distribution = {
-        o.value: outcome_counts.get(o, 0) / total
-        for o in Outcome
+        o.value: outcome_counts.get(o, 0) / denom
+        for o in BREWING_OUTCOMES
     }
+    outcome_distribution["no_brewing_count"] = n_no_brewing
+    outcome_distribution["no_brewing_rate"] = n_no_brewing / (len(sample_diagnostics) or 1)
 
     fpcls = [sd.fpcl for sd in sample_diagnostics if sd.fpcl is not None]
     fjcs = [sd.fjc for sd in sample_diagnostics if sd.fjc is not None]
@@ -174,19 +186,24 @@ def group_diagnostics_by_difficulty(
         key_val = str(sample.difficulty.get(group_key, "unknown"))
         groups.setdefault(key_val, []).append(sd)
 
+    BREWING_OUTCOMES = [Outcome.RESOLVED, Outcome.OVERPROCESSED, Outcome.MISRESOLVED, Outcome.UNRESOLVED]
     result = {}
     for key_val, diags in sorted(groups.items()):
         outcomes = Counter(sd.outcome for sd in diags)
-        total = len(diags) or 1
+        n_no_brewing = outcomes.get(Outcome.NO_BREWING, 0)
+        brewing_total = len(diags) - n_no_brewing
+        denom = brewing_total or 1
         fpcls = [sd.fpcl for sd in diags if sd.fpcl is not None]
         fjcs = [sd.fjc for sd in diags if sd.fjc is not None]
         dbs = [sd.delta_brew for sd in diags if sd.delta_brew is not None]
 
+        dist = {o.value: outcomes.get(o, 0) / denom for o in BREWING_OUTCOMES}
+        dist["no_brewing_count"] = n_no_brewing
+        dist["no_brewing_rate"] = n_no_brewing / (len(diags) or 1)
+
         result[key_val] = {
             "n_samples": len(diags),
-            "outcome_distribution": {
-                o.value: outcomes.get(o, 0) / total for o in Outcome
-            },
+            "outcome_distribution": dist,
             "mean_fpcl": float(np.mean(fpcls)) if fpcls else None,
             "mean_fjc": float(np.mean(fjcs)) if fjcs else None,
             "mean_delta_brew": float(np.mean(dbs)) if dbs else None,

@@ -1,52 +1,20 @@
-# Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-*.egg
+*.pyc
+*.pyo
 *.egg-info/
+.eggs/
 build/
 dist/
-pip-wheel-metadata/
-
-# Test / tooling caches
-.pytest_cache/
-.coverage
-htmlcov/
-.mypy_cache/
-.ruff_cache/
-
-# Environments
-.env
 .venv/
 venv/
-env/
-
-# IDE / editor
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Claude local settings
-.claude/
-
-# Brewing local outputs and large generated artifacts
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+*.log
+*.zip
+*.tar.gz
 brewing_output/
-*.npz
-*.npy
-*.pkl
-*.pt
-*.pth
-*.bin
-*.safetensors
-*.ckpt
-*.h5
-
-CLAUDE.md
-uv.lock
+.DS_Store
+.idea/
+.vscode/

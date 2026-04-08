@@ -211,13 +211,18 @@ def patchscope_lens(
         raise ValueError("Cannot provide both source_prompts and latents")
 
     output_fn = get_next_token_logits if return_logits else get_next_token_probs
+
+    # Determine device and dtype outside trace context (proxy objects don't expose these)
+    param = next(nn_model.parameters())
+    device = param.device
+    dtype = param.dtype
+
     results_l = []
     for idx, layer in enumerate(layers):
         with nn_model.trace(target_patch_prompts.prompts):
-            device = get_layer_output(nn_model, layer).device
             get_layer_output(nn_model, layer)[
                 th.arange(num_sources), target_patch_prompts.index_to_patch
-            ] = latents[idx].to(device)
+            ] = latents[idx].to(device=device, dtype=dtype)
             results_l.append(output_fn(nn_model).cpu().save())
 
     results = th.cat(results_l, dim=0)

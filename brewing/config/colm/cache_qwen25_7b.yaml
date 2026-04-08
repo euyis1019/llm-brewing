@@ -1,0 +1,9 @@
+mode: cache_only
+benchmark: CUE-Bench
+subsets: [value_tracking, computing, conditional, function_call, loop, loop_unrolled]
+splits: [train, eval]
+model_id: Qwen/Qwen2.5-7B
+model_cache_dir: /home/gyf/CUE/models
+output_root: brewing_output
+seed: 42
+batch_size: 64

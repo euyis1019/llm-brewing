@@ -1,0 +1,9 @@
+{
+  "description": "Fig J.1 -- Coder-7B vs Base-7B Res% delta per task",
+  "tasks": ["value_tracking", "computing", "conditional", "function_call", "loop", "loop_unrolled"],
+  "task_labels": ["Value Tracking", "Computing", "Conditional", "Function Call", "Loop", "Loop (Unrolled)"],
+  "coder_res": [70.8, 26.2, 59.2, 27.7, 35.5, 28.0],
+  "base_res":  [80.6, 21.5, 56.5, 19.3, 17.9, 21.3],
+  "delta": [-9.8, 4.7, 2.7, 8.4, 17.6, 6.7],
+  "colors": {"positive": "#5B9BD5", "negative": "#E07B39"}
+}
