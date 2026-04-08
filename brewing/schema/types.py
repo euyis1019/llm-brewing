@@ -46,6 +46,7 @@ class Outcome(str, Enum):
     OVERPROCESSED = "overprocessed"
     MISRESOLVED = "misresolved"
     UNRESOLVED = "unresolved"
+    NO_BREWING = "no_brewing"  # FPCL=None: probing never correct, brewing never started
 
 
 class DatasetPurpose(str, Enum):

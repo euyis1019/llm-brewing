@@ -1,0 +1,1016 @@
+{
+  "description": "Fig F.1 -- 16 models x 5 outcome weighted-avg heatmap",
+  "models": [
+    {
+      "dir": "Qwen__Qwen2.5-Coder-0.5B",
+      "label": "Coder-0.5B",
+      "group": "coder_scaling"
+    },
+    {
+      "dir": "Qwen__Qwen2.5-Coder-1.5B",
+      "label": "Coder-1.5B",
+      "group": "coder_scaling"
+    },
+    {
+      "dir": "Qwen__Qwen2.5-Coder-3B",
+      "label": "Coder-3B",
+      "group": "coder_scaling"
+    },
+    {
+      "dir": "Qwen__Qwen2.5-Coder-7B",
+      "label": "Coder-7B★",
+      "group": "coder_scaling"
+    },
+    {
+      "dir": "Qwen__Qwen2.5-Coder-14B",
+      "label": "Coder-14B",
+      "group": "coder_scaling"
+    },
+    {
+      "dir": "Qwen__Qwen2.5-0.5B",
+      "label": "Base-0.5B",
+      "group": "base_scaling"
+    },
+    {
+      "dir": "Qwen__Qwen2.5-1.5B",
+      "label": "Base-1.5B",
+      "group": "base_scaling"
+    },
+    {
+      "dir": "Qwen__Qwen2.5-3B",
+      "label": "Base-3B",
+      "group": "base_scaling"
+    },
+    {
+      "dir": "Qwen__Qwen2.5-7B",
+      "label": "Base-7B",
+      "group": "base_scaling"
+    },
+    {
+      "dir": "Qwen__Qwen3-0.6B-Base",
+      "label": "Qwen3-0.6B",
+      "group": "qwen3"
+    },
+    {
+      "dir": "Qwen__Qwen3-1.7B-Base",
+      "label": "Qwen3-1.7B",
+      "group": "qwen3"
+    },
+    {
+      "dir": "Qwen__Qwen3-4B-Base",
+      "label": "Qwen3-4B",
+      "group": "qwen3"
+    },
+    {
+      "dir": "Qwen__Qwen3-8B-Base",
+      "label": "Qwen3-8B",
+      "group": "qwen3"
+    },
+    {
+      "dir": "deepseek-ai__deepseek-coder-6.7b-base",
+      "label": "DS-Coder-6.7B",
+      "group": "cross_arch"
+    },
+    {
+      "dir": "codellama__CodeLlama-7b-hf",
+      "label": "CodeLlama-7B",
+      "group": "cross_arch"
+    },
+    {
+      "dir": "meta-llama__Llama-2-7b-hf",
+      "label": "Llama-2-7B",
+      "group": "cross_arch"
+    }
+  ],
+  "outcomes": [
+    "Resolved",
+    "Overprocessed",
+    "Misresolved",
+    "Unresolved",
+    "NB"
+  ],
+  "matrix": [
+    [
+      18.9,
+      33.3,
+      3.5,
+      44.3,
+      10.1
+    ],
+    [
+      25.7,
+      22.1,
+      6.5,
+      45.7,
+      5.4
+    ],
+    [
+      36.2,
+      34.1,
+      3.1,
+      26.6,
+      3.9
+    ],
+    [
+      41.5,
+      26.4,
+      8.5,
+      23.7,
+      2.7
+    ],
+    [
+      50.3,
+      31.1,
+      4.7,
+      14.0,
+      1.4
+    ],
+    [
+      19.9,
+      29.5,
+      1.0,
+      49.7,
+      10.1
+    ],
+    [
+      20.4,
+      25.7,
+      4.5,
+      49.4,
+      6.8
+    ],
+    [
+      30.9,
+      29.7,
+      2.6,
+      36.8,
+      5.3
+    ],
+    [
+      36.7,
+      31.7,
+      3.2,
+      28.4,
+      3.8
+    ],
+    [
+      25.5,
+      30.7,
+      3.5,
+      40.3,
+      7.2
+    ],
+    [
+      27.2,
+      31.7,
+      3.6,
+      37.6,
+      4.9
+    ],
+    [
+      40.7,
+      27.5,
+      5.2,
+      26.6,
+      2.5
+    ],
+    [
+      44.2,
+      31.6,
+      4.0,
+      20.3,
+      1.1
+    ],
+    [
+      38.4,
+      34.7,
+      6.4,
+      20.5,
+      3.2
+    ],
+    [
+      24.1,
+      22.5,
+      11.1,
+      42.2,
+      4.7
+    ],
+    [
+      21.6,
+      41.1,
+      3.0,
+      34.2,
+      6.1
+    ]
+  ],
+  "per_task": {
+    "Qwen__Qwen2.5-Coder-0.5B": {
+      "value_tracking": {
+        "Res": 62.8,
+        "OP": 20.7,
+        "MR": 1.4,
+        "UR": 15.2,
+        "NB": 0.9,
+        "n": 810
+      },
+      "computing": {
+        "Res": 8.4,
+        "OP": 31.7,
+        "MR": 2.7,
+        "UR": 57.2,
+        "NB": 16.3,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 16.8,
+        "OP": 41.9,
+        "MR": 8.0,
+        "UR": 33.3,
+        "NB": 10.4,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 7.5,
+        "OP": 29.6,
+        "MR": 1.8,
+        "UR": 61.1,
+        "NB": 16.2,
+        "n": 810
+      },
+      "loop": {
+        "Res": 8.6,
+        "OP": 38.2,
+        "MR": 2.7,
+        "UR": 50.5,
+        "NB": 7.7,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 3.7,
+        "OP": 38.7,
+        "MR": 4.3,
+        "UR": 53.3,
+        "NB": 9.0,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen2.5-Coder-1.5B": {
+      "value_tracking": {
+        "Res": 74.8,
+        "OP": 10.3,
+        "MR": 2.5,
+        "UR": 12.4,
+        "NB": 0.5,
+        "n": 810
+      },
+      "computing": {
+        "Res": 13.4,
+        "OP": 25.9,
+        "MR": 10.0,
+        "UR": 50.7,
+        "NB": 7.0,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 34.9,
+        "OP": 23.3,
+        "MR": 10.4,
+        "UR": 31.5,
+        "NB": 5.1,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 14.6,
+        "OP": 24.6,
+        "MR": 1.5,
+        "UR": 59.2,
+        "NB": 11.2,
+        "n": 810
+      },
+      "loop": {
+        "Res": 6.8,
+        "OP": 28.8,
+        "MR": 5.0,
+        "UR": 59.3,
+        "NB": 4.4,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 6.4,
+        "OP": 20.7,
+        "MR": 9.3,
+        "UR": 63.5,
+        "NB": 4.2,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen2.5-Coder-3B": {
+      "value_tracking": {
+        "Res": 78.9,
+        "OP": 15.1,
+        "MR": 0.1,
+        "UR": 5.8,
+        "NB": 0.5,
+        "n": 810
+      },
+      "computing": {
+        "Res": 21.3,
+        "OP": 37.4,
+        "MR": 5.4,
+        "UR": 35.9,
+        "NB": 5.7,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 54.9,
+        "OP": 31.7,
+        "MR": 1.5,
+        "UR": 11.9,
+        "NB": 2.6,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 18.6,
+        "OP": 36.5,
+        "MR": 1.9,
+        "UR": 43.1,
+        "NB": 8.3,
+        "n": 810
+      },
+      "loop": {
+        "Res": 25.2,
+        "OP": 43.8,
+        "MR": 4.1,
+        "UR": 26.9,
+        "NB": 3.1,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 15.5,
+        "OP": 41.0,
+        "MR": 5.6,
+        "UR": 37.9,
+        "NB": 3.5,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen2.5-Coder-7B": {
+      "value_tracking": {
+        "Res": 70.8,
+        "OP": 13.8,
+        "MR": 5.4,
+        "UR": 9.9,
+        "NB": 0.1,
+        "n": 810
+      },
+      "computing": {
+        "Res": 26.2,
+        "OP": 35.6,
+        "MR": 11.5,
+        "UR": 26.7,
+        "NB": 4.3,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 59.2,
+        "OP": 22.7,
+        "MR": 10.1,
+        "UR": 8.0,
+        "NB": 2.5,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 27.7,
+        "OP": 28.9,
+        "MR": 3.8,
+        "UR": 39.6,
+        "NB": 5.9,
+        "n": 810
+      },
+      "loop": {
+        "Res": 35.5,
+        "OP": 31.1,
+        "MR": 9.5,
+        "UR": 23.8,
+        "NB": 1.6,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 28.0,
+        "OP": 26.7,
+        "MR": 10.4,
+        "UR": 34.9,
+        "NB": 1.6,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen2.5-Coder-14B": {
+      "value_tracking": {
+        "Res": 77.3,
+        "OP": 14.9,
+        "MR": 4.8,
+        "UR": 3.0,
+        "NB": 0.4,
+        "n": 270
+      },
+      "computing": {
+        "Res": 42.0,
+        "OP": 36.7,
+        "MR": 6.1,
+        "UR": 15.2,
+        "NB": 2.2,
+        "n": 270
+      },
+      "conditional": {
+        "Res": 74.0,
+        "OP": 17.0,
+        "MR": 7.2,
+        "UR": 1.9,
+        "NB": 1.9,
+        "n": 270
+      },
+      "function_call": {
+        "Res": 48.7,
+        "OP": 28.7,
+        "MR": 3.1,
+        "UR": 19.5,
+        "NB": 3.3,
+        "n": 270
+      },
+      "loop": {
+        "Res": 26.4,
+        "OP": 44.2,
+        "MR": 3.7,
+        "UR": 25.7,
+        "NB": 0.4,
+        "n": 270
+      },
+      "loop_unrolled": {
+        "Res": 33.5,
+        "OP": 44.6,
+        "MR": 3.3,
+        "UR": 18.6,
+        "NB": 0.4,
+        "n": 270
+      }
+    },
+    "Qwen__Qwen2.5-0.5B": {
+      "value_tracking": {
+        "Res": 57.9,
+        "OP": 21.5,
+        "MR": 0.1,
+        "UR": 20.5,
+        "NB": 1.2,
+        "n": 810
+      },
+      "computing": {
+        "Res": 10.4,
+        "OP": 26.3,
+        "MR": 1.5,
+        "UR": 61.8,
+        "NB": 16.0,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 20.1,
+        "OP": 41.7,
+        "MR": 2.1,
+        "UR": 36.1,
+        "NB": 10.5,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 7.0,
+        "OP": 24.1,
+        "MR": 0.3,
+        "UR": 68.6,
+        "NB": 15.6,
+        "n": 810
+      },
+      "loop": {
+        "Res": 9.3,
+        "OP": 34.4,
+        "MR": 0.1,
+        "UR": 56.2,
+        "NB": 8.1,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 9.7,
+        "OP": 29.2,
+        "MR": 1.8,
+        "UR": 59.4,
+        "NB": 9.4,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen2.5-1.5B": {
+      "value_tracking": {
+        "Res": 60.0,
+        "OP": 12.6,
+        "MR": 4.9,
+        "UR": 22.6,
+        "NB": 0.7,
+        "n": 810
+      },
+      "computing": {
+        "Res": 8.2,
+        "OP": 32.0,
+        "MR": 5.3,
+        "UR": 54.5,
+        "NB": 11.2,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 25.0,
+        "OP": 37.0,
+        "MR": 6.7,
+        "UR": 31.2,
+        "NB": 6.3,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 11.8,
+        "OP": 22.6,
+        "MR": 3.7,
+        "UR": 61.9,
+        "NB": 12.1,
+        "n": 810
+      },
+      "loop": {
+        "Res": 6.8,
+        "OP": 23.6,
+        "MR": 4.2,
+        "UR": 65.4,
+        "NB": 5.3,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 7.3,
+        "OP": 27.4,
+        "MR": 2.6,
+        "UR": 62.7,
+        "NB": 5.3,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen2.5-3B": {
+      "value_tracking": {
+        "Res": 77.9,
+        "OP": 12.7,
+        "MR": 1.1,
+        "UR": 8.3,
+        "NB": 0.5,
+        "n": 810
+      },
+      "computing": {
+        "Res": 18.4,
+        "OP": 28.9,
+        "MR": 6.3,
+        "UR": 46.3,
+        "NB": 8.3,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 46.5,
+        "OP": 32.5,
+        "MR": 2.4,
+        "UR": 18.5,
+        "NB": 4.0,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 13.8,
+        "OP": 30.8,
+        "MR": 2.4,
+        "UR": 53.0,
+        "NB": 10.7,
+        "n": 810
+      },
+      "loop": {
+        "Res": 14.8,
+        "OP": 42.5,
+        "MR": 2.0,
+        "UR": 40.7,
+        "NB": 3.5,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 10.3,
+        "OP": 31.4,
+        "MR": 1.6,
+        "UR": 56.8,
+        "NB": 5.2,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen2.5-7B": {
+      "value_tracking": {
+        "Res": 80.6,
+        "OP": 11.5,
+        "MR": 1.6,
+        "UR": 6.3,
+        "NB": 0.0,
+        "n": 810
+      },
+      "computing": {
+        "Res": 21.5,
+        "OP": 32.1,
+        "MR": 6.7,
+        "UR": 39.8,
+        "NB": 5.7,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 56.5,
+        "OP": 27.3,
+        "MR": 4.3,
+        "UR": 11.9,
+        "NB": 2.3,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 19.3,
+        "OP": 34.2,
+        "MR": 2.8,
+        "UR": 43.6,
+        "NB": 8.6,
+        "n": 810
+      },
+      "loop": {
+        "Res": 17.9,
+        "OP": 44.9,
+        "MR": 3.6,
+        "UR": 33.7,
+        "NB": 2.8,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 21.3,
+        "OP": 41.1,
+        "MR": 0.5,
+        "UR": 37.1,
+        "NB": 3.2,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen3-0.6B-Base": {
+      "value_tracking": {
+        "Res": 67.9,
+        "OP": 14.8,
+        "MR": 3.2,
+        "UR": 14.1,
+        "NB": 0.7,
+        "n": 810
+      },
+      "computing": {
+        "Res": 12.2,
+        "OP": 33.5,
+        "MR": 2.8,
+        "UR": 51.5,
+        "NB": 12.7,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 32.5,
+        "OP": 33.7,
+        "MR": 6.6,
+        "UR": 27.2,
+        "NB": 6.5,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 10.4,
+        "OP": 34.6,
+        "MR": 2.1,
+        "UR": 52.8,
+        "NB": 13.3,
+        "n": 810
+      },
+      "loop": {
+        "Res": 11.1,
+        "OP": 35.6,
+        "MR": 4.4,
+        "UR": 49.0,
+        "NB": 4.2,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 14.6,
+        "OP": 33.6,
+        "MR": 1.4,
+        "UR": 50.4,
+        "NB": 5.4,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen3-1.7B-Base": {
+      "value_tracking": {
+        "Res": 67.5,
+        "OP": 17.4,
+        "MR": 3.0,
+        "UR": 12.2,
+        "NB": 0.5,
+        "n": 810
+      },
+      "computing": {
+        "Res": 13.7,
+        "OP": 37.5,
+        "MR": 4.3,
+        "UR": 44.5,
+        "NB": 8.1,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 41.9,
+        "OP": 32.4,
+        "MR": 8.2,
+        "UR": 17.5,
+        "NB": 4.0,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 12.7,
+        "OP": 32.4,
+        "MR": 3.1,
+        "UR": 51.7,
+        "NB": 9.8,
+        "n": 810
+      },
+      "loop": {
+        "Res": 9.3,
+        "OP": 40.2,
+        "MR": 1.4,
+        "UR": 49.0,
+        "NB": 3.3,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 15.1,
+        "OP": 30.9,
+        "MR": 1.5,
+        "UR": 52.4,
+        "NB": 3.7,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen3-4B-Base": {
+      "value_tracking": {
+        "Res": 83.3,
+        "OP": 9.5,
+        "MR": 2.2,
+        "UR": 4.9,
+        "NB": 0.1,
+        "n": 810
+      },
+      "computing": {
+        "Res": 28.6,
+        "OP": 34.5,
+        "MR": 5.7,
+        "UR": 31.2,
+        "NB": 4.2,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 58.2,
+        "OP": 26.9,
+        "MR": 6.4,
+        "UR": 8.5,
+        "NB": 2.3,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 28.1,
+        "OP": 31.1,
+        "MR": 3.9,
+        "UR": 36.8,
+        "NB": 5.2,
+        "n": 810
+      },
+      "loop": {
+        "Res": 18.6,
+        "OP": 32.7,
+        "MR": 7.7,
+        "UR": 41.0,
+        "NB": 1.9,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 26.3,
+        "OP": 30.7,
+        "MR": 5.4,
+        "UR": 37.7,
+        "NB": 1.4,
+        "n": 810
+      }
+    },
+    "Qwen__Qwen3-8B-Base": {
+      "value_tracking": {
+        "Res": 82.0,
+        "OP": 13.2,
+        "MR": 1.7,
+        "UR": 3.1,
+        "NB": 0.0,
+        "n": 810
+      },
+      "computing": {
+        "Res": 28.2,
+        "OP": 38.6,
+        "MR": 7.4,
+        "UR": 25.9,
+        "NB": 4.6,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 66.7,
+        "OP": 22.0,
+        "MR": 5.7,
+        "UR": 5.7,
+        "NB": 0.0,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 24.7,
+        "OP": 33.7,
+        "MR": 5.2,
+        "UR": 36.4,
+        "NB": 0.0,
+        "n": 810
+      },
+      "loop": {
+        "Res": 33.2,
+        "OP": 39.4,
+        "MR": 1.2,
+        "UR": 26.2,
+        "NB": 0.0,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 29.2,
+        "OP": 43.0,
+        "MR": 3.1,
+        "UR": 24.7,
+        "NB": 1.9,
+        "n": 810
+      }
+    },
+    "deepseek-ai__deepseek-coder-6.7b-base": {
+      "value_tracking": {
+        "Res": 76.5,
+        "OP": 12.2,
+        "MR": 5.4,
+        "UR": 5.8,
+        "NB": 0.1,
+        "n": 810
+      },
+      "computing": {
+        "Res": 21.3,
+        "OP": 38.9,
+        "MR": 8.5,
+        "UR": 31.3,
+        "NB": 5.4,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 54.5,
+        "OP": 22.6,
+        "MR": 11.0,
+        "UR": 11.9,
+        "NB": 2.3,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 19.0,
+        "OP": 42.8,
+        "MR": 4.0,
+        "UR": 34.3,
+        "NB": 7.0,
+        "n": 810
+      },
+      "loop": {
+        "Res": 27.5,
+        "OP": 47.2,
+        "MR": 3.8,
+        "UR": 21.5,
+        "NB": 2.2,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 29.3,
+        "OP": 45.4,
+        "MR": 5.8,
+        "UR": 19.5,
+        "NB": 1.9,
+        "n": 810
+      }
+    },
+    "codellama__CodeLlama-7b-hf": {
+      "value_tracking": {
+        "Res": 75.2,
+        "OP": 10.3,
+        "MR": 8.1,
+        "UR": 6.4,
+        "NB": 0.4,
+        "n": 810
+      },
+      "computing": {
+        "Res": 7.6,
+        "OP": 30.2,
+        "MR": 11.3,
+        "UR": 50.9,
+        "NB": 8.5,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 35.9,
+        "OP": 23.6,
+        "MR": 19.7,
+        "UR": 20.8,
+        "NB": 4.1,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 7.9,
+        "OP": 27.1,
+        "MR": 6.6,
+        "UR": 58.4,
+        "NB": 7.9,
+        "n": 810
+      },
+      "loop": {
+        "Res": 8.6,
+        "OP": 24.8,
+        "MR": 9.7,
+        "UR": 56.9,
+        "NB": 3.6,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 6.5,
+        "OP": 20.1,
+        "MR": 11.4,
+        "UR": 62.0,
+        "NB": 3.5,
+        "n": 810
+      }
+    },
+    "meta-llama__Llama-2-7b-hf": {
+      "value_tracking": {
+        "Res": 71.7,
+        "OP": 17.3,
+        "MR": 3.3,
+        "UR": 7.7,
+        "NB": 0.2,
+        "n": 810
+      },
+      "computing": {
+        "Res": 8.3,
+        "OP": 41.7,
+        "MR": 1.2,
+        "UR": 48.7,
+        "NB": 9.8,
+        "n": 810
+      },
+      "conditional": {
+        "Res": 23.1,
+        "OP": 45.3,
+        "MR": 6.6,
+        "UR": 24.9,
+        "NB": 7.2,
+        "n": 810
+      },
+      "function_call": {
+        "Res": 7.1,
+        "OP": 43.9,
+        "MR": 3.1,
+        "UR": 45.9,
+        "NB": 11.6,
+        "n": 810
+      },
+      "loop": {
+        "Res": 8.1,
+        "OP": 52.5,
+        "MR": 0.4,
+        "UR": 39.0,
+        "NB": 4.1,
+        "n": 810
+      },
+      "loop_unrolled": {
+        "Res": 7.3,
+        "OP": 47.4,
+        "MR": 3.6,
+        "UR": 41.7,
+        "NB": 3.7,
+        "n": 810
+      }
+    }
+  },
+  "tasks": [
+    "value_tracking",
+    "computing",
+    "conditional",
+    "function_call",
+    "loop",
+    "loop_unrolled"
+  ]
+}

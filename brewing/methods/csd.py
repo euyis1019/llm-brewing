@@ -77,7 +77,7 @@ class CSD(ModelOnlineMethod):
                 target_prompt, answer_space, n_layers,
             )
         except Exception as e:
-            logger.warning("Batch patchscope failed (%s), falling back to per-sample", e)
+            logger.warning("Batch patchscope failed (%s), falling back to per-sample", e, exc_info=True)
             sample_results = self._run_per_sample(
                 model, eval_samples, eval_cache,
                 target_prompt, answer_space, n_layers,
@@ -135,15 +135,17 @@ class CSD(ModelOnlineMethod):
                 return_logits=True,
             )
             # logits_all: (1, L, vocab_size)
-            logits_np = logits_all[0].cpu().float().numpy()  # (L, vocab_size)
+            logits_np = logits_all[0].detach().cpu().float().numpy()  # (L, vocab_size)
 
             layer_vals = np.zeros(n_layers)
             layer_preds: list[str] = []
             layer_confs = np.zeros((n_layers, len(answer_space)))
+            layer_non_digit = np.zeros(n_layers)
 
             for layer_idx in range(n_layers):
+                full_logits = logits_np[layer_idx]  # (vocab_size,)
                 answer_logits = np.array([
-                    logits_np[layer_idx, tid] for tid in answer_token_ids
+                    full_logits[tid] for tid in answer_token_ids
                 ])
                 adjusted = answer_logits - baseline_logits
 
@@ -154,6 +156,13 @@ class CSD(ModelOnlineMethod):
                 exp_adj = np.exp(adjusted - np.max(adjusted))
                 norm_probs = exp_adj / exp_adj.sum()
 
+                # non-digit probability from full vocabulary softmax
+                full_shifted = full_logits - full_logits.max()
+                full_exp = np.exp(full_shifted)
+                full_sum = full_exp.sum()
+                digit_sum = sum(full_exp[tid] for tid in answer_token_ids)
+                layer_non_digit[layer_idx] = 1.0 - digit_sum / full_sum
+
                 layer_vals[layer_idx] = correct
                 layer_preds.append(pred_label)
                 layer_confs[layer_idx] = norm_probs
@@ -163,6 +172,7 @@ class CSD(ModelOnlineMethod):
                 layer_values=layer_vals,
                 layer_predictions=layer_preds,
                 layer_confidences=layer_confs,
+                extras={"layer_non_digit_probs": layer_non_digit.tolist()},
             ))
 
         return sample_results
@@ -192,16 +202,20 @@ class CSD(ModelOnlineMethod):
 
         sample_results: list[SampleMethodResult] = []
 
+        param = next(model.parameters())
+        device, dtype = param.device, param.dtype
+
         for i, sample in enumerate(eval_samples):
             h_all = eval_cache.hidden_states[i]  # (L, D)
             layer_vals = np.zeros(n_layers)
             layer_preds: list[str] = []
             layer_confs = np.zeros((n_layers, len(answer_space)))
+            layer_non_digit = np.zeros(n_layers)
 
             for layer_idx in range(n_layers):
                 h = torch.tensor(
-                    h_all[layer_idx], dtype=torch.float16
-                ).to(next(model.parameters()).device)
+                    h_all[layer_idx], dtype=dtype
+                ).to(device)
 
                 # Hook-based injection (legacy pattern)
                 target_inputs = tokenizer(
@@ -237,6 +251,13 @@ class CSD(ModelOnlineMethod):
                 exp_adj = np.exp(adjusted - np.max(adjusted))
                 norm_probs = exp_adj / exp_adj.sum()
 
+                # non-digit probability from full vocabulary softmax
+                full_shifted = logits - logits.max()
+                full_exp = np.exp(full_shifted)
+                full_sum = full_exp.sum()
+                digit_sum = sum(full_exp[tid] for tid in answer_token_ids)
+                layer_non_digit[layer_idx] = 1.0 - digit_sum / full_sum
+
                 layer_vals[layer_idx] = correct
                 layer_preds.append(pred_label)
                 layer_confs[layer_idx] = norm_probs
@@ -246,6 +267,7 @@ class CSD(ModelOnlineMethod):
                 layer_values=layer_vals,
                 layer_predictions=layer_preds,
                 layer_confidences=layer_confs,
+                extras={"layer_non_digit_probs": layer_non_digit.tolist()},
             ))
 
         return sample_results
@@ -265,7 +287,7 @@ class CSD(ModelOnlineMethod):
         from brewing.nnsight_ops import get_logits as _get_logits
         with model.trace(target_prompt) as tracer:
             logits = _get_logits(model)[:, -1, :].cpu().save()
-        logits_np = logits.value[0].cpu().float().numpy()  # (vocab_size,)
+        logits_np = logits[0].detach().cpu().float().numpy()  # (vocab_size,)
         return np.array([logits_np[tid] for tid in answer_token_ids])
 
     def _get_baseline_logits_manual(
@@ -295,7 +317,7 @@ class CSD(ModelOnlineMethod):
         ids = []
         for ans in answer_space:
             tids = tokenizer.encode(ans, add_special_tokens=False)
-            ids.append(tids[0] if tids else 0)
+            ids.append(tids[-1] if tids else 0)
         return ids
 
 

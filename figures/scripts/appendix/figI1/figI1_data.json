@@ -1,0 +1,35 @@
+{
+  "description": "Fig I.1 -- Difficulty scaling: Res% and UR% along primary dimension per task",
+  "tasks": {
+    "value_tracking": {
+      "label": "Value Tracking", "dim": "depth", "levels": ["1", "2", "3"],
+      "Res": [77.5, 71.5, 63.4], "UR": [5.6, 9.4, 14.7]
+    },
+    "computing": {
+      "label": "Computing", "dim": "steps", "levels": ["2", "3", "4"],
+      "Res": [42.6, 22.3, 12.6], "UR": [16.9, 32.2, 31.8]
+    },
+    "conditional": {
+      "label": "Conditional", "dim": "depth", "levels": ["1", "2", "3"],
+      "Res": [76.1, 57.0, 45.5], "UR": [4.6, 9.4, 9.8]
+    },
+    "function_call": {
+      "label": "Function Call", "dim": "depth", "levels": ["1", "2", "3"],
+      "Res": [61.1, 17.1, 2.5], "UR": [19.1, 44.1, 57.4]
+    },
+    "loop": {
+      "label": "Loop", "dim": "iterations", "levels": ["2", "3", "4"],
+      "Res": [36.2, 45.1, 24.9], "UR": [19.8, 20.9, 31.0]
+    },
+    "loop_unrolled": {
+      "label": "Loop (Unrolled)", "dim": "iterations", "levels": ["2", "3", "4"],
+      "Res": [46.1, 27.9, 11.8], "UR": [24.1, 32.9, 46.7]
+    }
+  },
+  "task_order": ["value_tracking", "computing", "conditional", "function_call", "loop", "loop_unrolled"],
+  "task_colors": {
+    "value_tracking": "#E3F2FD", "computing": "#0D47A1",
+    "conditional": "#64B5F6", "function_call": "#BBDEFB",
+    "loop": "#42A5F5", "loop_unrolled": "#90CAF9"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "description": "Figure 2 data — Sankey (panel a) + Dumbbell (panel b)",
+  "source": "new.md §3.1 Per-task Outcome + §4.1 Per-Difficulty Breakdown",
+  "model": "Qwen2.5-Coder-7B (anchor), n=810/task",
+
+  "tasks": [
+    "value_tracking", "computing", "conditional",
+    "function_call", "loop", "loop_unrolled"
+  ],
+  "task_labels": [
+    "Value Tracking", "Computing", "Conditional",
+    "Function Call", "Loop", "Loop (Unrolled)"
+  ],
+  "task_short": ["ValTrack", "Compute", "Cond", "FuncCall", "Loop", "LoopUnr"],
+
+  "outcome_names": ["Resolved", "Overprocessed", "Misresolved", "Unresolved"],
+
+  "panel_a_flows": {
+    "_comment": "Per-task outcome % (NB excluded, renormalized). Order: [Res, OP, MR, UR]",
+    "_source": "new.md Tab D.1 Per-task Outcome",
+    "value_tracking":  [70.8, 13.8,  5.4,  9.9],
+    "computing":       [26.2, 35.6, 11.5, 26.7],
+    "conditional":     [59.2, 22.7, 10.1,  8.0],
+    "function_call":   [27.7, 28.9,  3.8, 39.6],
+    "loop":            [35.5, 31.1,  9.5, 23.8],
+    "loop_unrolled":   [28.0, 26.7, 10.4, 34.9]
+  },
+
+  "panel_b_resolved_by_difficulty": {
+    "_comment": "Resolved % at [easy, mid, hard] along primary difficulty dimension",
+    "_dimensions": {
+      "value_tracking": "depth 1→2→3",
+      "computing":      "steps 2→3→4",
+      "conditional":    "depth 1→2→3",
+      "function_call":  "depth 1→2→3",
+      "loop":           "iterations 2→3→4",
+      "loop_unrolled":  "iterations 2→3→4"
+    },
+    "value_tracking":  [77.5, 71.5, 63.4],
+    "computing":       [42.6, 22.3, 12.6],
+    "conditional":     [76.1, 57.0, 45.5],
+    "function_call":   [61.1, 17.1,  2.5],
+    "loop":            [36.2, 45.1, 24.9],
+    "loop_unrolled":   [46.1, 27.9, 11.8]
+  },
+
+  "colors": {
+    "outcomes": {
+      "Resolved":      "#3D9970",
+      "Overprocessed": "#E8934A",
+      "Misresolved":   "#D44E4E",
+      "Unresolved":    "#9A9A9A"
+    },
+    "tasks": {
+      "_comment": "Single-hue blue gradient by NJ% (non-join rate)",
+      "value_tracking":  {"fill": "#E3F2FD", "nj_pct": 0.0},
+      "function_call":   {"fill": "#BBDEFB", "nj_pct": 3.9},
+      "loop_unrolled":   {"fill": "#90CAF9", "nj_pct": 6.9},
+      "conditional":     {"fill": "#64B5F6", "nj_pct": 9.7},
+      "loop":            {"fill": "#42A5F5", "nj_pct": 36.2},
+      "computing":       {"fill": "#0D47A1", "nj_pct": 42.5}
+    }
+  }
+}

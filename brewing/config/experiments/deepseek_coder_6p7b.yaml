@@ -6,7 +6,7 @@ subsets:
 - function_call
 - loop
 - loop_unrolled
-model_id: deepseek-ai/deepseek-coder-6.7b-instruct
+model_id: deepseek-ai/deepseek-coder-6.7b-base
 model_cache_dir: /home/gyf/CUE/models
 methods:
 - linear_probing

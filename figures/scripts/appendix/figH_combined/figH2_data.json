@@ -1,0 +1,100 @@
+{
+  "points": [
+    {
+      "label": "Coder-0.5B",
+      "size_b": 0.5,
+      "group": "coder_scaling",
+      "avg_acc": 0.4051
+    },
+    {
+      "label": "Coder-1.5B",
+      "size_b": 1.5,
+      "group": "coder_scaling",
+      "avg_acc": 0.5506
+    },
+    {
+      "label": "Coder-3B",
+      "size_b": 3.0,
+      "group": "coder_scaling",
+      "avg_acc": 0.3465
+    },
+    {
+      "label": "Coder-7B",
+      "size_b": 7.0,
+      "group": "coder_scaling",
+      "avg_acc": 0.4975
+    },
+    {
+      "label": "Coder-14B",
+      "size_b": 14.0,
+      "group": "coder_scaling",
+      "avg_acc": 0.4673
+    },
+    {
+      "label": "Base-0.5B",
+      "size_b": 0.5,
+      "group": "base_scaling",
+      "avg_acc": 0.4547
+    },
+    {
+      "label": "Base-1.5B",
+      "size_b": 1.5,
+      "group": "base_scaling",
+      "avg_acc": 0.5457
+    },
+    {
+      "label": "Base-3B",
+      "size_b": 3.0,
+      "group": "base_scaling",
+      "avg_acc": 0.4263
+    },
+    {
+      "label": "Base-7B",
+      "size_b": 7.0,
+      "group": "base_scaling",
+      "avg_acc": 0.4226
+    },
+    {
+      "label": "Qwen3-0.6B",
+      "size_b": 0.6,
+      "group": "qwen3",
+      "avg_acc": 0.3903
+    },
+    {
+      "label": "Qwen3-1.7B",
+      "size_b": 1.7,
+      "group": "qwen3",
+      "avg_acc": 0.416
+    },
+    {
+      "label": "Qwen3-4B",
+      "size_b": 4.0,
+      "group": "qwen3",
+      "avg_acc": 0.451
+    },
+    {
+      "label": "Qwen3-8B",
+      "size_b": 8.0,
+      "group": "qwen3",
+      "avg_acc": 0.4263
+    },
+    {
+      "label": "DS-Coder",
+      "size_b": 6.7,
+      "group": "cross_arch",
+      "avg_acc": 0.4294
+    },
+    {
+      "label": "CodeLlama",
+      "size_b": 7.0,
+      "group": "cross_arch",
+      "avg_acc": 0.5617
+    },
+    {
+      "label": "Llama-2",
+      "size_b": 7.0,
+      "group": "cross_arch",
+      "avg_acc": 0.3714
+    }
+  ]
+}

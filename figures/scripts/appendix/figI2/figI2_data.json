@@ -1,0 +1,24 @@
+{
+  "description": "Fig I.2 -- Loop vs Unrolled comparison along 3 dimensions",
+  "dimensions": {
+    "body_type": {
+      "levels": ["simple_acc", "filter_count", "dual_var"],
+      "level_labels": ["Simple Acc", "Filter Count", "Dual Var"],
+      "loop":          {"Res": [40.8, 31.4, 33.5], "OP": [24.2, 32.6, 37.1], "MR": [12.5, 10.2, 5.9], "UR": [22.5, 25.8, 23.5]},
+      "loop_unrolled": {"Res": [36.7, 32.7, 14.6], "OP": [18.7, 34.6, 27.0], "MR": [18.4, 8.0, 4.9], "UR": [26.2, 24.7, 53.6]}
+    },
+    "iterations": {
+      "levels": ["2", "3", "4"],
+      "level_labels": ["2", "3", "4"],
+      "loop":          {"Res": [36.2, 45.1, 24.9], "OP": [29.5, 29.1, 34.9], "MR": [14.6, 4.9, 9.2], "UR": [19.8, 20.9, 31.0]},
+      "loop_unrolled": {"Res": [46.1, 27.9, 11.8], "OP": [22.4, 30.0, 27.2], "MR": [7.3, 9.3, 14.3], "UR": [24.1, 32.9, 46.7]}
+    },
+    "init_offset": {
+      "levels": ["0", "low", "high"],
+      "level_labels": ["0", "Low", "High"],
+      "loop":          {"Res": [63.1, 19.5, 24.5], "OP": [22.8, 37.5, 32.7], "MR": [6.8, 10.5, 11.3], "UR": [7.2, 32.5, 31.5]},
+      "loop_unrolled": {"Res": [43.2, 22.9, 17.5], "OP": [22.7, 36.1, 22.2], "MR": [4.8, 12.9, 13.8], "UR": [29.3, 28.1, 46.5]}
+    }
+  },
+  "colors": {"loop": "#5B9BD5", "loop_unrolled": "#E07B39"}
+}

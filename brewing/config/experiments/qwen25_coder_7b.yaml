@@ -10,7 +10,7 @@ subsets:
 - loop
 - loop_unrolled
 
-model_id: Qwen/Qwen2.5-Coder-7B-Instruct
+model_id: Qwen/Qwen2.5-Coder-7B
 model_cache_dir: /home/gyf/CUE/models
 
 # eval 模式下同时跑两种方法：probing 检测 information availability，CSD 检测 readiness

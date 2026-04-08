@@ -1,0 +1,689 @@
+{
+  "description": "Fig J.3 -- FPCL (normalized) vs Resolved % scatter",
+  "group_colors": {
+    "coder_scaling": "#5B9BD5",
+    "base_scaling": "#E07B39",
+    "qwen3": "#8E6FBF",
+    "cross_arch": "#4CAF50"
+  },
+  "group_labels": {
+    "coder_scaling": "Coder",
+    "base_scaling": "Base",
+    "qwen3": "Qwen3",
+    "cross_arch": "Cross-Arch"
+  },
+  "points": [
+    {
+      "model": "Coder-0.5B",
+      "task": "value_tracking",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1895,
+      "res_pct": 62.8
+    },
+    {
+      "model": "Coder-1.5B",
+      "task": "value_tracking",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1347,
+      "res_pct": 74.8
+    },
+    {
+      "model": "Coder-3B",
+      "task": "value_tracking",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.0885,
+      "res_pct": 78.9
+    },
+    {
+      "model": "Coder-7B",
+      "task": "value_tracking",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.0741,
+      "res_pct": 70.8
+    },
+    {
+      "model": "Coder-14B",
+      "task": "value_tracking",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.0671,
+      "res_pct": 77.3
+    },
+    {
+      "model": "Base-0.5B",
+      "task": "value_tracking",
+      "group": "base_scaling",
+      "fpcl_norm": 0.1772,
+      "res_pct": 57.9
+    },
+    {
+      "model": "Base-1.5B",
+      "task": "value_tracking",
+      "group": "base_scaling",
+      "fpcl_norm": 0.1387,
+      "res_pct": 60.0
+    },
+    {
+      "model": "Base-3B",
+      "task": "value_tracking",
+      "group": "base_scaling",
+      "fpcl_norm": 0.0947,
+      "res_pct": 77.9
+    },
+    {
+      "model": "Base-7B",
+      "task": "value_tracking",
+      "group": "base_scaling",
+      "fpcl_norm": 0.0856,
+      "res_pct": 80.6
+    },
+    {
+      "model": "Qwen3-0.6B",
+      "task": "value_tracking",
+      "group": "qwen3",
+      "fpcl_norm": 0.1335,
+      "res_pct": 67.9
+    },
+    {
+      "model": "Qwen3-1.7B",
+      "task": "value_tracking",
+      "group": "qwen3",
+      "fpcl_norm": 0.1051,
+      "res_pct": 67.5
+    },
+    {
+      "model": "Qwen3-4B",
+      "task": "value_tracking",
+      "group": "qwen3",
+      "fpcl_norm": 0.0579,
+      "res_pct": 83.3
+    },
+    {
+      "model": "Qwen3-8B",
+      "task": "value_tracking",
+      "group": "qwen3",
+      "fpcl_norm": 0.0549,
+      "res_pct": 82.0
+    },
+    {
+      "model": "DS-Coder",
+      "task": "value_tracking",
+      "group": "cross_arch",
+      "fpcl_norm": 0.0689,
+      "res_pct": 76.5
+    },
+    {
+      "model": "CodeLlama",
+      "task": "value_tracking",
+      "group": "cross_arch",
+      "fpcl_norm": 0.0597,
+      "res_pct": 75.2
+    },
+    {
+      "model": "Llama-2",
+      "task": "value_tracking",
+      "group": "cross_arch",
+      "fpcl_norm": 0.0556,
+      "res_pct": 71.7
+    },
+    {
+      "model": "Coder-0.5B",
+      "task": "computing",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.2402,
+      "res_pct": 8.4
+    },
+    {
+      "model": "Coder-1.5B",
+      "task": "computing",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.2386,
+      "res_pct": 13.4
+    },
+    {
+      "model": "Coder-3B",
+      "task": "computing",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.2208,
+      "res_pct": 21.3
+    },
+    {
+      "model": "Coder-7B",
+      "task": "computing",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1789,
+      "res_pct": 26.2
+    },
+    {
+      "model": "Coder-14B",
+      "task": "computing",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1576,
+      "res_pct": 42.0
+    },
+    {
+      "model": "Base-0.5B",
+      "task": "computing",
+      "group": "base_scaling",
+      "fpcl_norm": 0.2354,
+      "res_pct": 10.4
+    },
+    {
+      "model": "Base-1.5B",
+      "task": "computing",
+      "group": "base_scaling",
+      "fpcl_norm": 0.2187,
+      "res_pct": 8.2
+    },
+    {
+      "model": "Base-3B",
+      "task": "computing",
+      "group": "base_scaling",
+      "fpcl_norm": 0.2141,
+      "res_pct": 18.4
+    },
+    {
+      "model": "Base-7B",
+      "task": "computing",
+      "group": "base_scaling",
+      "fpcl_norm": 0.1616,
+      "res_pct": 21.5
+    },
+    {
+      "model": "Qwen3-0.6B",
+      "task": "computing",
+      "group": "qwen3",
+      "fpcl_norm": 0.2119,
+      "res_pct": 12.2
+    },
+    {
+      "model": "Qwen3-1.7B",
+      "task": "computing",
+      "group": "qwen3",
+      "fpcl_norm": 0.2029,
+      "res_pct": 13.7
+    },
+    {
+      "model": "Qwen3-4B",
+      "task": "computing",
+      "group": "qwen3",
+      "fpcl_norm": 0.1641,
+      "res_pct": 28.6
+    },
+    {
+      "model": "Qwen3-8B",
+      "task": "computing",
+      "group": "qwen3",
+      "fpcl_norm": 0.1484,
+      "res_pct": 28.2
+    },
+    {
+      "model": "DS-Coder",
+      "task": "computing",
+      "group": "cross_arch",
+      "fpcl_norm": 0.164,
+      "res_pct": 21.3
+    },
+    {
+      "model": "CodeLlama",
+      "task": "computing",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1451,
+      "res_pct": 7.6
+    },
+    {
+      "model": "Llama-2",
+      "task": "computing",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1308,
+      "res_pct": 8.3
+    },
+    {
+      "model": "Coder-0.5B",
+      "task": "conditional",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.2262,
+      "res_pct": 16.8
+    },
+    {
+      "model": "Coder-1.5B",
+      "task": "conditional",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.2115,
+      "res_pct": 34.9
+    },
+    {
+      "model": "Coder-3B",
+      "task": "conditional",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1991,
+      "res_pct": 54.9
+    },
+    {
+      "model": "Coder-7B",
+      "task": "conditional",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1634,
+      "res_pct": 59.2
+    },
+    {
+      "model": "Coder-14B",
+      "task": "conditional",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1763,
+      "res_pct": 74.0
+    },
+    {
+      "model": "Base-0.5B",
+      "task": "conditional",
+      "group": "base_scaling",
+      "fpcl_norm": 0.2106,
+      "res_pct": 20.1
+    },
+    {
+      "model": "Base-1.5B",
+      "task": "conditional",
+      "group": "base_scaling",
+      "fpcl_norm": 0.213,
+      "res_pct": 25.0
+    },
+    {
+      "model": "Base-3B",
+      "task": "conditional",
+      "group": "base_scaling",
+      "fpcl_norm": 0.2055,
+      "res_pct": 46.5
+    },
+    {
+      "model": "Base-7B",
+      "task": "conditional",
+      "group": "base_scaling",
+      "fpcl_norm": 0.1582,
+      "res_pct": 56.5
+    },
+    {
+      "model": "Qwen3-0.6B",
+      "task": "conditional",
+      "group": "qwen3",
+      "fpcl_norm": 0.2066,
+      "res_pct": 32.5
+    },
+    {
+      "model": "Qwen3-1.7B",
+      "task": "conditional",
+      "group": "qwen3",
+      "fpcl_norm": 0.1732,
+      "res_pct": 41.9
+    },
+    {
+      "model": "Qwen3-4B",
+      "task": "conditional",
+      "group": "qwen3",
+      "fpcl_norm": 0.146,
+      "res_pct": 58.2
+    },
+    {
+      "model": "Qwen3-8B",
+      "task": "conditional",
+      "group": "qwen3",
+      "fpcl_norm": 0.1294,
+      "res_pct": 66.7
+    },
+    {
+      "model": "DS-Coder",
+      "task": "conditional",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1246,
+      "res_pct": 54.5
+    },
+    {
+      "model": "CodeLlama",
+      "task": "conditional",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1161,
+      "res_pct": 35.9
+    },
+    {
+      "model": "Llama-2",
+      "task": "conditional",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1028,
+      "res_pct": 23.1
+    },
+    {
+      "model": "Coder-0.5B",
+      "task": "function_call",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.2444,
+      "res_pct": 7.5
+    },
+    {
+      "model": "Coder-1.5B",
+      "task": "function_call",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.2246,
+      "res_pct": 14.6
+    },
+    {
+      "model": "Coder-3B",
+      "task": "function_call",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.2036,
+      "res_pct": 18.6
+    },
+    {
+      "model": "Coder-7B",
+      "task": "function_call",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1788,
+      "res_pct": 27.7
+    },
+    {
+      "model": "Coder-14B",
+      "task": "function_call",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1556,
+      "res_pct": 48.7
+    },
+    {
+      "model": "Base-0.5B",
+      "task": "function_call",
+      "group": "base_scaling",
+      "fpcl_norm": 0.2186,
+      "res_pct": 7.0
+    },
+    {
+      "model": "Base-1.5B",
+      "task": "function_call",
+      "group": "base_scaling",
+      "fpcl_norm": 0.219,
+      "res_pct": 11.8
+    },
+    {
+      "model": "Base-3B",
+      "task": "function_call",
+      "group": "base_scaling",
+      "fpcl_norm": 0.2117,
+      "res_pct": 13.8
+    },
+    {
+      "model": "Base-7B",
+      "task": "function_call",
+      "group": "base_scaling",
+      "fpcl_norm": 0.1707,
+      "res_pct": 19.3
+    },
+    {
+      "model": "Qwen3-0.6B",
+      "task": "function_call",
+      "group": "qwen3",
+      "fpcl_norm": 0.2203,
+      "res_pct": 10.4
+    },
+    {
+      "model": "Qwen3-1.7B",
+      "task": "function_call",
+      "group": "qwen3",
+      "fpcl_norm": 0.1796,
+      "res_pct": 12.7
+    },
+    {
+      "model": "Qwen3-4B",
+      "task": "function_call",
+      "group": "qwen3",
+      "fpcl_norm": 0.1652,
+      "res_pct": 28.1
+    },
+    {
+      "model": "Qwen3-8B",
+      "task": "function_call",
+      "group": "qwen3",
+      "fpcl_norm": 0.1483,
+      "res_pct": 24.7
+    },
+    {
+      "model": "DS-Coder",
+      "task": "function_call",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1477,
+      "res_pct": 19.0
+    },
+    {
+      "model": "CodeLlama",
+      "task": "function_call",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1428,
+      "res_pct": 7.9
+    },
+    {
+      "model": "Llama-2",
+      "task": "function_call",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1301,
+      "res_pct": 7.1
+    },
+    {
+      "model": "Coder-0.5B",
+      "task": "loop",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1638,
+      "res_pct": 8.6
+    },
+    {
+      "model": "Coder-1.5B",
+      "task": "loop",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.153,
+      "res_pct": 6.8
+    },
+    {
+      "model": "Coder-3B",
+      "task": "loop",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1366,
+      "res_pct": 25.2
+    },
+    {
+      "model": "Coder-7B",
+      "task": "loop",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1023,
+      "res_pct": 35.5
+    },
+    {
+      "model": "Coder-14B",
+      "task": "loop",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.0871,
+      "res_pct": 26.4
+    },
+    {
+      "model": "Base-0.5B",
+      "task": "loop",
+      "group": "base_scaling",
+      "fpcl_norm": 0.1524,
+      "res_pct": 9.3
+    },
+    {
+      "model": "Base-1.5B",
+      "task": "loop",
+      "group": "base_scaling",
+      "fpcl_norm": 0.1538,
+      "res_pct": 6.8
+    },
+    {
+      "model": "Base-3B",
+      "task": "loop",
+      "group": "base_scaling",
+      "fpcl_norm": 0.1298,
+      "res_pct": 14.8
+    },
+    {
+      "model": "Base-7B",
+      "task": "loop",
+      "group": "base_scaling",
+      "fpcl_norm": 0.0958,
+      "res_pct": 17.9
+    },
+    {
+      "model": "Qwen3-0.6B",
+      "task": "loop",
+      "group": "qwen3",
+      "fpcl_norm": 0.1424,
+      "res_pct": 11.1
+    },
+    {
+      "model": "Qwen3-1.7B",
+      "task": "loop",
+      "group": "qwen3",
+      "fpcl_norm": 0.1204,
+      "res_pct": 9.3
+    },
+    {
+      "model": "Qwen3-4B",
+      "task": "loop",
+      "group": "qwen3",
+      "fpcl_norm": 0.1041,
+      "res_pct": 18.6
+    },
+    {
+      "model": "Qwen3-8B",
+      "task": "loop",
+      "group": "qwen3",
+      "fpcl_norm": 0.0813,
+      "res_pct": 33.2
+    },
+    {
+      "model": "DS-Coder",
+      "task": "loop",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1014,
+      "res_pct": 27.5
+    },
+    {
+      "model": "CodeLlama",
+      "task": "loop",
+      "group": "cross_arch",
+      "fpcl_norm": 0.0773,
+      "res_pct": 8.6
+    },
+    {
+      "model": "Llama-2",
+      "task": "loop",
+      "group": "cross_arch",
+      "fpcl_norm": 0.0797,
+      "res_pct": 8.1
+    },
+    {
+      "model": "Coder-0.5B",
+      "task": "loop_unrolled",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.2172,
+      "res_pct": 3.7
+    },
+    {
+      "model": "Coder-1.5B",
+      "task": "loop_unrolled",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1886,
+      "res_pct": 6.4
+    },
+    {
+      "model": "Coder-3B",
+      "task": "loop_unrolled",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1829,
+      "res_pct": 15.5
+    },
+    {
+      "model": "Coder-7B",
+      "task": "loop_unrolled",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.1481,
+      "res_pct": 28.0
+    },
+    {
+      "model": "Coder-14B",
+      "task": "loop_unrolled",
+      "group": "coder_scaling",
+      "fpcl_norm": 0.0745,
+      "res_pct": 33.5
+    },
+    {
+      "model": "Base-0.5B",
+      "task": "loop_unrolled",
+      "group": "base_scaling",
+      "fpcl_norm": 0.2068,
+      "res_pct": 9.7
+    },
+    {
+      "model": "Base-1.5B",
+      "task": "loop_unrolled",
+      "group": "base_scaling",
+      "fpcl_norm": 0.208,
+      "res_pct": 7.3
+    },
+    {
+      "model": "Base-3B",
+      "task": "loop_unrolled",
+      "group": "base_scaling",
+      "fpcl_norm": 0.2002,
+      "res_pct": 10.3
+    },
+    {
+      "model": "Base-7B",
+      "task": "loop_unrolled",
+      "group": "base_scaling",
+      "fpcl_norm": 0.1381,
+      "res_pct": 21.3
+    },
+    {
+      "model": "Qwen3-0.6B",
+      "task": "loop_unrolled",
+      "group": "qwen3",
+      "fpcl_norm": 0.1822,
+      "res_pct": 14.6
+    },
+    {
+      "model": "Qwen3-1.7B",
+      "task": "loop_unrolled",
+      "group": "qwen3",
+      "fpcl_norm": 0.1534,
+      "res_pct": 15.1
+    },
+    {
+      "model": "Qwen3-4B",
+      "task": "loop_unrolled",
+      "group": "qwen3",
+      "fpcl_norm": 0.1469,
+      "res_pct": 26.3
+    },
+    {
+      "model": "Qwen3-8B",
+      "task": "loop_unrolled",
+      "group": "qwen3",
+      "fpcl_norm": 0.1204,
+      "res_pct": 29.2
+    },
+    {
+      "model": "DS-Coder",
+      "task": "loop_unrolled",
+      "group": "cross_arch",
+      "fpcl_norm": 0.1195,
+      "res_pct": 29.3
+    },
+    {
+      "model": "CodeLlama",
+      "task": "loop_unrolled",
+      "group": "cross_arch",
+      "fpcl_norm": 0.102,
+      "res_pct": 6.5
+    },
+    {
+      "model": "Llama-2",
+      "task": "loop_unrolled",
+      "group": "cross_arch",
+      "fpcl_norm": 0.0955,
+      "res_pct": 7.3
+    }
+  ]
+}

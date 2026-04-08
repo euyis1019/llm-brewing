@@ -25,9 +25,9 @@ COMPUTING = SubsetSpec(
     name="computing",
     category="data_flow",
     difficulty_schema={
-        "structure": ["func_arithmetic", "inline_chain", "class_method"],
+        "structure": ["func_arithmetic", "chained_calls", "accumulator"],
         "steps": [2, 3, 4],
-        "operators": ["add_sub", "add_mul", "mixed"],
+        "operators": ["add", "add_sub", "add_mul"],
     },
     question_suffix='# The value of {var} is "',
 )
@@ -36,7 +36,7 @@ CONDITIONAL = SubsetSpec(
     name="conditional",
     category="control_flow",
     difficulty_schema={
-        "branch_type": ["if_else", "nested_if", "elif_chain"],
+        "branch_type": ["elif_chain", "guard_clause", "sequential_if"],
         "depth": [1, 2, 3],
         "condition_type": ["numeric", "membership", "boolean_flag"],
     },

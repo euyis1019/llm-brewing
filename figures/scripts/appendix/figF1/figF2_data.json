@@ -1,0 +1,84 @@
+{
+  "scales": [
+    "0.5B",
+    "1.5B",
+    "3B",
+    "7B",
+    "14B"
+  ],
+  "scale_params": [
+    0.5,
+    1.5,
+    3,
+    7,
+    14
+  ],
+  "tasks": [
+    "value_tracking",
+    "computing",
+    "conditional",
+    "function_call",
+    "loop",
+    "loop_unrolled"
+  ],
+  "task_labels": [
+    "Value Tracking",
+    "Computing",
+    "Conditional",
+    "Function Call",
+    "Loop",
+    "Loop (Unrolled)"
+  ],
+  "task_colors": {
+    "value_tracking": "#E3F2FD",
+    "computing": "#0D47A1",
+    "conditional": "#64B5F6",
+    "function_call": "#BBDEFB",
+    "loop": "#42A5F5",
+    "loop_unrolled": "#90CAF9"
+  },
+  "res_pct": {
+    "value_tracking": [
+      62.8,
+      74.8,
+      78.9,
+      70.8,
+      77.3
+    ],
+    "computing": [
+      8.4,
+      13.4,
+      21.3,
+      26.2,
+      42.0
+    ],
+    "conditional": [
+      16.8,
+      34.9,
+      54.9,
+      59.2,
+      74.0
+    ],
+    "function_call": [
+      7.5,
+      14.6,
+      18.6,
+      27.7,
+      48.7
+    ],
+    "loop": [
+      8.6,
+      6.8,
+      25.2,
+      35.5,
+      26.4
+    ],
+    "loop_unrolled": [
+      3.7,
+      6.4,
+      15.5,
+      28.0,
+      33.5
+    ]
+  }
+}
