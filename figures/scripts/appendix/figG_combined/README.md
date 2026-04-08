@@ -4,4 +4,4 @@
 
 ## Files
 
-- `figG_causal_v2.py` — Plotting script (data inline + reads from `/data/brewing_output/artifacts/`) → `output/appendix/figG_combined/figG_causal_v2.{pdf,png}`
+- `figG_causal_v2.py` — Plotting script (data inline + reads from `/path/to/brewing_output/artifacts/`) → `output/appendix/figG_combined/figG_causal_v2.{pdf,png}`

@@ -17,7 +17,7 @@ subsets:
 
 # 3B 模型，hidden_dim 更大，probe 训练会稍慢但仍然很快
 model_id: Qwen/Qwen2.5-Coder-3B
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 
 output_root: brewing_output
 seed: 42

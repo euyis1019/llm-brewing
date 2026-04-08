@@ -290,7 +290,7 @@ N_sel = FJC≠null 的 sample 数（Resolved + Overprocessed）。各 offset 的
 ## 4. Per-Difficulty Breakdowns (Coder-7B, 28L)
 
 > 2026-03-31. 对每个任务的每个维度分别 sweep（固定其他两维取全部值，沿目标维度聚合）。
-> 脚本: `scripts/per_difficulty_breakdown.py`，输出: `/data/brewing_output/artifacts/per_difficulty/`（CSV + JSON）。
+> 脚本: `scripts/per_difficulty_breakdown.py`，输出: `/path/to/brewing_output/artifacts/per_difficulty/`（CSV + JSON）。
 
 ### TABLE 6: Per-Difficulty Outcome & Brewing Metrics — 6 Tasks × 3 Dims
 

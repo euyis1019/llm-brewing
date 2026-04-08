@@ -13,7 +13,7 @@ Usage:
 
     # In tmux
     tmux new -s eval
-    /home/gyf/miniconda3/envs/cue/bin/python scripts/run_full_eval.py --models all --dual-gpu
+    /path/to/conda/envs/cue/bin/python scripts/run_full_eval.py --models all --dual-gpu
 """
 import sys
 from pathlib import Path
@@ -41,7 +41,7 @@ from brewing.resources import ResourceKey, ResourceManager
 
 # ── Constants ──
 
-MODEL_DIR = Path("/home/gyf/CUE/models")
+MODEL_DIR = Path("/path/to/cue/models")
 OUTPUT_ROOT = Path("brewing_output")
 DATA_DIR = Path("brewing/benchmarks/cue_bench/data/eval")
 

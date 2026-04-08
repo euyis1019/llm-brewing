@@ -76,7 +76,7 @@
 - 9 个 .py 文件复制到 `benchmarks/cue_bench/datagen/`
 - `builder.py` 中 `importlib.import_module("datagen.xxx")` 改为相对 import（`package="brewing.benchmarks.cue_bench"`）
 - `cli.py` 和 `test_e2e.py` 中指向 CUE 根目录的 `sys.path.insert` 已删除
-- 原始 `/home/gyf/CUE/datagen/` 未删除，由用户自行处理
+- 原始 `/path/to/cue/datagen/` 未删除，由用户自行处理
 
 ---
 

@@ -12,7 +12,7 @@ subsets:
 - value_tracking
 - computing
 model_id: Qwen/Qwen2.5-Coder-7B-Instruct
-model_cache_dir: /home/gyf/CUE/models   # local weights path
+model_cache_dir: /path/to/cue/models   # local weights path
 methods:
 - linear_probing
 - csd

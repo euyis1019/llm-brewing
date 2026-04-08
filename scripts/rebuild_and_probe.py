@@ -33,7 +33,7 @@ from tqdm import tqdm
 # ── Paths ──
 OUTPUT_ROOT = Path("brewing_output")
 DATA_ROOT = Path("brewing/benchmarks/cue_bench/data")
-MODELS_DIR = Path("/home/gyf/CUE/models/Qwen")
+MODELS_DIR = Path("/path/to/cue/models/Qwen")
 
 MODELS = {
     "1.5B": ("Qwen/Qwen2.5-Coder-1.5B", MODELS_DIR / "Qwen2.5-Coder-1.5B"),

@@ -1,4 +1,4 @@
-model_id: /home/gyf/CUE/models/Qwen/Qwen2.5-Coder-7B
+model_id: /path/to/cue/models/Qwen/Qwen2.5-Coder-7B
 subsets:
   - value_tracking
 output_root: brewing_output/smoke_test

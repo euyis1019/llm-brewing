@@ -12,7 +12,7 @@ subsets:
 
 # 7B base 模型，hidden_dim=3584，batch_size 调小一点防止 OOM
 model_id: Qwen/Qwen2.5-Coder-7B
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 
 output_root: brewing_output
 seed: 42

@@ -8,8 +8,8 @@
 
 set -euo pipefail
 
-BREWING_DIR="/home/gyf/CUE/Brewing"
-MODEL_DIR="/home/gyf/CUE/models/Qwen"
+BREWING_DIR="/path/to/cue/Brewing"
+MODEL_DIR="/path/to/cue/models/Qwen"
 OUTPUT="$BREWING_DIR/brewing_output"
 SESSION="dry_run"
 CONDA_ACT="conda activate cue"

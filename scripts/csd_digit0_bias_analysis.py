@@ -9,8 +9,8 @@ import os
 from collections import Counter
 from pathlib import Path
 
-RESULTS_BASE = "/data/brewing_output/results/cuebench/eval"
-DATASET_BASE = "/data/brewing_output/datasets/cuebench/eval"
+RESULTS_BASE = "/path/to/brewing_output/results/cuebench/eval"
+DATASET_BASE = "/path/to/brewing_output/datasets/cuebench/eval"
 
 MODELS = [
     "codellama__CodeLlama-7b-hf",

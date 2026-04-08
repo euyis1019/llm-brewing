@@ -37,7 +37,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 logger = logging.getLogger(__name__)
 
 BASE = Path(__file__).resolve().parent.parent / "brewing_output"
-MODEL_CACHE = Path("/home/gyf/CUE/models")
+MODEL_CACHE = Path("/path/to/cue/models")
 SEED = "seed42"
 TASKS = ["value_tracking", "computing", "conditional", "function_call", "loop", "loop_unrolled"]
 

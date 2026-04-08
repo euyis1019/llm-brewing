@@ -26,7 +26,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 logger = logging.getLogger(__name__)
 
 BASE = Path(__file__).resolve().parent.parent / "brewing_output"
-MODEL_CACHE = Path("/home/gyf/CUE/models")
+MODEL_CACHE = Path("/path/to/cue/models")
 SEED = "seed42"
 TASK = "computing"
 MODEL_ID = "Qwen/Qwen2.5-Coder-7B"

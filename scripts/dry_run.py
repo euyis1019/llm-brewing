@@ -5,7 +5,7 @@ hidden states + model predictions to disk. No analysis methods are run.
 
 Usage:
     python scripts/dry_run.py \
-        --model-path /home/gyf/CUE/models/Qwen/Qwen2.5-Coder-7B \
+        --model-path /path/to/cue/models/Qwen/Qwen2.5-Coder-7B \
         --model-id Qwen/Qwen2.5-Coder-7B \
         --gpu 0
 """

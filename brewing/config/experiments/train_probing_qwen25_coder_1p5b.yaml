@@ -19,7 +19,7 @@ subsets:
 
 # HuggingFace model ID，也决定了去哪个目录找 cache
 model_id: Qwen/Qwen2.5-Coder-1.5B-Instruct
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 
 # 所有产出（datasets / caches / artifacts / results）的根目录
 output_root: brewing_output

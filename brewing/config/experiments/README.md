@@ -1,11 +1,11 @@
 # experiment Batch Configs
 
 These YAML files are the default batch configs for the 9 models in
-`/home/gyf/CUE/EXPERIMENTS.md`.
+`/path/to/cue/EXPERIMENTS.md`.
 
 Conventions:
 
-- `data_dir` points to `/home/gyf/CUE/data/data_v1/eval`
+- `data_dir` points to `/path/to/cue/data/data_v1/eval`
 - each run covers all 6 CUE-Bench subsets
 - all models share `output_root: brewing_output` (hierarchical layout separates by benchmark/task/model)
 - probing is evaluation-only in the main run

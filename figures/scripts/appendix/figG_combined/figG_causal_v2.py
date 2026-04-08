@@ -21,7 +21,7 @@ g1_flip = {
 
 # Layer skipping from artifact
 import json as _json
-ls_data = _json.loads(P("/data/brewing_output/artifacts/layer_skipping/results_7B_small.json").read_text())
+ls_data = _json.loads(P("/path/to/brewing_output/artifacts/layer_skipping/results_7B_small.json").read_text())
 g2_ot = {}
 g2_res = {}
 for entry in ls_data:
@@ -30,7 +30,7 @@ for entry in ls_data:
     g2_res[t] = [round(entry["offsets"][str(o)]["res_rate"]*100, 1) for o in [2,4,6]]
 
 # Re-injection from artifact
-ri_data = _json.loads(P("/data/brewing_output/artifacts/reinjection/results_7B_alpha_0.3.json").read_text())
+ri_data = _json.loads(P("/path/to/brewing_output/artifacts/reinjection/results_7B_alpha_0.3.json").read_text())
 g3_ur = {}
 g3_res = {}
 for entry in ri_data:

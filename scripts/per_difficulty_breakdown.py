@@ -16,8 +16,8 @@ from pathlib import Path
 
 # ── Config ──────────────────────────────────────────────────────────────
 
-RESULTS_BASE = Path("/data/brewing_output/results/cuebench/eval")
-DATASETS_BASE = Path("/data/brewing_output/datasets/cuebench/eval")
+RESULTS_BASE = Path("/path/to/brewing_output/results/cuebench/eval")
+DATASETS_BASE = Path("/path/to/brewing_output/datasets/cuebench/eval")
 SEED = "seed42"
 
 TASKS = [
@@ -166,7 +166,7 @@ def main():
                         help="Tasks to process")
     args = parser.parse_args()
 
-    output_dir = Path(args.output_dir) if args.output_dir else Path("/data/brewing_output/artifacts/per_difficulty")
+    output_dir = Path(args.output_dir) if args.output_dir else Path("/path/to/brewing_output/artifacts/per_difficulty")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     all_results = []

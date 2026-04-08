@@ -13,7 +13,7 @@ subsets:
 
 # Base 模型（非 Instruct），和 Instruct 版本会产出不同的 probe artifact
 model_id: Qwen/Qwen2.5-Coder-1.5B
-model_cache_dir: /home/gyf/CUE/models
+model_cache_dir: /path/to/cue/models
 
 output_root: brewing_output
 seed: 42
