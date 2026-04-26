@@ -1,20 +1,70 @@
+# Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
+*.so
+*.egg
 *.egg-info/
-.eggs/
 build/
 dist/
-.venv/
-venv/
+pip-wheel-metadata/
+
+# Test / tooling caches
 .pytest_cache/
+.coverage
+htmlcov/
 .mypy_cache/
 .ruff_cache/
-.ipynb_checkpoints/
-*.log
-*.zip
-*.tar.gz
-brewing_output/
-.DS_Store
-.idea/
+
+# Environments
+.env
+.venv/
+venv/
+env/
+
+# IDE / editor
 .vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude local settings
+.claude/
+
+# Brewing local outputs and large generated artifacts
+brewing_output
+brewing_output/
+*.npz
+*.npy
+*.pkl
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+*.h5
+
+# Local archives / snapshots (never commit large bundles)
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+cue_data_snapshot_*
+
+# Run logs
+*.log
+
+# Local-only working notes and paper-side artifacts (kept off public mirror)
+new.md
+docs_for_paper/
+figures/
+normalized_delta_brew.json
+normalized_delta_brew_README.md
+
+CLAUDE.md
+uv.lock
