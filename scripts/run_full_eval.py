@@ -13,7 +13,7 @@ Usage:
 
     # In tmux
     tmux new -s eval
-    /path/to/conda/envs/cue/bin/python scripts/run_full_eval.py --models all --dual-gpu
+    /path/to/python/envs/cue/bin/python scripts/run_full_eval.py --models all --dual-gpu
 """
 import sys
 from pathlib import Path
