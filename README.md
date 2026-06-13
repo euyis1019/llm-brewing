@@ -2,12 +2,14 @@
 
 Code repository for the experiments in "From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs".
 
-This repository is the implementation side of the project: benchmark construction, hidden-state caching, layer-wise methods, diagnostics, and causal validation. The paper source lives in the sibling directory `../CUE-experiment-main`.
+This repository is the implementation side of the project: benchmark construction, hidden-state caching, layer-wise methods, diagnostics, and causal validation. The paper source lives in the sibling directory [`../CUE-experiment-main`](../CUE-experiment-main).
 
-> Heads-up
-> This repo already runs our experiments, but it is still being actively refactored, and we are also pushing scaling experiments on stronger and larger open-weight models to see how far the same phenomenon holds up. So if you just want a stable framework to build on, it is probably better to wait a bit for the cleaner release.
+> 🚧 **Heads-up**
+> This repo already runs our experiments, but it is still being actively refactored. We are also running **scaling experiments on stronger and larger open-weight models** to test how far the same phenomenon holds up. If you want a stable framework to build on, it is probably better to wait a bit for the cleaner release.
 >
-> That said, I am pretty easy to catch up with and very open to questions, issues, and weird edge cases. Feel free to reach out through GitHub at `https://github.com/euyis1019/llm-brewing` or by email at `ifguo1019@qq.com`.
+> 💬 I am pretty easy to catch up with and very open to questions, issues, and weird edge cases.
+> 📦 Repo: [llm-brewing](https://github.com/euyis1019/llm-brewing)
+> 📫 Email: [ifguo1019@qq.com](mailto:ifguo1019@qq.com)
 
 ## What This Work Is About
 
