@@ -1,10 +1,23 @@
-# Brewing
+<div align="center">
+
+# ☕ Brewing
+
+### Tracing the Internal Lifecycle of Code Reasoning in LLMs
+
+[![arXiv](https://img.shields.io/badge/arXiv-2606.17648-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.17648)
+[![Paper](https://img.shields.io/badge/paper-HTML-success?logo=readthedocs&logoColor=white)](https://arxiv.org/html/2606.17648v1)
+[![Code](https://img.shields.io/badge/code-paper__experiment-blue?logo=github)](https://github.com/euyis1019/llm-brewing/tree/paper_experiment)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
 **English** · [中文](README.CN.md)
 
-**Brewing** traces the internal, layer-wise lifecycle of how code-reasoning answers form inside an LLM — from the moment an answer first becomes *readable* in a hidden state to the moment the model can actually *use* it.
+<em>From the moment an answer becomes <b>readable</b> in a hidden state,<br/>to the moment the model can actually <b>use</b> it.</em>
 
-This is the official code for the paper *"From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs"* (under review). It covers benchmark construction, hidden-state caching, layer-wise methods, diagnostics, and causal validation.
+</div>
+
+---
+
+**Brewing** traces the internal, layer-wise lifecycle of how code-reasoning answers form inside an LLM. This is the official code for the paper [*"From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs"*](https://arxiv.org/abs/2606.17648), covering benchmark construction, hidden-state caching, layer-wise methods, diagnostics, and causal validation.
 
 > 📦 **Where the code lives**
 > `main` is just this landing page (README, figures, docs). **All experiment code lives on the [`paper_experiment`](https://github.com/euyis1019/llm-brewing/tree/paper_experiment) branch** — the framework, benchmarks, methods, diagnostics, and causal validation that reproduce the paper.
@@ -227,12 +240,12 @@ The framework is usable and already structured around reusable pipelines, but pa
 ## Citation
 
 ```bibtex
-@misc{brewing2026,
+@article{brewing2026,
   title={From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs},
   author={Chen, Siyue and Guo, Yifu and Lu, Yuquan and Xu, Zishan and Lin, Jiaye and
           Lin, Jianbo and Zhang, Siyu and Yang, Cheng and Li, Junxin and Li, Yujia and
           Huo, Yu and Wang, Ruixuan},
+  journal={arXiv preprint arXiv:2606.17648},
   year={2026},
-  note={Under review},
 }
 ```

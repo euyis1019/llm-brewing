@@ -1,10 +1,23 @@
-# Brewing
+<div align="center">
+
+# ☕ Brewing
+
+### 追踪 LLM 代码推理的内部逐层生命周期
+
+[![arXiv](https://img.shields.io/badge/arXiv-2606.17648-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.17648)
+[![Paper](https://img.shields.io/badge/paper-HTML-success?logo=readthedocs&logoColor=white)](https://arxiv.org/html/2606.17648v1)
+[![Code](https://img.shields.io/badge/code-paper__experiment-blue?logo=github)](https://github.com/euyis1019/llm-brewing/tree/paper_experiment)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
 [English](README.md) · **中文**
 
-**Brewing** 追踪 LLM 在做代码推理时，答案在内部逐层形成的完整生命周期——从答案第一次在 hidden state 中变得 *可读*，到模型自己真正能 *用上* 它的那一刻。
+<em>从答案在 hidden state 中变得 <b>可读</b> 的那一刻，<br/>到模型真正能 <b>用上</b> 它的那一刻。</em>
 
-这是论文 *"From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs"*（审稿中）的官方代码，涵盖基准构建、hidden-state 缓存、逐层方法、诊断以及因果验证。
+</div>
+
+---
+
+**Brewing** 追踪 LLM 在做代码推理时，答案在内部逐层形成的完整生命周期。这是论文 [*"From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs"*](https://arxiv.org/abs/2606.17648) 的官方代码，涵盖基准构建、hidden-state 缓存、逐层方法、诊断以及因果验证。
 
 > 📦 **代码在哪里**
 > `main` 分支只是这个首页（README、图片、docs）。**全部实验代码都在 [`paper_experiment`](https://github.com/euyis1019/llm-brewing/tree/paper_experiment) 分支** —— 复现论文所需的框架、基准、方法、诊断和因果验证都在那里。
@@ -227,12 +240,12 @@ python scripts/test_e2e_smoke.py
 ## 引用
 
 ```bibtex
-@misc{brewing2026,
+@article{brewing2026,
   title={From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs},
   author={Chen, Siyue and Guo, Yifu and Lu, Yuquan and Xu, Zishan and Lin, Jiaye and
           Lin, Jianbo and Zhang, Siyu and Yang, Cheng and Li, Junxin and Li, Yujia and
           Huo, Yu and Wang, Ruixuan},
+  journal={arXiv preprint arXiv:2606.17648},
   year={2026},
-  note={Under review},
 }
 ```
