@@ -1,8 +1,10 @@
 # Brewing
 
-Code repository for the experiments in "From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs".
+**English** · [中文](README.CN.md)
 
-This repository is the implementation side of the project: benchmark construction, hidden-state caching, layer-wise methods, diagnostics, and causal validation. The paper source lives in the sibling directory [`../CUE-experiment-main`](../CUE-experiment-main).
+**Brewing** traces the internal, layer-wise lifecycle of how code-reasoning answers form inside an LLM — from the moment an answer first becomes *readable* in a hidden state to the moment the model can actually *use* it.
+
+This is the official code for the paper *"From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs"* (under review). It covers benchmark construction, hidden-state caching, layer-wise methods, diagnostics, and causal validation.
 
 > 📦 **Where the code lives**
 > `main` is just this landing page (README, figures, docs). **All experiment code lives on the [`paper_experiment`](https://github.com/euyis1019/llm-brewing/tree/paper_experiment) branch** — the framework, benchmarks, methods, diagnostics, and causal validation that reproduce the paper.
@@ -44,6 +46,8 @@ At the task level, the project asks not just which code reasoning problems are h
 Across model families and scales, the core brewing-to-resolution scaffold appears surprisingly stable, while what improves with model capability is the chance that brewing actually resolves into a preserved correct answer.
 
 [![Brewing stability](assets/brewing_stability.svg)](assets/brewing_stability.pdf)
+
+> All figures are clickable — they link to the original vector PDF.
 
 ## What This Repo Does
 
