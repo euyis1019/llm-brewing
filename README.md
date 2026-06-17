@@ -4,6 +4,17 @@ Code repository for the experiments in "From Brewing to Resolution: Tracing the 
 
 This repository is the implementation side of the project: benchmark construction, hidden-state caching, layer-wise methods, diagnostics, and causal validation. The paper source lives in the sibling directory [`../CUE-experiment-main`](../CUE-experiment-main).
 
+> 📦 **Where the code lives**
+> `main` is just this landing page (README, figures, docs). **All experiment code lives on the [`paper_experiment`](https://github.com/euyis1019/llm-brewing/tree/paper_experiment) branch** — the framework, benchmarks, methods, diagnostics, and causal validation that reproduce the paper.
+>
+> ```bash
+> git clone https://github.com/euyis1019/llm-brewing.git
+> cd llm-brewing
+> git checkout paper_experiment
+> ```
+>
+> Browse it on GitHub: **[github.com/euyis1019/llm-brewing/tree/paper_experiment](https://github.com/euyis1019/llm-brewing/tree/paper_experiment)**
+
 > 🚧 **Heads-up**
 > This repo already runs our experiments, but it is still being actively refactored. We are also running **scaling experiments on stronger and larger open-weight models** to test how far the same phenomenon holds up. If you want a stable framework to build on, it is probably better to wait a bit for the cleaner release.
 >
@@ -24,15 +35,15 @@ We track this lifecycle with two complementary views:
 
 Their gap gives a concrete way to measure the transition from representation to usable computation. Once that process succeeds or fails, examples fall into distinct outcome types such as `resolved`, `overprocessed`, `misresolved`, and `unresolved`.
 
-![Brewing overview](assets/teaser.png)
+[![Brewing overview](assets/resolution_taxonomy.svg)](assets/resolution_taxonomy.pdf)
 
 At the task level, the project asks not just which code reasoning problems are hard, but what kind of internal failure each task induces. Across value tracking, arithmetic, conditionals, function calls, and loop-based reasoning, the outcome distribution acts like a fingerprint of how a computation is being carried through the network.
 
-![Task fingerprint](assets/task_fingerprint.png)
+[![Task fingerprint](assets/task_fingerprint.svg)](assets/task_fingerprint.pdf)
 
 Across model families and scales, the core brewing-to-resolution scaffold appears surprisingly stable, while what improves with model capability is the chance that brewing actually resolves into a preserved correct answer.
 
-![Brewing stability](assets/brewing_stability.png)
+[![Brewing stability](assets/brewing_stability.svg)](assets/brewing_stability.pdf)
 
 ## What This Repo Does
 
@@ -55,6 +66,8 @@ The default benchmark in this repo is `CUE-Bench`, which contains six code-reaso
 
 ## Repository Layout
 
+> The tree below lives on the [`paper_experiment`](https://github.com/euyis1019/llm-brewing/tree/paper_experiment) branch. On `main` you will only find this README, the `assets/` figures, and `docs/`.
+
 ```text
 brewing/
   benchmarks/         Benchmark specs, builders, adapters, built-in data
@@ -73,6 +86,8 @@ tests/                Unit and integration tests
 ```
 
 ## Installation
+
+> All commands below require the code on the [`paper_experiment`](https://github.com/euyis1019/llm-brewing/tree/paper_experiment) branch — run `git checkout paper_experiment` first.
 
 Minimal install:
 
@@ -182,8 +197,8 @@ If you are trying to understand or modify the framework, start here:
 
 - [docs/project_overview.md](docs/project_overview.md)
 - [docs/running_modes.md](docs/running_modes.md)
-- [brewing/config/README.md](brewing/config/README.md)
-- [brewing/config/experiments/README.md](brewing/config/experiments/README.md)
+- [brewing/config/README.md](https://github.com/euyis1019/llm-brewing/blob/paper_experiment/brewing/config/README.md) (on `paper_experiment`)
+- [brewing/config/experiments/README.md](https://github.com/euyis1019/llm-brewing/blob/paper_experiment/brewing/config/experiments/README.md) (on `paper_experiment`)
 
 ## Tests
 
