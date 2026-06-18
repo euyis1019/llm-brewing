@@ -14,7 +14,7 @@ Resolved（成功）/ Overprocessed（曾对后被破坏）/ Misresolved（自�
 
 ## 当前目标 vs 长期愿景
 
-**当前**：为 论文跑完全部实验（`EXPERIMENTS.md`）。
+**当前**：为论文跑完全部实验（`EXPERIMENTS.md`）。
 生产 config 在 `brewing/config/experiments/`，每个模型一个 YAML。
 
 ```
