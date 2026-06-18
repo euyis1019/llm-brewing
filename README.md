@@ -5,9 +5,7 @@
 ### Tracing the Internal Lifecycle of Code Reasoning in LLMs
 
 [![arXiv](https://img.shields.io/badge/arXiv-2606.17648-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.17648)
-[![Paper](https://img.shields.io/badge/paper-HTML-success?logo=readthedocs&logoColor=white)](https://arxiv.org/html/2606.17648v1)
 [![Code](https://img.shields.io/badge/code-paper__experiment-blue?logo=github)](https://github.com/euyis1019/llm-brewing/tree/paper_experiment)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
 **English** · [中文](README.CN.md)
 
