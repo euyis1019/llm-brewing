@@ -240,12 +240,15 @@ The framework is usable and already structured around reusable pipelines, but pa
 ## Citation
 
 ```bibtex
-@article{brewing2026,
+@misc{chen2026brewingresolutiontracinginternal,
   title={From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs},
-  author={Chen, Siyue and Guo, Yifu and Lu, Yuquan and Xu, Zishan and Lin, Jiaye and
-          Lin, Jianbo and Zhang, Siyu and Yang, Cheng and Li, Junxin and Li, Yujia and
-          Huo, Yu and Wang, Ruixuan},
-  journal={arXiv preprint arXiv:2606.17648},
+  author={Siyue Chen and Yifu Guo and Yuquan Lu and Zishan Xu and Jiaye Lin and
+          Jianbo Lin and Siyu Zhang and Cheng Yang and Junxin Li and Yujia Li and
+          Yu Huo and Ruixuan Wang},
   year={2026},
+  eprint={2606.17648},
+  archivePrefix={arXiv},
+  primaryClass={cs.AI},
+  url={https://arxiv.org/abs/2606.17648},
 }
 ```
