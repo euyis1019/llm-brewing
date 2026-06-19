@@ -99,6 +99,8 @@ def build_model_load_kwargs(config: RunConfig) -> dict[str, Any]:
     load_kwargs: dict[str, Any] = {
         "device_map": "auto",
         "dtype": torch.float16,
+        # Disable SDPA to avoid meta-tensor errors with nnsight + transformers ≥5.8
+        "attn_implementation": "eager",
     }
 
     if config.model_cache_dir is not None:

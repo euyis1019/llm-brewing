@@ -18,11 +18,17 @@ import dependency removed — Brewing depends directly on nnsight.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, Union
+from typing import Any, Callable, Union
 
 import torch as th
 from nnsight import LanguageModel
-from nnsight.intervention.tracing.globals import Object
+
+# nnsight ≥ 0.4.x removed intervention.tracing.globals.Object;
+# use Any as a type alias — only used for annotations, not runtime checks.
+try:
+    from nnsight.intervention.tracing.globals import Object
+except ImportError:
+    Object = Any  # type: ignore[misc,assignment]
 
 TraceTensor = Union[th.Tensor, Object]
 GetModuleOutput = Callable[[LanguageModel, int], TraceTensor]
