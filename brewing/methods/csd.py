@@ -91,6 +91,10 @@ class CSD(ModelOnlineMethod):
             sample_results=sample_results,
         )
 
+    # Batch size for chunked patchscope: balance memory vs speed.
+    # With 2×A100-80GB and a 9B model, ~64 samples per chunk is safe.
+    PATCHSCOPE_CHUNK_SIZE: int = 64
+
     def _run_batch_patchscope(
         self,
         model: Any,
@@ -100,11 +104,11 @@ class CSD(ModelOnlineMethod):
         answer_space: list[str],
         n_layers: int,
     ) -> list[SampleMethodResult]:
-        """Use patchscope_lens for batch processing.
+        """Chunked-batch patchscope_lens: process CHUNK_SIZE samples per call.
 
-        patchscope_lens(return_logits=True) returns raw logits for all layers
-        in one call per sample. Baseline subtraction in logit space, consistent
-        with the per-sample fallback path.
+        Original code called patchscope_lens once *per sample* (N×L passes).
+        This version batches samples into chunks (chunk×L passes), giving a
+        ~CHUNK_SIZE× speedup while keeping memory bounded.
         """
         import torch
         from brewing.nnsight_ops import patchscope_lens, TargetPrompt
@@ -113,29 +117,50 @@ class CSD(ModelOnlineMethod):
         answer_token_ids = self._get_answer_token_ids(tokenizer, answer_space)
         target = TargetPrompt(target_prompt, -1)
 
-        # Baseline in logit space (same as per-sample path)
         baseline_logits = self._get_baseline_logits_nnsight(
             model, target_prompt, answer_token_ids
         )
 
-        sample_results: list[SampleMethodResult] = []
+        n_samples = len(eval_samples)
+        chunk = self.PATCHSCOPE_CHUNK_SIZE
+        layers = list(range(n_layers))
 
-        for i, sample in enumerate(eval_samples):
-            # latents for patchscope_lens: shape (num_layers, 1, hidden_dim)
-            h_all = eval_cache.hidden_states[i]  # (L, D)
-            latents = torch.tensor(h_all, dtype=torch.float32).unsqueeze(1)  # (L, 1, D)
+        # all_logits[i] will hold shape (n_layers, vocab_size) for sample i
+        all_logits_np = np.zeros((n_samples, n_layers, eval_cache.hidden_states.shape[-1]),
+                                 dtype=np.float32)  # placeholder, overwritten below
 
-            # patchscope_lens returns (num_source_prompts, num_layers, vocab_size)
+        # We'll accumulate per-sample (n_layers, vocab_size) logits
+        sample_logits_list: list[np.ndarray] = []
+
+        for start in range(0, n_samples, chunk):
+            end = min(start + chunk, n_samples)
+            batch_size = end - start
+
+            # hidden_states[start:end]: (batch, n_layers, D)
+            h_batch = eval_cache.hidden_states[start:end]  # (B, L, D)
+            # patchscope_lens expects (n_layers, num_sources, D)
+            latents = torch.tensor(
+                h_batch, dtype=torch.float32
+            ).permute(1, 0, 2)  # (L, B, D)
+
+            # logits_all: (num_sources=B, n_layers=L, vocab_size)
             logits_all = patchscope_lens(
                 nn_model=model,
                 source_prompts=None,
                 target_patch_prompts=target,
-                layers=list(range(n_layers)),
+                layers=layers,
                 latents=latents,
                 return_logits=True,
             )
-            # logits_all: (1, L, vocab_size)
-            logits_np = logits_all[0].detach().cpu().float().numpy()  # (L, vocab_size)
+            # shape: (B, L, vocab_size) — one row per sample in chunk
+            batch_logits_np = logits_all.detach().cpu().float().numpy()
+            for b in range(batch_size):
+                sample_logits_list.append(batch_logits_np[b])  # (L, vocab_size)
+
+        # Build SampleMethodResult list
+        sample_results: list[SampleMethodResult] = []
+        for i, sample in enumerate(eval_samples):
+            logits_np = sample_logits_list[i]  # (n_layers, vocab_size)
 
             layer_vals = np.zeros(n_layers)
             layer_preds: list[str] = []
@@ -144,9 +169,7 @@ class CSD(ModelOnlineMethod):
 
             for layer_idx in range(n_layers):
                 full_logits = logits_np[layer_idx]  # (vocab_size,)
-                answer_logits = np.array([
-                    full_logits[tid] for tid in answer_token_ids
-                ])
+                answer_logits = np.array([full_logits[tid] for tid in answer_token_ids])
                 adjusted = answer_logits - baseline_logits
 
                 pred_idx = int(np.argmax(adjusted))
@@ -156,7 +179,6 @@ class CSD(ModelOnlineMethod):
                 exp_adj = np.exp(adjusted - np.max(adjusted))
                 norm_probs = exp_adj / exp_adj.sum()
 
-                # non-digit probability from full vocabulary softmax
                 full_shifted = full_logits - full_logits.max()
                 full_exp = np.exp(full_shifted)
                 full_sum = full_exp.sum()
