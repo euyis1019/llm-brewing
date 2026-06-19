@@ -60,9 +60,14 @@ class EvalPipeline(PipelineBase):
 
         # S2
         for method_name in self.config.methods:
+            result_key = self.make_key(subset_name, "eval", method=method_name)
+            # Resume: skip methods whose result files already exist on disk
+            if self.resources.result_path(result_key).exists():
+                logger.info("Method '%s' result already exists, skipping (resume mode)", method_name)
+                result[f"method_{method_name}"] = "ok"
+                continue
             logger.info("Running method: %s", method_name)
             try:
-                result_key = self.make_key(subset_name, "eval", method=method_name)
                 mr = self._run_method(
                     method_name, subset_name, eval_key,
                     eval_samples, eval_cache, model, tokenizer,

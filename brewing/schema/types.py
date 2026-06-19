@@ -265,5 +265,10 @@ class FitArtifact:
 
     @classmethod
     def load_metadata(cls, path: Path) -> FitArtifact:
+        from dataclasses import fields as dc_fields
         with open(path) as f:
-            return cls(**json.load(f))
+            data = json.load(f)
+        # Filter to known fields only — ignores extra keys added externally
+        # (e.g. best_eval_accuracy from validate_on_eval results)
+        known = {f.name for f in dc_fields(cls)}
+        return cls(**{k: v for k, v in data.items() if k in known})
