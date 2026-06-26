@@ -1,209 +1,161 @@
 # Brewing
 
-Code repository for the experiments in "From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs".
+Implementation for the experiments in *"From Brewing to Resolution: Tracing the
+Internal Lifecycle of Code Reasoning in LLMs"*.
 
-This repository is the implementation side of the project: benchmark construction, hidden-state caching, layer-wise methods, diagnostics, and causal validation. The paper source lives in the sibling directory [`../CUE-experiment-main`](../CUE-experiment-main).
+Standard accuracy only tells you whether a model got the answer right, not how
+that answer formed inside the network. Brewing studies code reasoning as an
+internal **layer-wise lifecycle**: answers often become linearly readable from
+hidden states *before* the model itself can decode them. That intermediate
+regime is what we call `brewing`.
 
-> 🚧 **Heads-up**
-> This repo already runs our experiments, but it is still being actively refactored. We are also running **scaling experiments on stronger and larger open-weight models** to test how far the same phenomenon holds up. If you want a stable framework to build on, it is probably better to wait a bit for the cleaner release.
->
-> 💬 I am pretty easy to catch up with and very open to questions, issues, and weird edge cases.
-> 📦 Repo: [llm-brewing](https://github.com/euyis1019/llm-brewing)
-> 📫 Email: [ifguo1019@qq.com](mailto:ifguo1019@qq.com)
+Two complementary views track this lifecycle:
 
-## What This Work Is About
+- `linear_probing` (Φ_P) — **information availability**: is the answer already
+  linearly readable from the hidden state?
+- `csd` (Φ_C) — **information readiness**: can the model itself decode the answer
+  from that state?
 
-Standard accuracy only tells you whether a model got the answer right. It does not tell you how that answer formed internally, whether it formed early and was later destroyed, or whether the information was already present in the representation but not yet usable by the model itself.
+Their gap over the layer axis (the *brewing gap*) sorts each example into one of
+four outcomes: `resolved`, `overprocessed`, `misresolved`, `unresolved`.
 
-Brewing studies code reasoning as an internal layer-wise lifecycle rather than a final-output event. The central claim is that answers often become linearly readable from hidden states before they become decodable by the model itself. We call that intermediate regime `brewing`.
+> 🚧 Actively refactored. Scaling experiments on larger open-weight models are
+> ongoing. Questions and issues welcome — [llm-brewing](https://github.com/euyis1019/llm-brewing).
 
-We track this lifecycle with two complementary views:
+## Design Philosophy: Config-Driven
 
-- `linear_probing`: is the answer already externally readable from the hidden state?
-- `csd`: can the model itself decode the answer from that state?
+Brewing is **config-driven**. There is exactly one entry point —
 
-Their gap gives a concrete way to measure the transition from representation to usable computation. Once that process succeeds or fails, examples fall into distinct outcome types such as `resolved`, `overprocessed`, `misresolved`, and `unresolved`.
-
-![Brewing overview](assets/teaser.png)
-
-At the task level, the project asks not just which code reasoning problems are hard, but what kind of internal failure each task induces. Across value tracking, arithmetic, conditionals, function calls, and loop-based reasoning, the outcome distribution acts like a fingerprint of how a computation is being carried through the network.
-
-![Task fingerprint](assets/task_fingerprint.png)
-
-Across model families and scales, the core brewing-to-resolution scaffold appears surprisingly stable, while what improves with model capability is the chance that brewing actually resolves into a preserved correct answer.
-
-![Brewing stability](assets/brewing_stability.png)
-
-## What This Repo Does
-
-Brewing is the codebase that implements this analysis pipeline. The main workflow is:
-
-1. Build or load a benchmark dataset.
-2. Extract hidden states into a cache.
-3. Run analysis methods such as linear probing and CSD.
-4. Derive diagnostics such as FPCL, FJC, brewing gap, and outcome labels.
-5. Optionally run causal validation experiments on saved outputs.
-
-The default benchmark in this repo is `CUE-Bench`, which contains six code-reasoning subsets:
-
-- `value_tracking`
-- `computing`
-- `conditional`
-- `function_call`
-- `loop`
-- `loop_unrolled`
-
-## Repository Layout
-
-```text
-brewing/
-  benchmarks/         Benchmark specs, builders, adapters, built-in data
-  causal/             Causal intervention backends and validators
-  config/             Example and batch YAML configs
-  diagnostics/        Outcome taxonomy and aggregate metrics
-  methods/            Linear probing and CSD
-  pipelines/          cache_only / train_probing / eval / diagnostics / causal_validation
-  schema/             Shared dataclasses and serialization
-  cli.py              CLI entry point used by `python -m brewing`
-docs/
-  project_overview.md High-level architecture notes
-  running_modes.md    Detailed mode-by-mode behavior
-scripts/              Smoke tests and experiment helpers
-tests/                Unit and integration tests
+```bash
+python -m brewing --config path/to/config.yaml [--verbose]
 ```
+
+— and a single YAML file declares everything about a run: which `mode` to
+execute, which benchmark and subsets, which model, which methods, and where
+outputs land. The CLI parses no behavioral flags; it only loads the config,
+decides whether a model must be brought online, and hands off to the
+orchestrator. This has a few consequences worth knowing:
+
+- **A run is fully described by its config.** No hidden CLI state, no
+  environment-dependent branching. The same YAML reproduces the same run, which
+  is why the configs under `brewing/config/experiments/` *are* the experiment
+  record.
+- **Modes compose into a pipeline, not a monolith.** Each run does one stage
+  (`cache_only`, `train_probing`, `eval`, `diagnostics`, `causal_validation`).
+  You chain them by running configs in sequence; intermediate artifacts on disk
+  are the interface between stages.
+- **Resolve-or-build everywhere.** Datasets, caches, and probe artifacts are
+  keyed deterministically (benchmark × split × subset × seed × model × method).
+  If an artifact already exists it is loaded, not recomputed — so reruns are
+  cheap and interrupted jobs resume naturally.
+- **Diagnostics are decoupled.** `diagnostics` reads saved method results from
+  disk and needs no model. The expensive GPU stages and the cheap analysis stage
+  never have to run together.
+
+The framework keeps its interface boundaries (`BenchmarkSpec`,
+`AnalysisMethod`, `MethodResult`) generic so new benchmarks and methods slot in
+without touching the orchestrator.
+
+## Pipeline
+
+```
+S0  Dataset resolve / build
+S1  Hidden-state cache extraction
+S2  Method run (Probing / CSD) → MethodResult on disk
+─── pipeline boundary ───
+S3  Diagnostics (independent post-processing): FPCL / FJC / outcome labels
+```
+
+| Mode | Purpose | Needs online model |
+| --- | --- | --- |
+| `cache_only` | Build/load dataset and extract hidden-state caches | Yes, unless all caches exist |
+| `train_probing` | Train per-layer probe artifacts from train-split caches | Yes, unless required caches exist |
+| `eval` | Run `linear_probing` / `csd` on eval data | Depends on selected methods |
+| `diagnostics` | Compute FPCL, FJC, brewing gap, outcome labels from saved results | No |
+| `causal_validation` | Intervention experiments over existing S0–S3 artifacts | Yes |
+
+Typical end-to-end flow: `cache_only` → `train_probing` → `eval` →
+`diagnostics` → (optionally) `causal_validation`.
 
 ## Installation
 
-Minimal install:
-
 ```bash
-pip install -e .
-```
-
-If you need model-backed runs such as cache extraction, CSD, or causal validation:
-
-```bash
-pip install -e .[model]
-```
-
-For test dependencies:
-
-```bash
-pip install -e .[dev]
+pip install -e .            # minimal
+pip install -e .[model]     # model-backed runs (cache extraction, CSD, causal)
+pip install -e .[dev]       # test dependencies
 ```
 
 Python `>=3.10` is required.
 
 ## Quick Start
 
-The smallest runnable path is the built-in fixture config:
+The smallest runnable path uses the built-in fixture (no model, no setup):
 
 ```bash
 python -m brewing --config brewing/config/example_single_task.yaml
 ```
 
-That config uses:
+That config sets `use_fixture: true`, one subset (`value_tracking`), and one
+method (`linear_probing`) — the fastest way to verify the CLI and output layout.
 
-- `use_fixture: true`
-- one subset: `value_tracking`
-- one method: `linear_probing`
-
-It is the fastest way to verify the CLI and output layout without setting up a full experiment run.
-
-To inspect available config examples:
+Other example configs:
 
 ```text
 brewing/config/example_single_task.yaml
 brewing/config/example_probing_tune.yaml
 brewing/config/example_local_model.yaml
-brewing/config/example_14b_int8.yaml
 brewing/config/example_full_reference.yaml
 brewing/config/experiments/*.yaml
 ```
 
-## Running The Pipeline
+## Benchmark
 
-The CLI entry point is:
+The default benchmark is `CUE-Bench`, six code-reasoning subsets, all with
+single-digit answers (0–9):
 
-```bash
-python -m brewing --config path/to/config.yaml --verbose
-```
-
-Brewing currently supports five run modes.
-
-| Mode | Purpose | Needs online model |
-| --- | --- | --- |
-| `cache_only` | Build/load dataset and extract hidden-state caches | Yes, unless all caches already exist |
-| `train_probing` | Train probe artifacts from train-split caches | Yes, unless required caches already exist |
-| `eval` | Run methods such as `linear_probing` and `csd` on eval data | Depends on selected methods |
-| `diagnostics` | Load saved method results and compute outcome diagnostics | No |
-| `causal_validation` | Run intervention experiments from existing S0-S3 artifacts | Yes |
-
-Typical workflow:
-
-1. Run `cache_only` to build train and/or eval caches.
-2. Run `train_probing` to produce probe artifacts.
-3. Run `eval` to generate `MethodResult` outputs.
-4. Run `diagnostics` to compute FPCL, FJC, brewing gap, and outcome labels.
-5. Run `causal_validation` if you want intervention-based follow-up experiments.
-
-## Core Concepts
-
-Two analysis methods are first-class in the current codebase:
-
-- `linear_probing`: reads answer information from cached hidden states using trained per-layer probes.
-- `csd`: evaluates whether the model can decode the answer from a given hidden state using an online model.
-
-Diagnostics are computed after method execution and are intentionally decoupled from the main evaluation pipeline. The main outputs include:
-
-- hidden-state caches
-- probe artifacts
-- per-method result files
-- diagnostic summaries
-- causal validation result files
+`value_tracking`, `computing`, `conditional`, `function_call`, `loop`,
+`loop_unrolled`.
 
 ## Outputs
 
-All artifacts are written under `output_root` (default: `brewing_output/`). In practice the tree is organized by benchmark, split, subset, seed, model, and method.
+All artifacts go under `output_root` (default `brewing_output/`), organized by
+benchmark / split / subset / seed / model / method:
 
-Common output groups include:
+```text
+datasets/...    caches/...    artifacts/...    results/...    run_summary.json
+```
 
-- `datasets/...`
-- `caches/...`
-- `artifacts/...`
-- `results/...`
-- `run_summary.json`
+Path logic lives in `brewing/resources.py`.
 
-The exact path logic is managed by `brewing/resources.py`.
+## Repository Layout
 
-## Documentation Map
+```text
+brewing/
+  benchmarks/   Benchmark specs, builders, adapters, built-in data
+  causal/       Causal intervention backends and validators
+  config/       Example and experiment YAML configs
+  diagnostics/  Outcome taxonomy and aggregate metrics (S3)
+  methods/      Linear probing and CSD
+  pipelines/    cache_only / train_probing / eval / diagnostics / causal_validation
+  schema/       Shared dataclasses and serialization
+  cli.py        CLI entry point for `python -m brewing`
+docs/           Architecture notes and per-mode behavior
+scripts/        Smoke tests and experiment helpers
+tests/          Unit and integration tests
+```
 
-If you are trying to understand or modify the framework, start here:
+## Documentation
 
-- [docs/project_overview.md](docs/project_overview.md)
-- [docs/running_modes.md](docs/running_modes.md)
-- [brewing/config/README.md](brewing/config/README.md)
-- [brewing/config/experiments/README.md](brewing/config/experiments/README.md)
+- [docs/project_overview.md](docs/project_overview.md) — high-level architecture
+- [docs/running_modes.md](docs/running_modes.md) — per-mode behavior
+- [brewing/config/README.md](brewing/config/README.md) — config reference
 
 ## Tests
 
-Run the automated test suite with:
-
 ```bash
-pytest
+pytest                              # unit + integration suite
+python scripts/test_e2e_smoke.py    # model-backed end-to-end (assumes local assets)
 ```
-
-There is also a heavier smoke script for model-backed end-to-end checks:
-
-```bash
-python scripts/test_e2e_smoke.py
-```
-
-That script assumes local model assets and prebuilt experiment data, so it is not a zero-setup check.
-
-## Current State
-
-The framework is usable and already structured around reusable pipelines, but parts of the surrounding docs still reflect an earlier refactor stage. For behavior, prefer the code and config examples over old narrative text.
 
 ## Citation
 
