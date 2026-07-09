@@ -19,11 +19,7 @@ Two complementary views track this lifecycle:
 Their gap over the layer axis (the *brewing gap*) sorts each example into one of
 four outcomes: `resolved`, `overprocessed`, `misresolved`, `unresolved`.
 
-> 🚧 Actively refactored. Scaling experiments on larger open-weight models are
-> ongoing. Next up (2026-07-10): a more essential, more *general* line of
-> research — extending the brewing lifecycle beyond synthetic single-digit tasks
-> to real, multi-domain, multilingual benchmarks. Questions and issues welcome —
-> [llm-brewing](https://github.com/euyis1019/llm-brewing).
+> 🚧 Next up (2026-07-10): a more essential, more *general* line of research.
 
 ## Design Philosophy: Config-Driven
 
