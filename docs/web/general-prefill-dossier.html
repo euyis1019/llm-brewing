@@ -587,7 +587,7 @@
     <h1>答案先被读出，<br>再被模型自己解码</h1>
     <p class="standfirst">
       八项登记实验，两个锚点模型，两条冻结证据轨。观测性结论成立：正确答案在预填充中段就已线性可读，
-      而模型要再过几层才能自行解码出来。预注册的因果门槛没有通过，这份总览把它照原样留着。
+      而模型要再过几层才能自行解码出来。原定因果判据没有通过，这份总览把它照原样留着。
     </p>
     <div class="masthead-meta">
       <span>运行标识 <b>56cf303a0bee12f2__5ffa284ecd741a77</b></span>
@@ -694,7 +694,7 @@
           </div>
           <div class="lex-item">
             <dt>残差状态互换 <span class="en">residual-state interchange</span></dt>
-            <dd>把来源样本的残差流状态替换到被替换样本的对应位置。单层互换是当前预注册门槛的设计；窗口互换在连续层内逐层用来源样本轨迹钳制被替换样本。</dd>
+            <dd>把来源样本的残差流状态替换到被替换样本的对应位置。单层互换用于当前原定因果判据；窗口互换在连续层内逐层用来源样本轨迹钳制被替换样本。</dd>
           </div>
           <div class="lex-item">
             <dt>探针方向引导 <span class="en">probe-direction steering</span></dt>
@@ -769,7 +769,7 @@
           <tr>
             <td class="exp-id">GP-AUDIT-01</td>
             <td>审查结论能说到哪里</td>
-            <td>合并两个模型、两条证据轨和预注册因果结果，按预先规定的门槛审查声明。</td>
+            <td>合并两个模型、两条证据轨和原定因果检验结果，按事前确定的判据审查声明。</td>
             <td>审计完成；放行观测性结论，但不允许普适声明或因果闭合声明。</td>
           </tr>
           <tr>
@@ -794,6 +794,11 @@
       </table>
     </div>
 
+    <p class="ladder-note">
+      想逐项查看研究问题、实验操作、对照、关键数值和结论边界，可进入
+      <a href="experiments.html"><strong>实验详解子页面</strong></a>。
+    </p>
+
     <h3>证据状态的六个档位</h3>
     <p>
       结果陈述只用下面这六个状态，不用勾号叉号，也不用"基本证明"这类模糊措辞。
@@ -807,17 +812,17 @@
         <tbody>
           <tr>
             <td><span class="chip chip-pass">确认性通过</span></td>
-            <td>预注册判据和所需对照均通过</td>
+            <td>事前确定的判据和所需对照均通过</td>
             <td class="dim">主观测性终点 <span class="exp-id">GP-OBS-01</span> <span class="exp-id">GP-CF-01</span></td>
           </tr>
           <tr>
             <td><span class="chip chip-fail">确认性未通过</span></td>
-            <td>预注册判据未通过</td>
+            <td>未达到事前确定的判据</td>
             <td class="dim">单层状态互换因果门槛 <span class="exp-id">GP-CAUSAL-01</span></td>
           </tr>
           <tr>
             <td><span class="chip chip-sup">受控追加证据</span></td>
-            <td>预注册后开展，但有明确对照与复现</td>
+            <td>正式结果出来后开展，但有明确对照与复现</td>
             <td class="dim">窗口互换、方向引导、组件敲除</td>
           </tr>
           <tr>
@@ -840,7 +845,7 @@
     </div>
 
     <p class="ladder-note">
-      "确认性"这个词只给完成全部预注册空值对照、并生成正式审计结果的运行用。开发运行一律写"开发运行结果"或"探索性结果"。
+      "确认性"这个词只给完成事前确定的全部空值对照、并生成正式审计结果的运行用。开发运行一律写"开发运行结果"或"探索性结果"。
     </p>
 
     <div class="callout neutral">
@@ -1084,12 +1089,12 @@
   </section>
 
   <section>
-    <div class="sec-head"><span class="num">05</span><h2>预注册因果门槛：没通过</h2></div>
+    <div class="sec-head"><span class="num">05</span><h2>原定因果检验：没通过</h2></div>
 
     <div class="callout">
       <h4>GP-CAUSAL-01 · 确认性未通过</h4>
       <p>
-        预注册门槛要求：在 Track A 主窗口内，把来源样本某一层观测边界处的残差流状态换给被替换样本，
+        原定判据要求：在 Track A 主窗口内，把来源样本某一层观测边界处的残差流状态换给被替换样本，
         产生的答案定向效应要超过匹配的随机问题对照。<strong>两个模型都没有通过。</strong>
       </p>
       <p style="margin-top:0.75rem">
@@ -1124,7 +1129,7 @@
     </p>
 
     <h3>GP-AUDIT-01 · 联合审计放行了什么</h3>
-    <p>把两个模型、两条轨和预注册因果结果合起来算，系统允许写出的最强结论是：</p>
+    <p>把两个模型、两条轨和原定因果检验结果合起来算，系统允许写出的最强结论是：</p>
     <div class="claim">
       cross_model_gates.maximum_claim =<br>
       "gt_answers_linearly_decodable_before_context_independent_self_decoding"<br><br>
@@ -1139,7 +1144,7 @@
   <section>
     <div class="sec-head"><span class="num">06</span><h2>追加实验：把负结果拆开看</h2></div>
     <p>
-      预注册失败之后有两种待检验的解释：一是<strong>后层重算</strong>——单层干预被后续层用未受扰的上下文覆盖掉了；
+      原定实验未通过之后有两种待检验的解释：一是<strong>后层重算</strong>——单层干预被后续层用未受扰的上下文覆盖掉了；
       二是<strong>干预强度</strong>——方向是对的，但幅度不够。三项受控追加实验分别去掉这两条。
     </p>
 
@@ -1199,7 +1204,7 @@
     </p>
     <p>
       self 对照在各窗口都接近零，说明多层注入这个操作本身没有制造伪影。
-      结论：钳住整段窗口仍然弱，"单层干预被后层完全重算"解释不了预注册负结果。
+      结论：钳住整段窗口仍然弱，"单层干预被后层完全重算"解释不了原定实验的负结果。
     </p>
 
     <h3>GP-CAUSAL-03 · 方向是对的，幅度不够</h3>
@@ -1245,7 +1250,7 @@
         或者下游还没接上这条读出。到 readiness 边界附近，方向特异的放大和读出才开始生效。
       </p>
       <p style="margin-top:0.75rem">
-        这是对多项结果的综合解释，<strong>不是预注册判据</strong>。方向引导的幅度远高于自然波动，
+        这是对多项结果的综合解释，<strong>不是原定判据</strong>。方向引导的幅度远高于自然波动，
         它证明这个方向携带可被下游利用的信息，不证明模型自然运行时沿同一路径、以同样幅度计算。
       </p>
     </div>
@@ -1312,13 +1317,13 @@
         <ol>
           <li>两个被测 Qwen Base 模型都显示 availability 早于 readiness。</li>
           <li>该顺序在完整答案 ground truth 和选项置换反事实两条轨上都成立。</li>
-          <li>预注册单层状态互换因果门槛在两个模型上都未通过。</li>
+          <li>事前确定的单层状态互换在两个模型上都未达到原定因果判据。</li>
           <li>结果不允许普适到所有语言模型。</li>
         </ol>
 
         <h4 style="margin-top:2rem"><span style="color:var(--ready)">受控追加证据</span></h4>
         <ol>
-          <li>覆盖整个主窗口的自然状态互换仍弱，后层重算解释不了预注册负结果。</li>
+          <li>覆盖整个主窗口的自然状态互换仍弱，后层重算解释不了原定实验的负结果。</li>
           <li>方向特异 logit 效应在 readiness 边界附近增强，行为接管通常更晚。</li>
           <li>相同边界模式在 Track A 的 26 类答案空间复现。</li>
           <li>4B 的接管结构更集中，9B 更分布式。</li>
@@ -1392,7 +1397,7 @@
           <tr><td>单模型 Track A 分析</td><td class="m">&lt;model&gt;/analysis/generalprefill_gt.json</td></tr>
           <tr><td>单模型 Track B 分析</td><td class="m">&lt;model&gt;/analysis/choicepermutation_cf.json</td></tr>
           <tr><td>双模型联合声明审计</td><td class="m">combined/claim_audit.json</td></tr>
-          <tr><td>预注册状态互换</td><td class="m">&lt;model&gt;/causal/choicepermutationcf/eval/pooled/seed42/&lt;model&gt;/option_permutation_interchange__primary.json</td></tr>
+          <tr><td>原定单层状态互换</td><td class="m">&lt;model&gt;/causal/choicepermutationcf/eval/pooled/seed42/&lt;model&gt;/option_permutation_interchange__primary.json</td></tr>
           <tr><td>窗口互换</td><td class="m">同目录 gap_window_interchange__{primary,extend,boundary}.json</td></tr>
           <tr><td>探针方向引导</td><td class="m">同目录 probe_direction_steering__{primary,phase3,phase4}.json</td></tr>
           <tr><td>组件敲除</td><td class="m">同目录 component_knockout__primary.json</td></tr>
@@ -1407,7 +1412,7 @@
     <ul>
       <li><code>scripts/prepare_general_prefill_data.py</code> · <code>brewing/benchmarks/general_prefill/</code> — 数据产品构建</li>
       <li><code>scripts/run_general_prefill_anchor.py</code> — <span class="m">primary / ablations / nulls / suffix_controls / choice / causal_cf / analysis</span> 阶段</li>
-      <li><code>brewing/causal/option_interchange.py</code> — 预注册状态互换</li>
+      <li><code>brewing/causal/option_interchange.py</code> — 原定单层状态互换</li>
       <li><code>scripts/run_causal_gap_experiments.py</code> — <span class="m">--exp window / steering / gt_steering / knockout</span></li>
       <li><code>scripts/plot_causal_gap_experiments.py</code> — 汇总绘图</li>
     </ul>
@@ -1427,7 +1432,7 @@
       （<span class="m">docs/project_changes_and_experiment_status_2026-07-12.md</span> 与 <span class="m">general_bench_decisions.md</span> 均已不表示当前协议）。
     </p>
     <p style="margin-top:0.9rem">
-      索引规则：新实验先分配编号再运行；预注册与事后追加分开标记；未通过的预注册门槛永久保留。
+      索引规则：新实验先分配编号再运行；事前确定的验证实验与正式结果出来后追加的实验分开标记；未达到的原定判据永久保留。
     </p>
   </footer>
 

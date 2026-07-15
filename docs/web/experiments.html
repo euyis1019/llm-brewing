@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>General Prefill 实验详解 · LLM-Brewing</title>
+  <style>
+    :root {
+      --paper: #f4f5f8;
+      --panel: #ffffff;
+      --ink: #171b22;
+      --ink-2: #4a5162;
+      --ink-3: #737b8d;
+      --rule: #d6dae3;
+      --rule-soft: #e7e9ee;
+      --blue: #356d9f;
+      --purple: #7a4e9e;
+      --rose: #b84366;
+      --green: #27795a;
+      --red: #ae3d3d;
+      --amber: #8a641f;
+      --blue-wash: #356d9f14;
+      --purple-wash: #7a4e9e14;
+      --rose-wash: #b8436614;
+      --green-wash: #27795a14;
+      --red-wash: #ae3d3d12;
+      --amber-wash: #8a641f14;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", serif;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      --shell: min(100% - 2.5rem, 80rem);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #12151b;
+        --panel: #191d25;
+        --ink: #e6e9f0;
+        --ink-2: #a7aebe;
+        --ink-3: #7f8798;
+        --rule: #363d4a;
+        --rule-soft: #272d37;
+        --blue: #79b1df;
+        --purple: #b58ddb;
+        --rose: #ea8da7;
+        --green: #64bd91;
+        --red: #ec7975;
+        --amber: #dbb564;
+        --blue-wash: #79b1df18;
+        --purple-wash: #b58ddb18;
+        --rose-wash: #ea8da718;
+        --green-wash: #64bd9118;
+        --red-wash: #ec797516;
+        --amber-wash: #dbb56416;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.72;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration-color: var(--ink-3); text-underline-offset: 3px; }
+    a:hover { text-decoration-color: var(--rose); }
+    code, .mono {
+      font-family: var(--mono);
+      font-size: 0.86em;
+      overflow-wrap: anywhere;
+    }
+    .shell { width: var(--shell); margin-inline: auto; }
+
+    header {
+      padding-block: 2rem 2.4rem;
+      border-bottom: 1px solid var(--ink);
+    }
+    .back {
+      display: inline-block;
+      margin-bottom: 2.4rem;
+      color: var(--ink-2);
+      font-family: var(--mono);
+      font-size: 0.76rem;
+    }
+    .eyebrow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem 1.3rem;
+      margin-bottom: 1rem;
+      color: var(--ink-3);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 {
+      font-family: var(--serif);
+      text-wrap: balance;
+    }
+    h1 {
+      max-width: 18ch;
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      line-height: 1.02;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .standfirst {
+      max-width: 70ch;
+      margin: 1.3rem 0 0;
+      color: var(--ink-2);
+      font-family: var(--serif);
+      font-size: clamp(1.05rem, 2vw, 1.27rem);
+      line-height: 1.62;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.8rem;
+      margin-top: 1.7rem;
+      color: var(--ink-3);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+    }
+
+    main { padding-block: 1.5rem 5rem; }
+    section { padding-block: 2.5rem; border-top: 1px solid var(--rule-soft); }
+    section:first-child { border-top: 0; }
+    h2 {
+      margin: 0 0 1rem;
+      font-size: clamp(1.65rem, 3vw, 2.2rem);
+      line-height: 1.18;
+    }
+    h3 {
+      margin: 2rem 0 0.65rem;
+      font-size: 1.25rem;
+      line-height: 1.3;
+    }
+    p { max-width: 74ch; margin: 0.7rem 0; }
+    ul { max-width: 76ch; padding-left: 1.25rem; }
+    li + li { margin-top: 0.45rem; }
+
+    .jump {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+      gap: 0.65rem;
+      margin-top: 1.5rem;
+    }
+    .jump a {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.7rem;
+      align-items: baseline;
+      min-height: 4.5rem;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--panel);
+      text-decoration: none;
+    }
+    .jump a:hover { border-color: var(--rose); }
+    .exp-id {
+      color: var(--rose);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .jump b { font-size: 0.9rem; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+      gap: 0.8rem;
+      margin-block: 1.4rem;
+    }
+    .flow-step {
+      min-height: 8rem;
+      padding: 1rem;
+      border-top: 3px solid var(--blue);
+      background: var(--panel);
+    }
+    .flow-step:nth-child(2) { border-color: var(--purple); }
+    .flow-step:nth-child(3) { border-color: var(--rose); }
+    .flow-step:nth-child(4) { border-color: var(--green); }
+    .flow-step b { display: block; margin-bottom: 0.35rem; }
+    .flow-step p { margin: 0; color: var(--ink-2); font-size: 0.86rem; line-height: 1.55; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+      gap: 1rem;
+      margin-block: 1.2rem;
+    }
+    .panel {
+      padding: 1.1rem 1.2rem;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    .panel h3 {
+      margin: 0 0 0.55rem;
+      font-family: var(--sans);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+    .panel p, .panel ul { margin-block: 0.45rem; font-size: 0.91rem; }
+
+    .experiment {
+      margin-block: 1.2rem 3rem;
+      padding: clamp(1.15rem, 3vw, 2rem);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      background: var(--panel);
+      scroll-margin-top: 1rem;
+    }
+    .experiment-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.8rem 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--rule-soft);
+    }
+    .experiment-head h2 { margin: 0.25rem 0 0; font-size: clamp(1.55rem, 3vw, 2.05rem); }
+    .status {
+      display: inline-block;
+      padding: 0.25rem 0.58rem;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .pass { color: var(--green); background: var(--green-wash); }
+    .fail { color: var(--red); background: var(--red-wash); }
+    .support { color: var(--purple); background: var(--purple-wash); }
+    .base { color: var(--blue); background: var(--blue-wash); }
+    .audit { color: var(--amber); background: var(--amber-wash); }
+    .lede {
+      max-width: 70ch;
+      margin: 1.1rem 0;
+      color: var(--ink-2);
+      font-family: var(--serif);
+      font-size: 1.08rem;
+    }
+
+    .callout {
+      margin-block: 1.1rem;
+      padding: 1rem 1.15rem;
+      border-left: 4px solid var(--blue);
+      background: var(--blue-wash);
+    }
+    .callout.result { border-color: var(--green); background: var(--green-wash); }
+    .callout.warning { border-color: var(--red); background: var(--red-wash); }
+    .callout.interpret { border-color: var(--purple); background: var(--purple-wash); }
+    .callout h3 {
+      margin: 0 0 0.35rem;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+    }
+    .callout p { margin: 0.35rem 0; font-size: 0.92rem; }
+
+    .scroller {
+      overflow-x: auto;
+      margin-block: 1.1rem 1.4rem;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+    table {
+      width: 100%;
+      min-width: 42rem;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+    caption {
+      padding: 0.85rem 1rem 0.65rem;
+      color: var(--ink-3);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      text-align: left;
+    }
+    th, td {
+      padding: 0.72rem 0.85rem;
+      border-top: 1px solid var(--rule-soft);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      color: var(--ink-2);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    tr.highlight td { background: var(--rose-wash); }
+    .dim { color: var(--ink-3); }
+
+    .artifact {
+      margin-block: 0.55rem;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--rule-soft);
+      border-radius: 6px;
+      background: var(--paper);
+      color: var(--ink-2);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      overflow-wrap: anywhere;
+    }
+    footer {
+      padding-block: 1.8rem 4rem;
+      border-top: 1px solid var(--ink);
+      color: var(--ink-3);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+    }
+
+    @media (max-width: 620px) {
+      :root { --shell: min(100% - 1.25rem, 80rem); }
+      header { padding-top: 1rem; }
+      .experiment { border-radius: 7px; }
+      th, td { padding: 0.62rem 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell">
+      <a class="back" href="general-prefill-dossier.html">← 返回 General Prefill 实验总览</a>
+      <div class="eyebrow">
+        <span>LLM-Brewing</span>
+        <span>General Prefill</span>
+        <span>八项正式实验</span>
+      </div>
+      <h1>这些实验具体做了什么</h1>
+      <p class="standfirst">
+        这是一份按实验编号展开的方法与结论地图。每张实验卡片分别说明研究问题、实际操作、对照、关键结果、
+        能支持的结论和不能越过的边界。页面区分事前确定的验证实验与正式结果出来后追加的实验。
+      </p>
+      <div class="meta">
+        <span>锚点模型：Qwen3-4B-Base · Qwen3.5-9B-Base</span>
+        <span>主运行：56cf303a0bee12f2__5ffa284ecd741a77</span>
+        <span>结果核验：2026-07-14</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section id="overview">
+      <h2>先看整条实验链</h2>
+      <p>
+        研究从数据审计开始，先确认答案信息何时可由外部读出、何时能被模型自己的输出路径读出，
+        再用受控标签变换排除表面模式。随后才进入状态替换、方向干预和组件敲除。
+      </p>
+
+      <div class="flow">
+        <div class="flow-step">
+          <b>一、建立可信数据</b>
+          <p>冻结两条证据轨，确保目标 token、分组和两个模型的 tokenizer 身份可审计。</p>
+        </div>
+        <div class="flow-step">
+          <b>二、确认逐层现象</b>
+          <p>用外部线性探针和模型自身解码路径，分别定位信息可得性与信息就绪性。</p>
+        </div>
+        <div class="flow-step">
+          <b>三、检验因果作用</b>
+          <p>先做原定单层状态替换，再用多层窗口和方向引导查明负结果来自哪里。</p>
+        </div>
+        <div class="flow-step">
+          <b>四、定位承重组件</b>
+          <p>在接管边界附近敲除注意力和多层感知机输出，寻找局部承重结构。</p>
+        </div>
+      </div>
+
+      <h3>实验编号导航</h3>
+      <nav class="jump" aria-label="实验编号导航">
+        <a href="#gp-data-01"><span class="exp-id">GP-DATA-01</span><b>冻结实验数据</b></a>
+        <a href="#gp-obs-01"><span class="exp-id">GP-OBS-01</span><b>观察答案何时可读、何时就绪</b></a>
+        <a href="#gp-cf-01"><span class="exp-id">GP-CF-01</span><b>改变正确答案的位置</b></a>
+        <a href="#gp-causal-01"><span class="exp-id">GP-CAUSAL-01</span><b>单层状态替换</b></a>
+        <a href="#gp-audit-01"><span class="exp-id">GP-AUDIT-01</span><b>审查结论边界</b></a>
+        <a href="#gp-causal-02"><span class="exp-id">GP-CAUSAL-02</span><b>多层替换与边界细扫</b></a>
+        <a href="#gp-causal-03"><span class="exp-id">GP-CAUSAL-03</span><b>沿答案方向推动状态</b></a>
+        <a href="#gp-causal-04"><span class="exp-id">GP-CAUSAL-04</span><b>寻找承重组件</b></a>
+      </nav>
+
+      <div class="grid">
+        <div class="panel">
+          <h3>两条证据轨</h3>
+          <p><b>Track A</b> 使用完整正确答案，负责通用领域广度和主确认性分析。</p>
+          <p><b>Track B</b> 循环改变选项位置，负责控制答案绑定并构造因果实验配对。</p>
+        </div>
+        <div class="panel">
+          <h3>三个逐层阶段</h3>
+          <p><b>信息可得性</b>表示答案可由外部线性探针读出。</p>
+          <p><b>信息就绪性</b>表示模型自己的输出路径已经能稳定读出答案。</p>
+          <p><b>行为接管</b>表示定向干预已经能稳定控制最终选择。</p>
+        </div>
+        <div class="panel">
+          <h3>因果实验中的两个样本角色</h3>
+          <p><b>来源样本</b>提供答案定向状态或方向；<b>被替换样本</b>接受干预，并用于测量输出变化。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <article class="experiment" id="gp-data-01">
+        <div class="experiment-head">
+          <div>
+            <span class="exp-id">GP-DATA-01</span>
+            <h2>冻结实验数据</h2>
+          </div>
+          <span class="status base">数据前提 · 通过审计</span>
+        </div>
+        <p class="lede">
+          先保证后续实验比较的是同一批语义问题、同一套答案身份和模型各自正确解析的目标 token。
+        </p>
+
+        <div class="grid">
+          <div class="panel">
+            <h3>研究问题</h3>
+            <p>能否从九个公开 benchmark 构造两个模型都可比较、切分无泄漏、答案身份可追溯的冻结数据产品？</p>
+          </div>
+          <div class="panel">
+            <h3>具体做法</h3>
+            <ul>
+              <li>把不同数据源统一成规范记录。</li>
+              <li>按语义身份去重并剔除冲突组。</li>
+              <li>以规范问题组切分训练、验证和评测数据。</li>
+              <li>隔离 few-shot 示例，避免与评测问题重叠。</li>
+              <li>分别用两个模型的 tokenizer 编译正确答案。</li>
+              <li>只保留完整答案在精确边界后为单 token 的样本。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="scroller">
+          <table>
+            <caption>冻结数据与正式评测范围</caption>
+            <thead>
+              <tr><th>证据轨</th><th>数据产品</th><th>正式主评测</th><th>用途</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Track A</td>
+                <td>44,478 个样本，26 类完整答案</td>
+                <td>6,697 个样本，5,713 个规范问题组</td>
+                <td>主观测性结论与完整答案方向复现</td>
+              </tr>
+              <tr>
+                <td>Track B</td>
+                <td>26,750 个规范问题，107,000 个循环排列变体</td>
+                <td>4,044 个问题，16,176 个变体</td>
+                <td>受控标签变换和因果实验配对</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout result">
+          <h3>得到什么</h3>
+          <p>去重、分组隔离、目标 token 校验和训练评测组隔离均通过，为后续七项实验提供共同数据基础。</p>
+        </div>
+        <div class="callout warning">
+          <h3>结论边界</h3>
+          <p>GSM8K、MATH-500 和 CRUXEval 只代表完整答案满足单 token 条件的切片，不能代表这些 benchmark 的全部样本。</p>
+        </div>
+        <div class="artifact">代码：scripts/prepare_general_prefill_data.py · brewing/benchmarks/general_prefill/</div>
+      </article>
+
+      <article class="experiment" id="gp-obs-01">
+        <div class="experiment-head">
+          <div>
+            <span class="exp-id">GP-OBS-01</span>
+            <h2>观察答案何时可读、何时就绪</h2>
+          </div>
+          <span class="status pass">确认性通过</span>
+        </div>
+        <p class="lede">
+          这项实验是主观测性结果：它比较外部线性探针何时能读出正确答案，以及模型自身输出路径何时能稳定读出同一答案。
+        </p>
+
+        <div class="grid">
+          <div class="panel">
+            <h3>两种读出</h3>
+            <p><b>线性探针</b>在每一层单独训练，负责定位信息可得性。</p>
+            <p><b>上下文剥离解码</b>把该层状态直接接到模型最终归一化与输出头，负责定位信息就绪性。</p>
+          </div>
+          <div class="panel">
+            <h3>确认性对照</h3>
+            <ul>
+              <li>每种方法使用二十组完整空值运行。</li>
+              <li>三个中性答案提示后缀。</li>
+              <li>低秩探针和多层感知机探针容量消融。</li>
+              <li>以规范问题组为单位进行两千次重采样。</li>
+              <li>稳定起点要求连续至少三层超过确认性阈值。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="scroller">
+          <table>
+            <caption>Track A 双模型确认性结果</caption>
+            <thead>
+              <tr>
+                <th>模型</th><th class="num">层数</th><th class="num">信息可得性起点</th>
+                <th class="num">信息就绪性起点</th><th class="num">层位差</th><th>不确定性区间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Qwen3-4B-Base</td><td class="num">36</td><td class="num">L18</td><td class="num">L22</td><td class="num">4 层</td><td>2 至 5 层</td></tr>
+              <tr><td>Qwen3.5-9B-Base</td><td class="num">32</td><td class="num">L13</td><td class="num">L19</td><td class="num">6 层</td><td>5 至 7 层</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout result">
+          <h3>主要结论</h3>
+          <p>两个被测模型中，正确答案都先变得可以由外部探针稳定读出，随后才变得可以由模型自身输出路径稳定解码。三个提示后缀下方向一致。</p>
+          <p>9B 模型的 L15 是直观例子：线性探针平衡准确率约为 0.57，而上下文剥离解码仍约为 0.20。</p>
+        </div>
+        <div class="callout warning">
+          <h3>不能据此声称</h3>
+          <p>这项实验是观测性读出实验。它不能单独证明主窗口内的状态已经能因果控制输出，也不能推广到所有语言模型。</p>
+        </div>
+        <div class="artifact">产物：&lt;run&gt;/&lt;model&gt;/analysis/generalprefill_gt.json</div>
+      </article>
+
+      <article class="experiment" id="gp-cf-01">
+        <div class="experiment-head">
+          <div>
+            <span class="exp-id">GP-CF-01</span>
+            <h2>改变正确答案的位置</h2>
+          </div>
+          <span class="status pass">确认性通过</span>
+        </div>
+        <p class="lede">
+          保持题目和选项内容不变，只循环调整选项顺序，让正确答案对应的字母位置发生受控变化。
+        </p>
+
+        <div class="grid">
+          <div class="panel">
+            <h3>为什么要做</h3>
+            <p>如果探针只是记住某些字母位置或题面模板，改变选项排列后，逐层读出就不应稳定跟随新的正确字母。</p>
+          </div>
+          <div class="panel">
+            <h3>具体做法</h3>
+            <p>每个规范问题生成四个循环排列；两个模型分别训练四类线性探针，并使用同口径的上下文剥离解码、空值对照和等变性分析。</p>
+          </div>
+        </div>
+
+        <div class="scroller">
+          <table>
+            <caption>Track B 选项置换反事实结果</caption>
+            <thead>
+              <tr><th>模型</th><th class="num">层位差</th><th>不确定性区间</th><th class="num">最终行为等变性</th><th class="num">探针等变性峰值</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>4B 模型</td><td class="num">1 层</td><td>1 至 1 层</td><td class="num">0.721</td><td class="num">0.711</td></tr>
+              <tr><td>9B 模型</td><td class="num">3 层</td><td>3 至 3 层</td><td class="num">0.810</td><td class="num">0.789</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout result">
+          <h3>主要结论</h3>
+          <p>改变正确答案的字母位置后，信息可得性仍早于信息就绪性，探针读出和最终行为也会跟随新的答案绑定。固定字母位置或单一题面模式不足以解释 Track A 的结果。</p>
+        </div>
+        <div class="callout warning">
+          <h3>结论边界</h3>
+          <p>读出能够跟随受控标签变化，不等于主窗口内的自然状态已经具有足够强的因果作用。</p>
+        </div>
+        <div class="artifact">产物：&lt;run&gt;/&lt;model&gt;/analysis/choicepermutation_cf.json</div>
+      </article>
+
+      <article class="experiment" id="gp-causal-01">
+        <div class="experiment-head">
+          <div>
+            <span class="exp-id">GP-CAUSAL-01</span>
+            <h2>单层状态替换</h2>
+          </div>
+          <span class="status fail">确认性未通过</span>
+        </div>
+        <p class="lede">
+          这是事前确定的因果验证实验。它直接检查：只替换主窗口中的某一层状态，是否足以把输出推向来源样本的答案。
+        </p>
+
+        <div class="grid">
+          <div class="panel">
+            <h3>具体操作</h3>
+            <p>在 Track B 同一道题的不同选项排列之间，取来源样本某一层、观测边界处的残差流状态，替换被替换样本同层同位置的状态，然后继续运行模型。</p>
+          </div>
+          <div class="panel">
+            <h3>实验对照</h3>
+            <ul>
+              <li><b>self 对照</b>：重新注入被替换样本自己的状态。</li>
+              <li><b>随机问题对照</b>：改用其他问题的匹配来源状态。</li>
+              <li><b>邻层对照</b>：改用相邻来源层，检查层位特异性。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="scroller">
+          <table>
+            <caption>单层状态替换相对于随机问题对照的结果</caption>
+            <thead>
+              <tr><th>模型</th><th>Track A 主窗口</th><th class="num">窗口内平均效应</th><th>首个稳定增强位置</th><th>全层峰值</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>4B 模型</td><td>L18 至 L22</td><td class="num">−0.690</td><td>L24</td><td>L34 为 5.9</td></tr>
+              <tr><td>9B 模型</td><td>L13 至 L19</td><td class="num">−0.010</td><td>L19 至 L20</td><td>L31 为 10.0</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout warning">
+          <h3>正式判定</h3>
+          <p>两个模型在主窗口内都没有达到“单层状态替换的答案定向效应超过随机问题对照”这一原定因果判据。因此状态保持为确认性未通过。</p>
+        </div>
+        <div class="callout result">
+          <h3>仍然有价值的观察</h3>
+          <p>4B 模型的效应到 L24 才稳定增强；9B 模型在信息就绪性边界附近开始增强。这提示因果可用性晚于信息可得性，但它不改变原实验判定。</p>
+        </div>
+        <div class="artifact">产物：option_permutation_interchange__primary.json</div>
+      </article>
+
+      <article class="experiment" id="gp-audit-01">
+        <div class="experiment-head">
+          <div>
+            <span class="exp-id">GP-AUDIT-01</span>
+            <h2>审查结论能说到哪里</h2>
+          </div>
+          <span class="status audit">联合审计完成</span>
+        </div>
+        <p class="lede">
+          这不是新的模型干预，而是把两个模型、两条证据轨、完整空值对照和原定因果检验放在一起，按事前确定的声明规则决定允许写出的最强结论。
+        </p>
+
+        <div class="grid">
+          <div class="panel">
+            <h3>通过的检查</h3>
+            <ul>
+              <li>两个模型的主观测性层位差均为正。</li>
+              <li>每种方法所需的二十组空值运行齐全。</li>
+              <li>提示后缀敏感性检查方向一致。</li>
+              <li>选项置换后，层间顺序和答案绑定仍然保留。</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>未通过或不允许的声明</h3>
+            <ul>
+              <li>原定单层状态替换因果判据没有通过。</li>
+              <li>不能声称主窗口内的因果机制已经闭合。</li>
+              <li>不能把两个 Qwen Base 模型推广为所有语言模型。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout result">
+          <h3>最大允许结论</h3>
+          <p>在两个被测 Qwen Base 模型和冻结数据范围内，规范正确答案在模型能够通过自身输出路径稳定解码之前，已经可以由外部线性探针读出。</p>
+        </div>
+        <div class="artifact">产物：&lt;run&gt;/combined/claim_audit.json</div>
+      </article>
+
+      <article class="experiment" id="gp-causal-02">
+        <div class="experiment-head">
+          <div>
+            <span class="exp-id">GP-CAUSAL-02</span>
+            <h2>多层状态替换与边界细扫</h2>
+          </div>
+          <span class="status support">受控追加证据</span>
+        </div>
+        <p class="lede">
+          单层替换可能被后续层重新计算覆盖。这项实验把来源样本的自然状态轨迹连续注入一个多层窗口，并逐层扩展窗口，观察何时开始稳定改变最终答案。
+        </p>
+
+        <div class="grid">
+          <div class="panel">
+            <h3>样本与设计</h3>
+            <p>4B 模型使用 2,048 个配对、512 个选项置换组；9B 模型使用 1,024 个配对、256 个组。</p>
+            <p>同时设置窗口前、窗口后、self 和随机问题对照。</p>
+          </div>
+          <div class="panel">
+            <h3>这项实验回答什么</h3>
+            <p>一是检查原定实验的负结果能否只用“后层重算”解释；二是把行为接管开始出现的范围缩小到具体层位。</p>
+          </div>
+        </div>
+
+        <div class="scroller">
+          <table>
+            <caption>4B 模型的关键窗口</caption>
+            <thead><tr><th>连续替换窗口</th><th class="num">相对随机问题效应</th><th class="num">行为翻转率</th><th>解释</th></tr></thead>
+            <tbody>
+              <tr><td>L13 至 L17</td><td class="num">−0.05</td><td class="num">6.2%</td><td>窗口前基线</td></tr>
+              <tr><td>L18 单层</td><td class="num">−0.19</td><td class="num">6.4%</td><td>复现原定单层实验</td></tr>
+              <tr><td>L18 至 L22</td><td class="num">−0.76</td><td class="num">6.8%</td><td>覆盖整个 Track A 主窗口仍接近基线</td></tr>
+              <tr><td>L18 至 L23</td><td class="num">−0.73</td><td class="num">7.3%</td><td>边界前仍未接管</td></tr>
+              <tr class="highlight"><td>L18 至 L24</td><td class="num">+5.22</td><td class="num">76.1%</td><td>行为接管明显出现</td></tr>
+              <tr><td>L24 至 L28</td><td class="num">+5.62</td><td class="num">76.5%</td><td>窗口后保持强效应</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="scroller">
+          <table>
+            <caption>9B 模型的关键窗口</caption>
+            <thead><tr><th>连续替换窗口</th><th class="num">相对随机问题效应</th><th class="num">行为翻转率</th><th>解释</th></tr></thead>
+            <tbody>
+              <tr><td>L8 至 L12</td><td class="num">−0.06</td><td class="num">6.4%</td><td>窗口前基线</td></tr>
+              <tr><td>L13 至 L17</td><td class="num">仍为负</td><td class="num">约 6.5%</td><td>较浅窗口没有接管</td></tr>
+              <tr><td>L13 至 L19</td><td class="num">+1.09</td><td class="num">7.8%</td><td>分数级效应已转正，离散行为仍接近基线</td></tr>
+              <tr><td>L13 至 L20</td><td class="num dim">未单独报告</td><td class="num">8.6%</td><td>边界精扫</td></tr>
+              <tr><td>L13 至 L21</td><td class="num dim">未单独报告</td><td class="num">8.9%</td><td>边界精扫</td></tr>
+              <tr class="highlight"><td>L13 至 L22</td><td class="num dim">未单独报告</td><td class="num">24.3%</td><td>行为接管开始出现</td></tr>
+              <tr><td>L21 至 L25</td><td class="num">+3.83</td><td class="num">58.5%</td><td>窗口后明显增强</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout result">
+          <h3>主要结论</h3>
+          <p>覆盖整个主窗口的自然来源轨迹仍不能稳定接管输出，因此“单层干预被后层完全重算”不能单独解释原定实验的负结果。</p>
+          <p>4B 模型的行为接管边界位于 L24；9B 模型在 L19 已出现分数级效应，但行为接管要到 L22 才开始。分数变化与最终改判必须分开报告。</p>
+        </div>
+        <div class="callout warning">
+          <h3>结论边界</h3>
+          <p>这是累积窗口干预，只能定位接管发生在哪一段，不能证明边界层中的任意单个组件独自充分或必要。</p>
+        </div>
+        <div class="artifact">产物：gap_window_interchange__primary.json · __extend.json · __boundary.json</div>
+      </article>
+
+      <article class="experiment" id="gp-causal-03">
+        <div class="experiment-head">
+          <div>
+            <span class="exp-id">GP-CAUSAL-03</span>
+            <h2>沿答案方向推动隐藏状态</h2>
+          </div>
+          <span class="status support">受控追加证据</span>
+        </div>
+        <p class="lede">
+          不再复制自然状态，而是沿线性探针识别出的答案对比方向推动隐藏状态，用来区分“方向不对”和“方向正确但自然幅度不足”。
+        </p>
+
+        <div class="grid">
+          <div class="panel">
+            <h3>实验对照</h3>
+            <ul>
+              <li>等范数随机方向：检查是否只是大幅扰动。</li>
+              <li>负方向：检查答案语义是否呈反向变化。</li>
+              <li>不同干预强度：观察效应是否随强度变化。</li>
+              <li>单层与连续窗口：比较局部推动和累积推动。</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>运行范围</h3>
+            <p>Track B 主运行中，4B 模型使用 1,024 个配对，9B 模型使用 512 个配对；之后又在 Track A 的 26 类完整答案空间中复现。</p>
+          </div>
+        </div>
+
+        <div class="scroller">
+          <table>
+            <caption>Track B 的代表性方向引导结果</caption>
+            <thead><tr><th>模型与位置</th><th>设置</th><th class="num">相对随机方向效应</th><th class="num">行为翻转率</th><th>关键观察</th></tr></thead>
+            <tbody>
+              <tr><td>4B · L20</td><td>单层，基础强度</td><td class="num">3.25</td><td class="num">56.9%</td><td>随机方向翻转率为 9.1%</td></tr>
+              <tr><td>4B · L24</td><td>单层，基础强度</td><td class="num">6.44</td><td class="num">95.4%</td><td>与自然状态行为接管边界重合</td></tr>
+              <tr><td>4B · L20 至 L22</td><td>窗口，基础强度</td><td class="num">3.35</td><td class="num">61.9%</td><td>深侧窗口明显强于浅侧窗口</td></tr>
+              <tr><td>9B · L17</td><td>单层，较强档</td><td class="num">3.27</td><td class="num">44.9%</td><td>跨过 Track B 信息就绪性起点后增强</td></tr>
+              <tr><td>9B · L19</td><td>单层，较强档</td><td class="num dim">未单独列出</td><td class="num">93.4%</td><td>到 Track A 信息就绪性起点已很强</td></tr>
+              <tr><td>9B · L13 至 L19</td><td>整段窗口，基础强度</td><td class="num">来源 8.47；随机 1.22</td><td class="num">95.1%</td><td>负方向翻转率为零</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="scroller">
+          <table>
+            <caption>Track A 完整答案空间复现</caption>
+            <thead><tr><th>模型与位置</th><th class="num">相对随机方向效应</th><th class="num">行为翻转率</th><th>结果</th></tr></thead>
+            <tbody>
+              <tr><td>4B · L24</td><td class="num">8.01</td><td class="num">84.7%</td><td>L24 边界在 26 类答案空间再次出现</td></tr>
+              <tr><td>9B · L19</td><td class="num">3.22</td><td class="num">46.1%</td><td>信息就绪性边界附近出现方向特异效应</td></tr>
+              <tr><td>9B · L25</td><td class="num dim">较强档</td><td class="num">99.2%</td><td>深层方向效应接近完全接管</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout interpret">
+          <h3>机制解释</h3>
+          <p>主窗口中已经存在与答案对应的方向，但自然来源状态的幅度或下游读出连接还不足。到信息就绪性边界附近，方向特异的放大开始生效。这与“信息在场但欠放大”的解释一致。</p>
+        </div>
+        <div class="callout warning">
+          <h3>不能据此声称</h3>
+          <p>方向引导远强于自然波动。它能证明这个方向携带可被下游利用的信息，但不能证明模型自然运行时沿完全相同的方向、以相同幅度计算，也不能替代原定单层状态替换判据。</p>
+        </div>
+        <div class="artifact">产物：probe_direction_steering__primary.json · __phase3.json · __phase4.json · gt_probe_steering__primary.json</div>
+      </article>
+
+      <article class="experiment" id="gp-causal-04">
+        <div class="experiment-head">
+          <div>
+            <span class="exp-id">GP-CAUSAL-04</span>
+            <h2>寻找承重组件</h2>
+          </div>
+          <span class="status support">受控追加证据</span>
+        </div>
+        <p class="lede">
+          在每一层分别把观测位置的注意力输出或多层感知机输出置零，观察原本预测答案的分数、改判率和答案空间准确率如何变化。
+        </p>
+
+        <div class="scroller">
+          <table>
+            <caption>组件敲除的关键结果</caption>
+            <thead><tr><th>模型与组件</th><th class="num">原答案分数变化</th><th class="num">改判率</th><th>准确率变化</th><th>解释</th></tr></thead>
+            <tbody>
+              <tr class="highlight"><td>4B · L24 注意力</td><td class="num">−0.94</td><td class="num">15.4%</td><td>0.730 降至 0.709</td><td>中层唯一明显单点，与行为接管边界重合</td></tr>
+              <tr><td>4B · L18 至 L22 单组件</td><td class="num">绝对值不超过 0.6</td><td class="num">不超过 5%</td><td class="dim">变化较小</td><td>主窗口中没有同等明显单点</td></tr>
+              <tr><td>4B · L35 多层感知机</td><td class="num">−17.9</td><td class="num">5.8%</td><td class="dim">未作为主归因</td><td>更像末端分数整体压缩</td></tr>
+              <tr><td>9B · 中层单组件</td><td class="num">绝对值不超过 0.3</td><td class="num">1% 至 3%</td><td class="dim">变化较小</td><td>没有明显中层单点</td></tr>
+              <tr class="highlight"><td>9B · L31 注意力</td><td class="num">−4.6</td><td class="num">28.7%</td><td>0.766 降至 0.676</td><td>最后一个 full-attention 层是唯一明显单点</td></tr>
+              <tr><td>9B · L31 多层感知机</td><td class="num">+3.5</td><td class="num dim">探索性</td><td class="dim">未作确认性解释</td><td>可能反映校准或抑制作用</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout result">
+          <h3>主要结论</h3>
+          <p>4B 模型的接管结构相对集中，L24 注意力层是明确局部关键点。9B 模型在行为接管窗口内没有对应的强单点，更符合多个层和组件共同承载的解释。</p>
+        </div>
+        <div class="callout warning">
+          <h3>结论边界</h3>
+          <p>单组件敲除对冗余回路不敏感。9B 模型缺少显著中层单点，不等于它没有中层机制；4B 的 L24 结果也不能替代头级和路径级归因。</p>
+        </div>
+        <div class="artifact">产物：component_knockout__primary.json</div>
+      </article>
+    </section>
+
+    <section id="synthesis">
+      <h2>把八项实验放在一起，结论是什么</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>确认性支持</h3>
+          <ul>
+            <li>两个被测模型中，正确答案先达到信息可得性，随后达到信息就绪性。</li>
+            <li>改变正确答案的字母位置后，这一层间顺序仍然保留。</li>
+            <li>事前确定的单层状态替换没有达到原定因果判据。</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>受控追加支持</h3>
+          <ul>
+            <li>自然来源轨迹覆盖整个主窗口时仍不足以稳定接管输出。</li>
+            <li>答案方向的因果作用在信息就绪性边界附近增强。</li>
+            <li>行为接管通常晚于最早的分数级效应。</li>
+            <li>4B 模型的接管更集中，9B 模型更分布式。</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>当前机制解释</h3>
+          <p>答案方向先进入一种外部可读、但自然幅度或下游连接还不足的状态。模型继续计算后，该方向逐渐被放大并接入自身输出路径，最终才具备稳定控制离散答案的能力。</p>
+        </div>
+        <div class="panel">
+          <h3>仍然不能说</h3>
+          <ul>
+            <li>不能说主窗口内的自然状态已经通过原定因果判据。</li>
+            <li>不能把探针方向等同于模型的自然计算路径。</li>
+            <li>不能把某个边界层宣布为对两个模型都充分且必要。</li>
+            <li>不能推广到所有语言模型。</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>仍待回答的问题</h3>
+      <ul>
+        <li>4B 模型 L24 注意力中，哪些头和上下文位置真正承重？</li>
+        <li>9B 模型 L22 至 L25 的最小联合承重组件是什么？</li>
+        <li>信息就绪性前后，答案方向的自然幅度如何逐层变化？</li>
+        <li>相同边界规律能否在非 Qwen 模型上复现？</li>
+      </ul>
+    </section>
+
+    <section id="artifacts">
+      <h2>权威产物与复现入口</h2>
+      <p>主运行根目录：</p>
+      <div class="artifact">brewing_output/general_prefill_runs/56cf303a0bee12f2__5ffa284ecd741a77/</div>
+      <div class="grid">
+        <div class="panel">
+          <h3>确认性分析</h3>
+          <p class="mono">&lt;model&gt;/analysis/generalprefill_gt.json</p>
+          <p class="mono">&lt;model&gt;/analysis/choicepermutation_cf.json</p>
+          <p class="mono">combined/claim_audit.json</p>
+        </div>
+        <div class="panel">
+          <h3>因果实验</h3>
+          <p class="mono">option_permutation_interchange__primary.json</p>
+          <p class="mono">gap_window_interchange__*.json</p>
+          <p class="mono">probe_direction_steering__*.json</p>
+          <p class="mono">component_knockout__primary.json</p>
+        </div>
+        <div class="panel">
+          <h3>代码入口</h3>
+          <p class="mono">scripts/run_general_prefill_anchor.py</p>
+          <p class="mono">scripts/run_causal_gap_experiments.py</p>
+          <p class="mono">brewing/causal/option_interchange.py</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">
+      本页汇总自 EXPERIMENT_INDEX.md、docs/brewing_confirmatory_report.md 和 docs/causal_gap_followup_report.md。
+      实验状态以实验索引和正式报告为准。<br>
+      <a href="general-prefill-dossier.html">返回实验总览</a>
+    </div>
+  </footer>
+</body>
+</html>
