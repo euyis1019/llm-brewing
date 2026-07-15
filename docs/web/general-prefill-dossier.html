@@ -727,6 +727,73 @@
 
     </div>
 
+    <h3>实验编号速查</h3>
+    <p>
+      所有编号都以 <span class="exp-id">GP</span> 开头，表示属于 General Prefill 研究。
+      中间部分说明实验类型：<span class="exp-id">DATA</span> 是数据构建，<span class="exp-id">OBS</span> 是观测实验，
+      <span class="exp-id">CF</span> 是受控反事实，<span class="exp-id">CAUSAL</span> 是因果干预，
+      <span class="exp-id">AUDIT</span> 是结论审计。末尾序号只表示同类实验的登记顺序。
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>八项已登记实验 · 按研究流程排列</caption>
+        <thead>
+          <tr><th>编号</th><th>通俗名称</th><th>具体做了什么</th><th>结果与用途</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exp-id">GP-DATA-01</td>
+            <td>冻结实验数据</td>
+            <td>筛选并冻结两条证据轨，完成双 tokenizer 校验、去重和分组隔离。</td>
+            <td>通过审计；为后续所有实验提供可比较的数据基础。</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-OBS-01</td>
+            <td>观察答案何时可读、何时就绪</td>
+            <td>在 Track A 上对两个模型逐层运行线性探针和 CSD，并加入空值、提示后缀和探针容量对照。</td>
+            <td>确认性通过；给出信息可得性、信息就绪性及二者之间窗口的边界。</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-CF-01</td>
+            <td>改变正确答案的位置</td>
+            <td>保持题目和选项内容不变，循环调整选项位置与正确答案字母，再重复探针、CSD 和等变性分析。</td>
+            <td>确认性通过；说明主结果不能只用固定字母位置或单一题面模式解释。</td>
+          </tr>
+          <tr class="row-hi">
+            <td class="exp-id">GP-CAUSAL-01</td>
+            <td>单层状态替换</td>
+            <td>把来源样本的单层残差状态换给被替换样本，并与 self、随机问题和邻层对照比较。</td>
+            <td>确认性未通过；主窗口内的单层自然状态不足以超过匹配对照。</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-AUDIT-01</td>
+            <td>审查结论能说到哪里</td>
+            <td>合并两个模型、两条证据轨和预注册因果结果，按预先规定的门槛审查声明。</td>
+            <td>审计完成；放行观测性结论，但不允许普适声明或因果闭合声明。</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-CAUSAL-02</td>
+            <td>多层状态替换与边界细扫</td>
+            <td>从信息可得性起点开始连续替换多层来源轨迹，再逐层扩展窗口、细扫变化边界。</td>
+            <td>受控追加；检验后层重算解释，并定位本页使用的行为接管边界。</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-CAUSAL-03</td>
+            <td>沿答案方向推动隐藏状态</td>
+            <td>沿探针识别的答案方向干预隐藏状态，加入随机方向和负方向对照，并在 Track A 上复现。</td>
+            <td>受控追加；检验答案方向是否正确，以及自然状态是否只是幅度不足。</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-CAUSAL-04</td>
+            <td>寻找承重组件</td>
+            <td>逐层敲除注意力或多层感知机输出，观察答案分数和最终改判。</td>
+            <td>受控追加；定位接管阶段由哪些层和组件承载，并比较两个模型的差异。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <h3>证据状态的六个档位</h3>
     <p>
       结果陈述只用下面这六个状态，不用勾号叉号，也不用"基本证明"这类模糊措辞。
@@ -902,84 +969,7 @@
   </section>
 
   <section>
-    <div class="sec-head"><span class="num">03</span><h2>八项实验的证据等级</h2></div>
-    <p>
-      实验分三档记账：预注册的确认性实验、事后补做的受控追加实验、以及首看性质的探索性观察。
-      这个区分是硬的——追加实验做得再漂亮，也不能把一个没通过的预注册门槛改写成通过。
-    </p>
-
-    <div class="scroller">
-      <table>
-        <caption>实验总表 · 摘自 EXPERIMENT_INDEX.md</caption>
-        <thead>
-          <tr>
-            <th>编号</th><th>实验</th><th>证据等级</th><th>状态</th><th>结论</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="exp-id">GP-DATA-01</td>
-            <td>双 tokenizer 数据产品构建</td>
-            <td><span class="chip chip-base">前提</span></td>
-            <td>通过审计</td>
-            <td>两条轨均完成去重、分组隔离与目标 token 校验</td>
-          </tr>
-          <tr>
-            <td class="exp-id">GP-OBS-01</td>
-            <td>Track A 双模型确认性观测</td>
-            <td><span class="chip chip-pass">确认性</span></td>
-            <td class="pos">通过</td>
-            <td>两个模型都是 availability 早于 readiness</td>
-          </tr>
-          <tr>
-            <td class="exp-id">GP-CF-01</td>
-            <td>Track B 选项置换反事实</td>
-            <td><span class="chip chip-pass">确认性</span></td>
-            <td class="pos">通过</td>
-            <td>onset gap 保留，读出与行为具有较高等变性</td>
-          </tr>
-          <tr class="row-hi">
-            <td class="exp-id">GP-CAUSAL-01</td>
-            <td>预注册单层残差状态互换</td>
-            <td><span class="chip chip-fail">预注册</span></td>
-            <td class="neg">未通过</td>
-            <td>主窗口内来源样本效应没有超过随机问题对照</td>
-          </tr>
-          <tr>
-            <td class="exp-id">GP-AUDIT-01</td>
-            <td>双模型联合声明审计</td>
-            <td><span class="chip chip-base">审计</span></td>
-            <td>完成</td>
-            <td>放行观测性结论；禁止普适声明与因果闭合声明</td>
-          </tr>
-          <tr>
-            <td class="exp-id">GP-CAUSAL-02</td>
-            <td>多层窗口状态互换与边界精扫</td>
-            <td><span class="chip chip-sup">受控追加</span></td>
-            <td>完成</td>
-            <td>整窗口互换仍弱；跨过 readiness 后行为效应快速增强</td>
-          </tr>
-          <tr>
-            <td class="exp-id">GP-CAUSAL-03</td>
-            <td>探针方向引导与 Track A 复现</td>
-            <td><span class="chip chip-sup">受控追加</span></td>
-            <td>完成</td>
-            <td>方向特异效应在 readiness 边界附近接通，并在完整答案轨复现</td>
-          </tr>
-          <tr>
-            <td class="exp-id">GP-CAUSAL-04</td>
-            <td>注意力与多层感知机组件敲除</td>
-            <td><span class="chip chip-sup">受控追加</span></td>
-            <td>完成</td>
-            <td>4B 呈集中式关键层，9B 呈更分布式接管</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section>
-    <div class="sec-head"><span class="num">04</span><h2>数据：两条冻结证据轨</h2></div>
+    <div class="sec-head"><span class="num">03</span><h2>数据：两条冻结证据轨</h2></div>
     <p>
       <span class="exp-id">GP-DATA-01</span> 的约束很苛刻：完整正确答案本身必须就是单个 next token，
       而且两个锚点 tokenizer 都要能比较。九个公开 benchmark 过完这道筛子后分成两条轨。
@@ -1032,7 +1022,7 @@
   </section>
 
   <section>
-    <div class="sec-head"><span class="num">05</span><h2>确认性结果</h2></div>
+    <div class="sec-head"><span class="num">04</span><h2>确认性结果</h2></div>
 
     <h3>GP-OBS-01 · 完整答案上的 onset gap</h3>
     <p>
@@ -1094,7 +1084,7 @@
   </section>
 
   <section>
-    <div class="sec-head"><span class="num">06</span><h2>预注册因果门槛：没通过</h2></div>
+    <div class="sec-head"><span class="num">05</span><h2>预注册因果门槛：没通过</h2></div>
 
     <div class="callout">
       <h4>GP-CAUSAL-01 · 确认性未通过</h4>
@@ -1147,7 +1137,7 @@
   </section>
 
   <section>
-    <div class="sec-head"><span class="num">07</span><h2>追加实验：把负结果拆开看</h2></div>
+    <div class="sec-head"><span class="num">06</span><h2>追加实验：把负结果拆开看</h2></div>
     <p>
       预注册失败之后有两种待检验的解释：一是<strong>后层重算</strong>——单层干预被后续层用未受扰的上下文覆盖掉了；
       二是<strong>干预强度</strong>——方向是对的，但幅度不够。三项受控追加实验分别去掉这两条。
@@ -1314,7 +1304,7 @@
   </section>
 
   <section>
-    <div class="sec-head"><span class="num">08</span><h2>能说什么，不能说什么</h2></div>
+    <div class="sec-head"><span class="num">07</span><h2>能说什么，不能说什么</h2></div>
 
     <div class="cols">
       <div>
@@ -1369,7 +1359,7 @@
   </section>
 
   <section>
-    <div class="sec-head"><span class="num">09</span><h2>接下来</h2></div>
+    <div class="sec-head"><span class="num">08</span><h2>接下来</h2></div>
     <p>以下候选项还没有正式实验编号。按索引规则，要等设计和预期产物明确之后才能登记成新的 <span class="exp-id">GP-*</span>。</p>
 
     <div class="scroller">
@@ -1391,7 +1381,7 @@
   </section>
 
   <section>
-    <div class="sec-head"><span class="num">10</span><h2>产物与复现</h2></div>
+    <div class="sec-head"><span class="num">09</span><h2>产物与复现</h2></div>
     <p>运行根目录：</p>
     <div class="claim">brewing_output/general_prefill_runs/56cf303a0bee12f2__5ffa284ecd741a77/</div>
 
