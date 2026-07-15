@@ -1,0 +1,1444 @@
+<title>General Prefill 实验总览 · LLM-Brewing</title>
+<style>
+  :root {
+    --paper:      #F4F5F8;
+    --paper-2:    #FFFFFF;
+    --rule:       #D3D7E0;
+    --rule-soft:  #E4E7ED;
+    --ink:        #171B22;
+    --ink-2:      #4A5162;
+    --ink-3:      #767D8E;
+
+    --avail:      #3C6E9F;
+    --ready:      #7A4E9E;
+    --takeover:   #C04B6E;
+
+    --pass:       #2E7D5B;
+    --fail:       #B3403F;
+    --neutral:    #6B7280;
+
+    --avail-wash:    #3C6E9F1F;
+    --ready-wash:    #7A4E9E1F;
+    --takeover-wash: #C04B6E1F;
+    --pass-wash:     #2E7D5B1A;
+    --fail-wash:     #B3403F14;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+    --measure: 68ch;
+    --shell: min(100% - 2.5rem, 78rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:      #12151B;
+      --paper-2:    #191D25;
+      --rule:       #333A47;
+      --rule-soft:  #262C36;
+      --ink:        #E5E8EF;
+      --ink-2:      #A3AABA;
+      --ink-3:      #767D8E;
+
+      --avail:      #78AEDC;
+      --ready:      #B48DD8;
+      --takeover:   #E88AA5;
+
+      --pass:       #5FB88C;
+      --fail:       #E4726F;
+
+      --avail-wash:    #78AEDC24;
+      --ready-wash:    #B48DD824;
+      --takeover-wash: #E88AA524;
+      --pass-wash:     #5FB88C1F;
+      --fail-wash:     #E4726F18;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:      #12151B;
+    --paper-2:    #191D25;
+    --rule:       #333A47;
+    --rule-soft:  #262C36;
+    --ink:        #E5E8EF;
+    --ink-2:      #A3AABA;
+    --ink-3:      #767D8E;
+    --avail:      #78AEDC;
+    --ready:      #B48DD8;
+    --takeover:   #E88AA5;
+    --pass:       #5FB88C;
+    --fail:       #E4726F;
+    --avail-wash:    #78AEDC24;
+    --ready-wash:    #B48DD824;
+    --takeover-wash: #E88AA524;
+    --pass-wash:     #5FB88C1F;
+    --fail-wash:     #E4726F18;
+  }
+
+  :root[data-theme="light"] {
+    --paper:      #F4F5F8;
+    --paper-2:    #FFFFFF;
+    --rule:       #D3D7E0;
+    --rule-soft:  #E4E7ED;
+    --ink:        #171B22;
+    --ink-2:      #4A5162;
+    --ink-3:      #767D8E;
+    --avail:      #3C6E9F;
+    --ready:      #7A4E9E;
+    --takeover:   #C04B6E;
+    --pass:       #2E7D5B;
+    --fail:       #B3403F;
+    --avail-wash:    #3C6E9F1F;
+    --ready-wash:    #7A4E9E1F;
+    --takeover-wash: #C04B6E1F;
+    --pass-wash:     #2E7D5B1A;
+    --fail-wash:     #B3403F14;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { width: var(--shell); margin-inline: auto; }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    border-bottom: 1px solid var(--ink);
+    padding-block: 3.5rem 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+  .masthead h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.3rem, 5.5vw, 3.9rem);
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    margin-bottom: 0.9rem;
+  }
+  .standfirst {
+    font-family: var(--serif);
+    font-size: clamp(1.05rem, 1.8vw, 1.28rem);
+    line-height: 1.6;
+    color: var(--ink-2);
+    max-width: var(--measure);
+  }
+  .masthead-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 2rem;
+    margin-top: 1.75rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--ink-3);
+  }
+  .masthead-meta b { color: var(--ink-2); font-weight: 500; }
+
+  /* ---------- sections ---------- */
+
+  section { padding-block: 2.75rem; border-top: 1px solid var(--rule-soft); }
+  section:first-of-type { border-top: none; }
+
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+  .sec-head .num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    flex: none;
+  }
+  h2 {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.6vw, 1.95rem);
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-size: 0.94rem;
+    font-weight: 650;
+    letter-spacing: 0.005em;
+    margin-block: 2rem 0.75rem;
+  }
+  h4 {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-block: 1.5rem 0.6rem;
+  }
+
+  p, ul, ol { max-width: var(--measure); }
+  p + p, p + ul, p + ol, ul + p, ol + p { margin-top: 0.9rem; }
+  li + li { margin-top: 0.35rem; }
+  ul, ol { padding-left: 1.25rem; }
+  li::marker { color: var(--ink-3); }
+
+  strong { font-weight: 650; }
+  code, .m { font-family: var(--mono); font-size: 0.86em; }
+  code {
+    background: var(--rule-soft);
+    padding: 0.1em 0.36em;
+    border-radius: 3px;
+  }
+  .lyr {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    font-weight: 550;
+  }
+
+  /* ---------- chips ---------- */
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.2em 0.55em;
+    border-radius: 3px;
+    white-space: nowrap;
+    border: 1px solid;
+  }
+  .chip::before {
+    content: "";
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
+  }
+  .chip-pass    { color: var(--pass);    background: var(--pass-wash);    border-color: color-mix(in srgb, var(--pass) 35%, transparent); }
+  .chip-fail    { color: var(--fail);    background: var(--fail-wash);    border-color: color-mix(in srgb, var(--fail) 45%, transparent); }
+  .chip-sup     { color: var(--ready);   background: var(--ready-wash);   border-color: color-mix(in srgb, var(--ready) 35%, transparent); }
+  .chip-base    { color: var(--ink-2);   background: var(--rule-soft);    border-color: var(--rule); }
+
+  /* ---------- lexicon ---------- */
+
+  .lex-panel {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    margin-block: 1.75rem;
+  }
+  .lex-group {
+    padding: 1.5rem 1.6rem;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .lex-group:last-child { border-bottom: none; }
+  .lex-group > h4 { margin-block: 0 1rem; }
+
+  .lex {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 1.1rem 2.25rem;
+  }
+  .lex-item { break-inside: avoid; }
+  .lex dt {
+    font-size: 0.9rem;
+    font-weight: 650;
+    line-height: 1.45;
+    margin-bottom: 0.2rem;
+  }
+  .lex dt .en {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: var(--ink-3);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .lex dt .stage-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-right: 0.45em;
+    vertical-align: 0.12em;
+  }
+  .d-avail    { background: var(--avail); }
+  .d-ready    { background: var(--ready); }
+  .d-takeover { background: var(--takeover); }
+  .lex dd {
+    font-size: 0.84rem;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+  .lex dd .warn {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.78rem;
+    color: var(--fail);
+  }
+  .lex dd .warn::before {
+    content: "不要 ";
+    font-family: var(--mono);
+    font-size: 0.9em;
+    opacity: 0.7;
+  }
+
+  .ladder-note {
+    font-size: 0.84rem;
+    color: var(--ink-2);
+    max-width: var(--measure);
+    margin-top: 1rem;
+  }
+
+  /* ---------- depth map ---------- */
+
+  .depthmap {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 2rem 1.75rem 1.5rem;
+    margin-block: 1.75rem;
+  }
+  .track { margin-bottom: 2.5rem; }
+  .track:last-of-type { margin-bottom: 1.25rem; }
+
+  .track-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.9rem;
+    margin-bottom: 1.4rem;
+  }
+  .track-name {
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .track-sub {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-3);
+  }
+
+  .bar-wrap { position: relative; }
+  .bar {
+    position: relative;
+    height: 46px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    background:
+      repeating-linear-gradient(to right,
+        var(--rule-soft) 0 1px,
+        transparent 1px var(--tick));
+  }
+  .zone {
+    position: absolute;
+    top: 0; bottom: 0;
+  }
+  .z-quiet    { background: transparent; }
+  .z-window   {
+    background: var(--avail-wash);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--avail) 26%, transparent) 0 1px,
+      transparent 1px 7px);
+    border-left: 2px solid var(--avail);
+  }
+  .z-logit    { background: var(--ready-wash); border-left: 2px solid var(--ready); }
+  .z-behavior { background: var(--takeover-wash); border-left: 2px solid var(--takeover); }
+
+  .flag {
+    position: absolute;
+    top: 100%;
+    transform: translateX(-1px);
+    padding-top: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  .flag::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0;
+    width: 1px; height: 0.5rem;
+    background: currentColor;
+  }
+  .flag b { display: block; font-weight: 600; font-size: 0.74rem; }
+  .flag span { color: var(--ink-3); }
+  .f-avail    { color: var(--avail); }
+  .f-ready    { color: var(--ready); }
+  .f-takeover { color: var(--takeover); }
+  .flag-row { position: relative; height: 3.4rem; }
+  .flag-row-2 { position: relative; height: 2.6rem; }
+
+  .axis {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    color: var(--ink-3);
+    margin-top: 0.4rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule-soft);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-2);
+  }
+  .legend div { display: flex; align-items: center; gap: 0.5rem; }
+  .swatch { width: 22px; height: 10px; border-radius: 2px; flex: none; border-left: 2px solid; }
+  .sw-window   { background: var(--avail-wash);    border-color: var(--avail); background-image: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--avail) 26%, transparent) 0 1px, transparent 1px 7px); }
+  .sw-logit    { background: var(--ready-wash);    border-color: var(--ready); }
+  .sw-behavior { background: var(--takeover-wash); border-color: var(--takeover); }
+
+  /* ---------- tables ---------- */
+
+  .scroller {
+    overflow-x: auto;
+    margin-block: 1.5rem;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--paper-2);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.86rem;
+    font-variant-numeric: tabular-nums;
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    padding: 0.85rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  th, td {
+    padding: 0.6rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+  }
+  thead th {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-3);
+    font-weight: 500;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .num-col { text-align: right; font-family: var(--mono); white-space: nowrap; }
+  th.num-col { text-align: right; }
+  .exp-id { font-family: var(--mono); font-size: 0.78rem; font-weight: 600; white-space: nowrap; }
+  .pos { color: var(--pass); font-weight: 600; }
+  .neg { color: var(--fail); font-weight: 600; }
+  .row-hi td { background: var(--takeover-wash); }
+  .dim { color: var(--ink-3); }
+
+  /* ---------- callout ---------- */
+
+  .callout {
+    border: 1px solid color-mix(in srgb, var(--fail) 40%, transparent);
+    background: var(--fail-wash);
+    border-radius: 4px;
+    padding: 1.5rem 1.6rem;
+    margin-block: 1.75rem;
+    max-width: var(--measure);
+  }
+  .callout.neutral {
+    border-color: var(--rule);
+    background: var(--paper-2);
+  }
+  .callout h4 { margin-top: 0; color: var(--fail); }
+  .callout.neutral h4 { color: var(--ink-3); }
+  .callout p { max-width: none; }
+  .callout p:first-of-type { margin-top: 0; }
+
+  .claim {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    background: var(--rule-soft);
+    border-radius: 3px;
+    padding: 0.7rem 0.85rem;
+    margin-top: 0.9rem;
+    word-break: break-word;
+    color: var(--ink-2);
+  }
+
+  /* ---------- stage cards ---------- */
+
+  .stages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-block: 1.75rem;
+  }
+  .stage {
+    background: var(--paper-2);
+    padding: 1.4rem 1.35rem;
+    border-top: 3px solid;
+  }
+  .stage:nth-child(1) { border-top-color: var(--avail); }
+  .stage:nth-child(2) { border-top-color: var(--ready); }
+  .stage:nth-child(3) { border-top-color: var(--takeover); }
+  .stage .tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .stage:nth-child(1) .tag { color: var(--avail); }
+  .stage:nth-child(2) .tag { color: var(--ready); }
+  .stage:nth-child(3) .tag { color: var(--takeover); }
+  .stage .title { font-weight: 650; font-size: 1rem; margin-bottom: 0.5rem; }
+  .stage p { font-size: 0.87rem; color: var(--ink-2); line-height: 1.6; max-width: none; }
+  .stage .probe {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-3);
+    margin-top: 0.8rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  /* ---------- two-col ---------- */
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+    gap: 1.75rem 2.5rem;
+    margin-block: 1.5rem;
+  }
+  .cols > div > p, .cols > div > ul { max-width: none; }
+
+  footer {
+    border-top: 1px solid var(--ink);
+    margin-top: 2.5rem;
+    padding-block: 1.75rem 4rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    line-height: 1.75;
+  }
+  footer p { max-width: none; }
+
+  a { color: inherit; text-decoration-color: var(--ink-3); text-underline-offset: 2px; }
+  a:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--ready);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .depthmap { padding: 1.5rem 1rem 1.25rem; }
+    .flag { font-size: 0.62rem; }
+  }
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span>LLM-Brewing</span>
+      <span>General Prefill 扩展</span>
+      <span>核验于 2026-07-14</span>
+    </div>
+    <h1>答案先被读出，<br>再被模型自己解码</h1>
+    <p class="standfirst">
+      八项登记实验，两个锚点模型，两条冻结证据轨。观测性结论成立：正确答案在预填充中段就已线性可读，
+      而模型要再过几层才能自行解码出来。预注册的因果门槛没有通过，这份总览把它照原样留着。
+    </p>
+    <div class="masthead-meta">
+      <span>运行标识 <b>56cf303a0bee12f2__5ffa284ecd741a77</b></span>
+      <span>锚点 <b>Qwen3-4B-Base · Qwen3.5-9B-Base</b></span>
+      <span>覆盖 <b>2026-07-10 → 07-13</b></span>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="num">00</span><h2>术语速查</h2></div>
+    <p>
+      摘自 <span class="m">docs/glossary.md</span>（权威术语规范，核验于 2026-07-14）。
+      下面只列本页会用到的词条；完整规范以原文为准。彩色圆点标出该术语属于哪个阶段。
+    </p>
+
+    <div class="lex-panel">
+
+      <div class="lex-group">
+        <h4>读出、阶段与层位</h4>
+        <dl class="lex">
+          <div class="lex-item">
+            <dt><span class="stage-dot d-avail"></span>信息可得性 <span class="en">information availability</span></dt>
+            <dd>正确答案可由外部线性探针稳定读出的状态。简称 availability。</dd>
+          </div>
+          <div class="lex-item">
+            <dt><span class="stage-dot d-ready"></span>信息就绪性 <span class="en">information readiness</span></dt>
+            <dd>正确答案可由 CSD 稳定读出的状态。简称 readiness。
+              <span class="warn">用"可用性"翻译 readiness，会和因果可用性混淆。</span></dd>
+          </div>
+          <div class="lex-item">
+            <dt><span class="stage-dot d-takeover"></span>因果可用性 <span class="en">causal usability</span></dt>
+            <dd>对中间状态做答案定向操纵后，模型读出或行为发生方向特异变化的状态。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>上下文剥离解码 <span class="en">Context-Stripped Decoding, CSD</span></dt>
+            <dd>把某层状态直接接入模型最终归一化与输出头，绕开原始上下文计算路径来读答案。
+              <span class="warn">把缩写展开成 context-independent self-decoding——那是语义解释，不是展开。</span></dd>
+          </div>
+          <div class="lex-item">
+            <dt>稳定起点 <span class="en">stable onset</span></dt>
+            <dd>轨迹连续达到确认性阈值的首层。本页取连续三层。单次偶然命中的层不算。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>确认性 onset gap</dt>
+            <dd>readiness 起点晚于 availability 起点的层位差，用于 General Prefill 聚合确认性分析。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>可得性到就绪性窗口</dt>
+            <dd>两个起点之间的层区间。引用时必须写明用的是 Track A 还是 Track B 的边界。
+              <span class="warn">只写"gap 内"。</span></dd>
+          </div>
+          <div class="lex-item">
+            <dt>brewing gap</dt>
+            <dd>CUE-Bench <em>样本级</em>诊断里，首次联合正确层与首次探针正确层之差。和本页的聚合 onset gap 是两个统计对象。</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="lex-group">
+        <h4>数据与观测边界</h4>
+        <dl class="lex">
+          <div class="lex-item">
+            <dt>Track A <span class="en">GeneralPrefill-GT</span></dt>
+            <dd>完整答案 ground truth 证据轨，负责通用领域广度与主确认性分析。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>Track B <span class="en">ChoicePermutation-CF</span></dt>
+            <dd>选项置换反事实证据轨，负责控制答案绑定与因果识别。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>观测边界 <span class="en">observation boundary</span></dt>
+            <dd>prompt 最后一个 token 所在位置。缓存和主要干预都在这个位置读取逐层状态。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>规范问题组 <span class="en">canonical question group</span></dt>
+            <dd>去重、切分隔离和 bootstrap 抽样的语义问题单位，可包含多个样本变体。本页所有 bootstrap 以它为抽样单位。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>完整答案单 token 资格</dt>
+            <dd>完整规范答案在两个锚点 tokenizer 的精确 prompt 边界后都只对应一个 suffix token。数字和代码来源只代表满足该资格的条件切片。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>残差流状态 <span class="en">residual-stream state</span></dt>
+            <dd>因果干预实际替换或修改的层间状态。只在确实操作残差流时使用，不是所有 hidden state 的泛称。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>锚点模型 <span class="en">anchor model</span></dt>
+            <dd>完整跑通数据、探针、解码与因果分析的模型。双锚点设计指两个模型各自独立训练和缓存，最后做联合审计，<em>不是</em>跨模型共享探针。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>空值运行 <span class="en">null run</span></dt>
+            <dd>破坏目标对应关系、但保留规定结构的对照运行。探针空值重新从头训练；CSD 空值只重配隐藏轨迹。
+              <span class="warn">把随机基线泛称为 null。</span></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="lex-group">
+        <h4>因果实验</h4>
+        <dl class="lex">
+          <div class="lex-item">
+            <dt>来源样本 / 被替换样本</dt>
+            <dd>来源样本提供答案定向状态或方向；被替换样本接受干预并被测量输出变化。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>残差状态互换 <span class="en">residual-state interchange</span></dt>
+            <dd>把来源样本的残差流状态替换到被替换样本的对应位置。单层互换是当前预注册门槛的设计；窗口互换在连续层内逐层用来源样本轨迹钳制被替换样本。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>探针方向引导 <span class="en">probe-direction steering</span></dt>
+            <dd>沿已训练探针给出的答案对比方向修改隐藏状态，强度按该层范数缩放。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>四类对照</dt>
+            <dd><strong>self</strong>：把被替换样本自己的状态重新注入，测注入操作本身的影响。<strong>随机问题</strong>：来源样本换成别的题，区分答案定向与一般扰动。<strong>随机方向</strong>：等范数随机向量，检验是否只是大幅扰动。<strong>负方向</strong>：反向干预，检验方向语义的反对称性。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>logit 级效应</dt>
+            <dd>干预对来源样本与被替换样本答案分数对比的影响。引用时必须说明是否已减去匹配对照。</dd>
+          </div>
+          <div class="lex-item">
+            <dt>行为翻转率 <span class="en">flip rate</span></dt>
+            <dd>干预后答案空间预测切换到来源样本答案的比例。
+              <span class="warn">跨不同答案空间横比翻转率（Track B 四选一与 Track A 两类读数不可直接比较）。</span></dd>
+          </div>
+          <div class="lex-item">
+            <dt>行为接管 <span class="en">behavioral takeover</span></dt>
+            <dd>干预开始稳定控制离散答案输出的现象。
+              <span class="warn">用单个 logit 变化直接声称行为接管。</span></dd>
+          </div>
+          <div class="lex-item">
+            <dt>因果门槛 <span class="en">causal gate</span></dt>
+            <dd>预先规定的因果判据。当前"单层状态互换在可得性到就绪性窗口内超过匹配对照"这一门槛未通过。</dd>
+          </div>
+        </dl>
+      </div>
+
+    </div>
+
+    <h3>证据状态的六个档位</h3>
+    <p>
+      结果陈述只用下面这六个状态，不用勾号叉号，也不用"基本证明"这类模糊措辞。
+      本页所有实验卡片和结论都按这套档位标记。
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>声明阶梯 · claim ladder</caption>
+        <thead><tr><th>状态</th><th>含义</th><th>本页适用</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="chip chip-pass">确认性通过</span></td>
+            <td>预注册判据和所需对照均通过</td>
+            <td class="dim">主观测性终点 <span class="exp-id">GP-OBS-01</span> <span class="exp-id">GP-CF-01</span></td>
+          </tr>
+          <tr>
+            <td><span class="chip chip-fail">确认性未通过</span></td>
+            <td>预注册判据未通过</td>
+            <td class="dim">单层状态互换因果门槛 <span class="exp-id">GP-CAUSAL-01</span></td>
+          </tr>
+          <tr>
+            <td><span class="chip chip-sup">受控追加证据</span></td>
+            <td>预注册后开展，但有明确对照与复现</td>
+            <td class="dim">窗口互换、方向引导、组件敲除</td>
+          </tr>
+          <tr>
+            <td><span class="chip chip-base">探索性观察</span></td>
+            <td>尚未按确认性口径复现</td>
+            <td class="dim">逐来源首看、局部非单调现象</td>
+          </tr>
+          <tr>
+            <td><span class="chip chip-base">机制解释</span></td>
+            <td>多项结果共同支持，但没有直接判据</td>
+            <td class="dim">"在场但欠放大"等综合叙事</td>
+          </tr>
+          <tr>
+            <td><span class="chip chip-base">开放问题</span></td>
+            <td>尚无充分实验结论</td>
+            <td class="dim">头级分解、跨架构复现</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="ladder-note">
+      "确认性"这个词只给完成全部预注册空值对照、并生成正式审计结果的运行用。开发运行一律写"开发运行结果"或"探索性结果"。
+    </p>
+
+    <div class="callout neutral">
+      <h4>三个 gap 不是一回事</h4>
+      <p>
+        术语表里被单独列为禁止写法的头一条就是裸写 <code>gap</code>。本页涉及三个不同的统计对象：
+        <strong>确认性 onset gap</strong>（聚合层位差，本页主角）、
+        <strong>可得性到就绪性窗口</strong>（层区间，要注明 Track A 还是 Track B）、
+        <strong>brewing gap</strong>（CUE-Bench 样本级诊断量，本页不涉及）。
+      </p>
+      <p style="margin-top:0.75rem">
+        同理，因果结果有多个层位定义，所以没有"causal onset"这个词——只有
+        <strong>方向特异 logit 效应起点</strong>和<strong>行为接管起点</strong>，两者在 9B 上差了三层。
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">01</span><h2>三个概念，三个不同的层位</h2></div>
+    <p>
+      整个扩展研究围绕一个区分展开：答案信息"在里面"和答案信息"能用"不是一回事。项目把它拆成三个可测的状态，
+      每个状态有各自的判据和各自的起点层。
+    </p>
+
+    <div class="stages">
+      <div class="stage">
+        <div class="tag">最早出现</div>
+        <div class="title">信息可得性 <span class="dim">availability</span></div>
+        <p>正确答案能被一个外部线性探针稳定读出。探针是外挂的，读得出来不代表模型自己在用。</p>
+        <div class="probe">判据：逐层线性探针平衡准确率连续三层超过空值阈值</div>
+      </div>
+      <div class="stage">
+        <div class="tag">随后出现</div>
+        <div class="title">信息就绪性 <span class="dim">readiness</span></div>
+        <p>把上下文剥掉之后，模型用自己的解码路径就能读出答案。这一步不再借助外部探针。</p>
+        <div class="probe">判据：上下文剥离解码（CSD）的稳定起点</div>
+      </div>
+      <div class="stage">
+        <div class="tag">通常最晚</div>
+        <div class="title">因果可用性 <span class="dim">causal usability</span></div>
+        <p>对答案方向做定向干预，能稳定改变内部读出或最终输出。这里还要再分 logit 级效应和行为接管两档。</p>
+        <div class="probe">判据：干预效应超过匹配对照（随机问题 / 随机方向 / self）</div>
+      </div>
+    </div>
+
+    <p>
+      readiness 起点减去 availability 起点，就是这项研究的核心量：<strong>确认性 onset gap</strong>。
+      两个起点之间的层段叫可得性到就绪性窗口。整份报告的问题都落在这个窗口里：答案已经在了，模型为什么还没开始用它。
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">02</span><h2>两个模型的深度剖面</h2></div>
+    <p>
+      下图按归一化深度画出两个锚点模型。窗口的位置和宽度是 <span class="exp-id">GP-OBS-01</span> 的确认性结果，
+      行为接管边界来自 <span class="exp-id">GP-CAUSAL-02</span> 的窗口精扫。
+    </p>
+
+    <div class="depthmap">
+
+      <!-- ============ 4B ============ -->
+      <div class="track">
+        <div class="track-head">
+          <span class="track-name">Qwen3-4B-Base</span>
+          <span class="track-sub">36 层 · d=2560 · 全层标准 self-attention</span>
+          <span class="track-sub">onset gap = 4 层，95% 区间 [2, 5]，归一化 0.097</span>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar" style="--tick: 2.7778%">
+            <div class="zone z-quiet"    style="left:0;        width:50%"></div>
+            <div class="zone z-window"   style="left:50%;      width:11.111%"></div>
+            <div class="zone z-logit"    style="left:61.111%;  width:5.556%"></div>
+            <div class="zone z-behavior" style="left:66.667%;  width:33.333%"></div>
+          </div>
+          <div class="flag-row">
+            <div class="flag f-avail" style="left:50%"><b>L18</b><span>availability</span></div>
+            <div class="flag f-takeover" style="left:66.667%"><b>L24</b><span>行为接管 · 翻转率 6.8% → 76.1%</span></div>
+          </div>
+          <div class="flag-row-2">
+            <div class="flag f-ready" style="left:61.111%"><b>L22</b><span>readiness</span></div>
+          </div>
+          <div class="axis"><span>L0</span><span>L18</span><span>L36</span></div>
+        </div>
+      </div>
+
+      <!-- ============ 9B ============ -->
+      <div class="track">
+        <div class="track-head">
+          <span class="track-name">Qwen3.5-9B-Base</span>
+          <span class="track-sub">32 层 · d=4096 · 混合线性注意力与 full attention</span>
+          <span class="track-sub">onset gap = 6 层，95% 区间 [5, 7]，归一化 0.186</span>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar" style="--tick: 3.125%">
+            <div class="zone z-quiet"    style="left:0;       width:40.625%"></div>
+            <div class="zone z-window"   style="left:40.625%; width:18.75%"></div>
+            <div class="zone z-logit"    style="left:59.375%; width:9.375%"></div>
+            <div class="zone z-behavior" style="left:68.75%;  width:31.25%"></div>
+          </div>
+          <div class="flag-row">
+            <div class="flag f-avail" style="left:40.625%"><b>L13</b><span>availability</span></div>
+            <div class="flag f-takeover" style="left:68.75%"><b>L22</b><span>行为接管 · 翻转率 8.9% → 24.3%</span></div>
+          </div>
+          <div class="flag-row-2">
+            <div class="flag f-ready" style="left:59.375%"><b>L19</b><span>readiness</span></div>
+          </div>
+          <div class="axis"><span>L0</span><span>L16</span><span>L32</span></div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div><span class="swatch sw-window"></span>可得性到就绪性窗口：答案可被探针读出，自然状态互换仍接近基线</div>
+        <div><span class="swatch sw-logit"></span>方向特异 logit 效应接通</div>
+        <div><span class="swatch sw-behavior"></span>行为接管：干预可稳定改变离散答案</div>
+      </div>
+    </div>
+
+    <p>
+      两个模型的层间顺序一致：availability → readiness → 行为接管。9B 模型的窗口在归一化深度上开得更早也更宽
+      （0.186 对 0.097），但样本只有两个锚点模型，不足以谈规模与层差的关系。
+    </p>
+    <p>
+      最直观的一处分离在 9B 的 <span class="lyr">L15</span>：线性探针的平衡准确率约 0.57，CSD 还停在 0.20 左右。
+      答案已经能被外部读出来，模型自己还解不出来。
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">03</span><h2>八项实验的证据等级</h2></div>
+    <p>
+      实验分三档记账：预注册的确认性实验、事后补做的受控追加实验、以及首看性质的探索性观察。
+      这个区分是硬的——追加实验做得再漂亮，也不能把一个没通过的预注册门槛改写成通过。
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>实验总表 · 摘自 EXPERIMENT_INDEX.md</caption>
+        <thead>
+          <tr>
+            <th>编号</th><th>实验</th><th>证据等级</th><th>状态</th><th>结论</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exp-id">GP-DATA-01</td>
+            <td>双 tokenizer 数据产品构建</td>
+            <td><span class="chip chip-base">前提</span></td>
+            <td>通过审计</td>
+            <td>两条轨均完成去重、分组隔离与目标 token 校验</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-OBS-01</td>
+            <td>Track A 双模型确认性观测</td>
+            <td><span class="chip chip-pass">确认性</span></td>
+            <td class="pos">通过</td>
+            <td>两个模型都是 availability 早于 readiness</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-CF-01</td>
+            <td>Track B 选项置换反事实</td>
+            <td><span class="chip chip-pass">确认性</span></td>
+            <td class="pos">通过</td>
+            <td>onset gap 保留，读出与行为具有较高等变性</td>
+          </tr>
+          <tr class="row-hi">
+            <td class="exp-id">GP-CAUSAL-01</td>
+            <td>预注册单层残差状态互换</td>
+            <td><span class="chip chip-fail">预注册</span></td>
+            <td class="neg">未通过</td>
+            <td>主窗口内来源样本效应没有超过随机问题对照</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-AUDIT-01</td>
+            <td>双模型联合声明审计</td>
+            <td><span class="chip chip-base">审计</span></td>
+            <td>完成</td>
+            <td>放行观测性结论；禁止普适声明与因果闭合声明</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-CAUSAL-02</td>
+            <td>多层窗口状态互换与边界精扫</td>
+            <td><span class="chip chip-sup">受控追加</span></td>
+            <td>完成</td>
+            <td>整窗口互换仍弱；跨过 readiness 后行为效应快速增强</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-CAUSAL-03</td>
+            <td>探针方向引导与 Track A 复现</td>
+            <td><span class="chip chip-sup">受控追加</span></td>
+            <td>完成</td>
+            <td>方向特异效应在 readiness 边界附近接通，并在完整答案轨复现</td>
+          </tr>
+          <tr>
+            <td class="exp-id">GP-CAUSAL-04</td>
+            <td>注意力与多层感知机组件敲除</td>
+            <td><span class="chip chip-sup">受控追加</span></td>
+            <td>完成</td>
+            <td>4B 呈集中式关键层，9B 呈更分布式接管</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">04</span><h2>数据：两条冻结证据轨</h2></div>
+    <p>
+      <span class="exp-id">GP-DATA-01</span> 的约束很苛刻：完整正确答案本身必须就是单个 next token，
+      而且两个锚点 tokenizer 都要能比较。九个公开 benchmark 过完这道筛子后分成两条轨。
+    </p>
+
+    <div class="cols">
+      <div>
+        <h4>Track A · GeneralPrefill-GT</h4>
+        <p>完整答案 ground truth，负责通用领域广度和主确认性结论。九个来源，<strong>44,478</strong> 个样本，26 类答案；主评测用其中 6,697 个样本、5,713 个规范问题组。</p>
+      </div>
+      <div>
+        <h4>Track B · ChoicePermutation-CF</h4>
+        <p>选项置换反事实，负责答案绑定与因果识别。<strong>26,750</strong> 个规范四选一问题生成 <strong>107,000</strong> 个循环排列变体；主评测用 4,044 个问题、16,176 个变体。</p>
+      </div>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <caption>Track A 来源纳入率（合格样本 / 原始样本）</caption>
+        <thead>
+          <tr><th>来源</th><th class="num-col">纳入 / 原始</th><th>备注</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>MMLU</td><td class="num-col">14,042 / 14,042</td><td class="dim">全量合格</td></tr>
+          <tr><td>MMLU-Pro</td><td class="num-col">12,032 / 12,032</td><td class="dim">全量合格</td></tr>
+          <tr><td>CMMLU</td><td class="num-col">11,582 / 11,582</td><td class="dim">全量合格</td></tr>
+          <tr><td>BBH</td><td class="num-col">5,762 / 6,511</td><td class="dim">含 <code>(X) → X</code> 标签规范化</td></tr>
+          <tr><td>MMLU-Redux</td><td class="num-col">3,000 / 3,000</td><td class="dim">与 MMLU 重复项按修正版优先，不重复计数</td></tr>
+          <tr><td>C-Eval</td><td class="num-col">1,346 / 1,346</td><td class="dim">全量合格</td></tr>
+          <tr><td>GSM8K</td><td class="num-col">252 / 1,319</td><td class="neg">条件切片</td></tr>
+          <tr><td>CRUXEval</td><td class="num-col">185 / 800</td><td class="neg">条件切片</td></tr>
+          <tr><td>MATH-500</td><td class="num-col dim">见执行计划</td><td class="neg">条件切片</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout neutral">
+      <h4>结论边界</h4>
+      <p>
+        GSM8K、MATH-500 和 CRUXEval 的纳入率很低，因为只有答案短到能压进单 token 的题目才留得下来。
+        这三个来源只代表一个答案长度条件切片，<strong>不代表完整 benchmark</strong>，报告里也不拿它们做逐来源解释。
+      </p>
+    </div>
+
+    <p>
+      去重和分组隔离处理了几处真实的泄漏风险：MMLU ↔ MMLU-Redux 约 2.9k 条 prompt 重复，
+      MMLU ↔ MMLU-Pro 约 6.5k 条共享问题，另外 BBH、C-Eval、CRUXEval 和 MATH-500 的 few-shot 池原本与评测行有重叠。
+      <code>group_id</code> 按规范化题面构造，保证同一道题的各种变体不会跨 split。
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">05</span><h2>确认性结果</h2></div>
+
+    <h3>GP-OBS-01 · 完整答案上的 onset gap</h3>
+    <p>
+      主轨迹指标是平衡准确率，稳定起点定义为连续至少三层超过确认性阈值的首层，阈值由每个模型、每条轨、每种方法各自的
+      <strong>二十组完整空值运行</strong>取跨层最大值确定。不确定性以规范问题组为抽样单位做 2,000 次 bootstrap。
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>Track A 主结果</caption>
+        <thead>
+          <tr>
+            <th>模型</th><th class="num-col">层数</th><th class="num-col">availability</th>
+            <th class="num-col">readiness</th><th class="num-col">gap</th><th class="num-col">95% 区间</th>
+            <th class="num-col">归一化</th><th class="num-col">正层差比例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>4B</td><td class="num-col">36</td><td class="num-col">L18</td><td class="num-col">L22</td>
+            <td class="num-col pos">+4</td><td class="num-col">[2, 5]</td><td class="num-col">0.097</td><td class="num-col">1.0</td>
+          </tr>
+          <tr>
+            <td>9B</td><td class="num-col">32</td><td class="num-col">L13</td><td class="num-col">L19</td>
+            <td class="num-col pos">+6</td><td class="num-col">[5, 7]</td><td class="num-col">0.186</td><td class="num-col">1.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      两个模型的区间都完全落在正方向，2,000 次 bootstrap 全部有效，起点删失检查通过。
+      换三种中性答案后缀（<code>Answer:\n</code>、<code>The answer is:\n</code>、<code>Final answer:\n</code>）结论不变：
+      4B 的 gap 在三到四层之间，9B 三种后缀都是六层。低秩和多层感知机容量消融也没有改变方向。
+    </p>
+
+    <h3>GP-CF-01 · 换个位置放答案，结论还在</h3>
+    <p>
+      题面和选项内容一个字不改，只把正确答案循环换到别的字母位置。这是在问：观测到的东西会不会只是探针学会了"C 选项通常是对的"。
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>Track B 选项置换反事实</caption>
+        <thead>
+          <tr><th>模型</th><th class="num-col">onset gap</th><th class="num-col">95% 区间</th><th class="num-col">正层差比例</th><th class="num-col">最终行为等变性</th><th class="num-col">探针等变性峰值</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>4B</td><td class="num-col pos">+1</td><td class="num-col">[1, 1]</td><td class="num-col">1.0</td><td class="num-col">0.721</td><td class="num-col">0.711</td></tr>
+          <tr><td>9B</td><td class="num-col pos">+3</td><td class="num-col">[3, 3]</td><td class="num-col">1.0</td><td class="num-col">0.810</td><td class="num-col">0.789</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      gap 仍为正，读出跟着受控标签变换走。固定字母位置或单一题面模式解释不了 Track A 的结果。
+      但等变性只说明读出能跟随答案绑定，它不说明窗口里已经有足够强的自然因果效应——这两件事在下一节分开。
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">06</span><h2>预注册因果门槛：没通过</h2></div>
+
+    <div class="callout">
+      <h4>GP-CAUSAL-01 · 确认性未通过</h4>
+      <p>
+        预注册门槛要求：在 Track A 主窗口内，把来源样本某一层观测边界处的残差流状态换给被替换样本，
+        产生的答案定向效应要超过匹配的随机问题对照。<strong>两个模型都没有通过。</strong>
+      </p>
+      <p style="margin-top:0.75rem">
+        这条状态被永久保留。后面三项追加实验无论结果多好，都不能把它改写成"已通过"。
+      </p>
+    </div>
+
+    <div class="scroller">
+      <table>
+        <caption>单层残差状态互换 · logit 级效应（已减去匹配随机问题对照）</caption>
+        <thead>
+          <tr><th>模型</th><th>Track A 主窗口</th><th class="num-col">窗口内平均效应</th><th>逐层效应</th><th class="num-col">首个稳定增强层</th><th class="num-col">全层峰值</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>4B</td><td class="m">L18 → L22</td><td class="num-col neg">−0.690</td>
+            <td class="m">−0.14、−0.82、−0.94、−0.76、−0.79</td>
+            <td class="num-col">L24</td><td class="num-col">5.9 @ L34</td>
+          </tr>
+          <tr>
+            <td>9B</td><td class="m">L13 → L19</td><td class="num-col neg">−0.010</td>
+            <td class="m">L13–L18: −0.14 → −0.24；L19: +1.06</td>
+            <td class="num-col">L19–L20</td><td class="num-col">10.0 @ L31</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      窗口内的效应是负的——换句话说，来源样本状态的作用还不如一个来自随机别的题的状态。
+      效应要到 readiness 起点之后（4B）或边界附近（9B）才稳定起来。
+    </p>
+
+    <h3>GP-AUDIT-01 · 联合审计放行了什么</h3>
+    <p>把两个模型、两条轨和预注册因果结果合起来算，系统允许写出的最强结论是：</p>
+    <div class="claim">
+      cross_model_gates.maximum_claim =<br>
+      "gt_answers_linearly_decodable_before_context_independent_self_decoding"<br><br>
+      universal_llm_claim_allowed = <span class="neg">false</span>
+    </div>
+    <p style="margin-top:1rem">
+      即：<strong>在两个被测 Qwen Base 模型和冻结数据范围内，规范正确答案在上下文独立自解码之前已经线性可读。</strong>
+      不能说所有语言模型都这样，也不能说因果机制已经闭合。
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">07</span><h2>追加实验：把负结果拆开看</h2></div>
+    <p>
+      预注册失败之后有两种待检验的解释：一是<strong>后层重算</strong>——单层干预被后续层用未受扰的上下文覆盖掉了；
+      二是<strong>干预强度</strong>——方向是对的，但幅度不够。三项受控追加实验分别去掉这两条。
+    </p>
+
+    <h3>GP-CAUSAL-02 · 后层重算解释不成立</h3>
+    <p>
+      从 availability 起点开始，把窗口里<em>每一层</em>都用来源样本缓存轨迹钳制住，逐步延长窗口。如果是后层重算的问题，钳住整段应该就够了。
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>4B 模型 · 窗口状态互换（2,048 配对 / 512 组）</caption>
+        <thead>
+          <tr><th>干预窗口</th><th class="num-col">来源样本偏移</th><th class="num-col">随机问题对照</th><th class="num-col">相对随机问题效应</th><th class="num-col">行为翻转率</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="m">窗口前 L13–L17</td><td class="num-col">−0.01</td><td class="num-col">0.04</td><td class="num-col neg">−0.05</td><td class="num-col">6.2%</td></tr>
+          <tr><td class="m">L18 单层复现</td><td class="num-col">−0.00</td><td class="num-col">0.19</td><td class="num-col neg">−0.19</td><td class="num-col">6.4%</td></tr>
+          <tr><td class="m">L18–L19</td><td class="num-col">+0.01</td><td class="num-col">0.80</td><td class="num-col neg">−0.79</td><td class="num-col">6.3%</td></tr>
+          <tr><td class="m">L18–L20</td><td class="num-col">+0.05</td><td class="num-col">0.95</td><td class="num-col neg">−0.90</td><td class="num-col">6.6%</td></tr>
+          <tr><td class="m">L18–L21</td><td class="num-col">+0.18</td><td class="num-col">0.89</td><td class="num-col neg">−0.72</td><td class="num-col">6.8%</td></tr>
+          <tr><td class="m"><strong>主窗口 L18–L22</strong></td><td class="num-col">+0.24</td><td class="num-col">1.00</td><td class="num-col neg">−0.76</td><td class="num-col">6.8%</td></tr>
+          <tr><td class="m">L18–L23</td><td class="num-col">+0.33</td><td class="num-col dim">—</td><td class="num-col neg">−0.73</td><td class="num-col">7.3%</td></tr>
+          <tr class="row-hi"><td class="m"><strong>L18–L24</strong></td><td class="num-col">+5.20</td><td class="num-col dim">未报告</td><td class="num-col pos">+5.22</td><td class="num-col"><strong>76.1%</strong></td></tr>
+          <tr><td class="m">L18–L26</td><td class="num-col">+5.50</td><td class="num-col dim">未报告</td><td class="num-col pos">+5.52</td><td class="num-col">76.2%</td></tr>
+          <tr><td class="m">窗口后 L24–L28</td><td class="num-col">+5.60</td><td class="num-col">−0.02</td><td class="num-col pos">+5.62</td><td class="num-col">76.5%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      钳住整个主窗口 L18–L22，翻转率 6.8%，跟什么都不干基本一样。多加一层到 L24，翻转率跳到 76.1%。
+      边界卡在 <span class="lyr">L24</span>，比 readiness 起点晚两层。
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>9B 模型 · 窗口状态互换（1,024 配对 / 256 组）</caption>
+        <thead>
+          <tr><th>干预窗口</th><th class="num-col">来源样本偏移</th><th class="num-col">相对随机问题效应</th><th class="num-col">行为翻转率</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="m">窗口前 L8–L12</td><td class="num-col">−0.00</td><td class="num-col neg">−0.06</td><td class="num-col">6.4%</td></tr>
+          <tr><td class="m">L13 累积至 L13–L17</td><td class="num-col">0.00 → 0.15</td><td class="num-col neg">始终为负</td><td class="num-col">≈6.5%</td></tr>
+          <tr><td class="m"><strong>主窗口 L13–L19</strong></td><td class="num-col">+1.29</td><td class="num-col pos">+1.09</td><td class="num-col">7.8%</td></tr>
+          <tr><td class="m">L13–L20</td><td class="num-col dim">—</td><td class="num-col dim">—</td><td class="num-col">8.6%</td></tr>
+          <tr><td class="m">L13–L21</td><td class="num-col dim">—</td><td class="num-col dim">—</td><td class="num-col">8.9%</td></tr>
+          <tr class="row-hi"><td class="m"><strong>L13–L22</strong></td><td class="num-col dim">—</td><td class="num-col dim">—</td><td class="num-col"><strong>24.3%</strong></td></tr>
+          <tr><td class="m">窗口后 L21–L25</td><td class="num-col">+4.04</td><td class="num-col pos">+3.83</td><td class="num-col">58.5%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      9B 这里出现一个必须分开记的现象：L13–L19 的相对随机问题效应已经转正（+1.09），
+      但翻转率只有 7.8%，还贴着行为基线。<strong>logit 级效应和行为接管是两条不同的边界</strong>，
+      前者在 L19 接通，后者要等到 L22。
+    </p>
+    <p>
+      self 对照在各窗口都接近零，说明多层注入这个操作本身没有制造伪影。
+      结论：钳住整段窗口仍然弱，"单层干预被后层完全重算"解释不了预注册负结果。
+    </p>
+
+    <h3>GP-CAUSAL-03 · 方向是对的，幅度不够</h3>
+    <p>
+      不换状态，改成沿已训练探针给出的来源样本/被替换样本对比方向去推隐藏状态，强度按该层范数缩放。
+      对照包括等范数随机方向和负方向。
+    </p>
+
+    <div class="cols">
+      <div>
+        <h4>4B 模型</h4>
+        <ul>
+          <li><span class="lyr">L14–L19</span> 相对随机方向效应不超过 0.7，随机方向自己也能造成很大扰动——这段没有清晰的方向特异性。</li>
+          <li><span class="lyr">L20</span> 效应升到 3.25，探针方向翻转率 56.9%，随机方向 9.1%。</li>
+          <li><span class="lyr">L24</span> <code>alpha=1</code> 效应 6.44，翻转率 95.4%；L24–L30 的随机方向基本无效。</li>
+          <li><span class="lyr">L25</span> <code>alpha=2</code> 正方向 shift +9.09，负方向 −5.19，反对称成立。</li>
+        </ul>
+      </div>
+      <div>
+        <h4>9B 模型</h4>
+        <ul>
+          <li><span class="lyr">L10–L14</span> 不具方向特异性。</li>
+          <li>跨过 Track B readiness 起点 L16 后，<span class="lyr">L15–L17</span> 逐步增强；L17 在 <code>alpha=2</code> 效应 3.27，翻转率 44.9%。</li>
+          <li><span class="lyr">L19</span>（Track A readiness 起点）<code>alpha=2</code> 翻转率 93.4%；L21、L23 在 <code>alpha=4</code> 到 100%。</li>
+          <li><span class="lyr">L20</span> <code>alpha=2</code> 正方向 +7.52，负方向 −2.34；负方向把翻转率压到 0–3%。</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>
+      窗口引导更清楚：9B 对 L13–L19 整段引导，<code>alpha=1</code> 翻转率 95.1%，探针方向 shift 8.47，随机方向 1.22，负方向 0%。
+      同样设置下最强的单层 L19 只有 53.3%。方向在窗口里就已经存在，多层累积能把它放大到足以改变行为。
+    </p>
+    <p>
+      这个模式在 Track A 的 26 类答案空间上复现了：4B 的 L24 边界再次出现（<code>alpha=1</code> 效应 8.01，翻转率 84.7%），
+      9B 的 L19 升到 3.22、翻转率 46.1%，L25 在 <code>alpha=2</code> 到 99.2%。所以它不是选项置换设计的产物。
+    </p>
+
+    <div class="callout neutral">
+      <h4>机制解释 · "在场但欠放大"</h4>
+      <p>
+        窗口里已经有一个可用的答案方向，探针能读出来，人为放大它也能改变行为——但自然状态自己的幅度不够，
+        或者下游还没接上这条读出。到 readiness 边界附近，方向特异的放大和读出才开始生效。
+      </p>
+      <p style="margin-top:0.75rem">
+        这是对多项结果的综合解释，<strong>不是预注册判据</strong>。方向引导的幅度远高于自然波动，
+        它证明这个方向携带可被下游利用的信息，不证明模型自然运行时沿同一路径、以同样幅度计算。
+      </p>
+    </div>
+
+    <h3>GP-CAUSAL-04 · 谁在承重</h3>
+    <p>逐层把观测边界处的 self-attention 或多层感知机输出置零，看干净运行的预测答案掉多少。</p>
+
+    <div class="scroller">
+      <table>
+        <caption>组件敲除 · 显著单点</caption>
+        <thead>
+          <tr><th>模型</th><th>组件</th><th class="num-col">logit 变化</th><th class="num-col">改判率</th><th class="num-col">准确率</th><th>读法</th></tr>
+        </thead>
+        <tbody>
+          <tr class="row-hi">
+            <td>4B <span class="dim">(1,536 样本)</span></td><td class="m">L24 self-attn</td>
+            <td class="num-col">−0.94</td><td class="num-col">15.4%</td><td class="num-col">0.730 → 0.709</td>
+            <td>中层唯一明显单点，与窗口精扫的 L24 接管边界重合</td>
+          </tr>
+          <tr>
+            <td>4B</td><td class="m">L18–L22 各组件</td>
+            <td class="num-col dim">|Δ| ≤ 0.6</td><td class="num-col dim">≤ 5%</td><td class="num-col dim">—</td>
+            <td class="dim">单独敲除都很弱</td>
+          </tr>
+          <tr>
+            <td>4B</td><td class="m">L35 MLP</td>
+            <td class="num-col">−17.9</td><td class="num-col">5.8%</td><td class="num-col dim">—</td>
+            <td class="dim">logit 掉很多但基本不改判，更像末端整体压缩</td>
+          </tr>
+          <tr class="row-hi">
+            <td>9B <span class="dim">(512 样本)</span></td><td class="m">L31 self-attn</td>
+            <td class="num-col">−4.6</td><td class="num-col">28.7%</td><td class="num-col">0.766 → 0.676</td>
+            <td>唯一明显单点，是最后一个 full-attention 层</td>
+          </tr>
+          <tr>
+            <td>9B</td><td class="m">中层各组件</td>
+            <td class="num-col dim">|Δ| ≤ 0.3</td><td class="num-col dim">1–3%</td><td class="num-col dim">—</td>
+            <td class="dim">包括接管窗口覆盖的 L23，单独敲除只有 −0.21</td>
+          </tr>
+          <tr>
+            <td>9B</td><td class="m">L31 MLP</td>
+            <td class="num-col pos">+3.5</td><td class="num-col dim">—</td><td class="num-col dim">—</td>
+            <td class="dim">反向，可能是校准或抑制作用；探索性</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      4B 的结构相对集中，接管压在 L24 self-attention 附近。9B 的 full-attention 层在 L3、L7、L11、L15、L19、L23、L27、L31，
+      行为接管窗口 L22–L25 覆盖了 L23，但单独敲 L23 只有 −0.21——更像层段分布式接管。
+    </p>
+    <p class="dim" style="font-size:0.87rem">
+      单组件敲除对冗余回路不敏感。9B 没有显著中层单点，不能反过来断定它没有中层承重结构。
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">08</span><h2>能说什么，不能说什么</h2></div>
+
+    <div class="cols">
+      <div>
+        <h4><span style="color:var(--pass)">确认性结论</span></h4>
+        <ol>
+          <li>两个被测 Qwen Base 模型都显示 availability 早于 readiness。</li>
+          <li>该顺序在完整答案 ground truth 和选项置换反事实两条轨上都成立。</li>
+          <li>预注册单层状态互换因果门槛在两个模型上都未通过。</li>
+          <li>结果不允许普适到所有语言模型。</li>
+        </ol>
+
+        <h4 style="margin-top:2rem"><span style="color:var(--ready)">受控追加证据</span></h4>
+        <ol>
+          <li>覆盖整个主窗口的自然状态互换仍弱，后层重算解释不了预注册负结果。</li>
+          <li>方向特异 logit 效应在 readiness 边界附近增强，行为接管通常更晚。</li>
+          <li>相同边界模式在 Track A 的 26 类答案空间复现。</li>
+          <li>4B 的接管结构更集中，9B 更分布式。</li>
+        </ol>
+      </div>
+      <div>
+        <h4><span style="color:var(--fail)">不能据此声称</span></h4>
+        <ul>
+          <li>探针方向等同于模型的自然计算路径。</li>
+          <li>累积窗口中的某个单层独自充分或必要。</li>
+          <li>9B 没有中层机制——单组件敲除弱不构成证据。</li>
+          <li>该边界规律适用于所有语言模型。</li>
+          <li>可得性到就绪性窗口内的因果机制已经确认。</li>
+        </ul>
+
+        <h4 style="margin-top:2rem"><span class="dim">探索性观察</span></h4>
+        <ul>
+          <li>9B 末端 MLP 敲除可能是校准或抑制效应。</li>
+          <li>4B 部分方向引导曲线存在局部非单调。</li>
+          <li>逐来源方向一致性只来自开发运行首看：CMMLU、MMLU、BBH、MMLU-Redux、C-Eval 五个较大知识类来源都出现正层差；MMLU-Pro 峰值约 0.5，深层后层差趋近零。尚未按来源分别建立确认性空值门槛。</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4 style="margin-top:2.5rem">已知的解释限制</h4>
+    <div class="scroller">
+      <table>
+        <thead><tr><th>限制</th><th>影响</th></tr></thead>
+        <tbody>
+          <tr><td>顶层双重归一化</td><td>缓存最顶层是最终归一化后的状态，CSD 和因果干预会再归一化一次。报告不解释顶层读数；两个模型的确认性起点都在中层，不受影响。</td></tr>
+          <tr><td>完整答案单 token 资格</td><td>GSM8K、MATH-500、CRUXEval 只是条件切片。</td></tr>
+          <tr><td>模型范围</td><td>只有两个 Qwen Base 锚点。</td></tr>
+          <tr><td>因果范围</td><td>观测性通过不等于因果门槛通过。<span class="exp-id">GP-CAUSAL-01</span> 保持未通过。</td></tr>
+          <tr><td>主指标口径</td><td>主报告用未经基线扣除的原始准确率轨迹；基线扣除只作敏感性读数。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">09</span><h2>接下来</h2></div>
+    <p>以下候选项还没有正式实验编号。按索引规则，要等设计和预期产物明确之后才能登记成新的 <span class="exp-id">GP-*</span>。</p>
+
+    <div class="scroller">
+      <table>
+        <thead><tr><th>优先级</th><th>问题</th><th>推荐实验</th><th>依赖</th></tr></thead>
+        <tbody>
+          <tr><td><span class="chip chip-fail">高</span></td><td>4B 的 L24 self-attention 里，哪些 head 和 context 位置在承重</td><td>head 级敲除与路径激活修补</td><td class="exp-id dim">CAUSAL-02 · 04</td></tr>
+          <tr><td><span class="chip chip-fail">高</span></td><td>9B 的 L22–L25 最小组合承重集合是什么</td><td>多组件联合敲除</td><td class="exp-id dim">CAUSAL-02 · 04</td></tr>
+          <tr><td><span class="chip chip-sup">中</span></td><td>readiness 前后，答案方向的自然幅度怎么变</td><td>沿探针方向的缓存投影分析</td><td class="exp-id dim">OBS-01 · CAUSAL-03</td></tr>
+          <tr><td><span class="chip chip-sup">中</span></td><td>边界规律是否跨模型家族成立</td><td>第三个非 Qwen 锚点模型</td><td class="dim">全部现有 pipeline</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      最后一项分量最重。当前所有结论都挂着"仅限两个被测 Qwen Base 模型"这个限定词，
+      一个非 Qwen 锚点是唯一能把它摘掉的办法。
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="num">10</span><h2>产物与复现</h2></div>
+    <p>运行根目录：</p>
+    <div class="claim">brewing_output/general_prefill_runs/56cf303a0bee12f2__5ffa284ecd741a77/</div>
+
+    <div class="scroller">
+      <table>
+        <thead><tr><th>内容</th><th>相对位置</th></tr></thead>
+        <tbody>
+          <tr><td>单模型 Track A 分析</td><td class="m">&lt;model&gt;/analysis/generalprefill_gt.json</td></tr>
+          <tr><td>单模型 Track B 分析</td><td class="m">&lt;model&gt;/analysis/choicepermutation_cf.json</td></tr>
+          <tr><td>双模型联合声明审计</td><td class="m">combined/claim_audit.json</td></tr>
+          <tr><td>预注册状态互换</td><td class="m">&lt;model&gt;/causal/choicepermutationcf/eval/pooled/seed42/&lt;model&gt;/option_permutation_interchange__primary.json</td></tr>
+          <tr><td>窗口互换</td><td class="m">同目录 gap_window_interchange__{primary,extend,boundary}.json</td></tr>
+          <tr><td>探针方向引导</td><td class="m">同目录 probe_direction_steering__{primary,phase3,phase4}.json</td></tr>
+          <tr><td>组件敲除</td><td class="m">同目录 component_knockout__primary.json</td></tr>
+          <tr><td>Track A 方向引导</td><td class="m">&lt;model&gt;/causal/generalprefillgt/eval/pooled/seed42/&lt;model&gt;/gt_probe_steering__primary.json</td></tr>
+          <tr><td>确认性曲线图</td><td class="m">brewing_output/figures/brewing_dual_confirmatory_gt.png</td></tr>
+          <tr><td>因果汇总图</td><td class="m">brewing_output/figures/causal_gap_experiments_dual.png</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>代码入口</h4>
+    <ul>
+      <li><code>scripts/prepare_general_prefill_data.py</code> · <code>brewing/benchmarks/general_prefill/</code> — 数据产品构建</li>
+      <li><code>scripts/run_general_prefill_anchor.py</code> — <span class="m">primary / ablations / nulls / suffix_controls / choice / causal_cf / analysis</span> 阶段</li>
+      <li><code>brewing/causal/option_interchange.py</code> — 预注册状态互换</li>
+      <li><code>scripts/run_causal_gap_experiments.py</code> — <span class="m">--exp window / steering / gt_steering / knockout</span></li>
+      <li><code>scripts/plot_causal_gap_experiments.py</code> — 汇总绘图</li>
+    </ul>
+
+    <h4>算力量级</h4>
+    <p>
+      追加因果实验第一轮约 24 万次带干预前向计算，双卡约 2.9 小时；
+      第二轮约 22 万次（4B 约 16.5 万、9B 约 6 万），双卡约 2.3 小时。
+      9B 的运行环境需要 <code>expandable_segments</code>。
+    </p>
+  </section>
+
+  <footer>
+    <p>
+      本页汇总自 <b>EXPERIMENT_INDEX.md</b>、<b>docs/brewing_confirmatory_report.md</b> 与 <b>docs/causal_gap_followup_report.md</b>，
+      核验日期 2026-07-14。正式引用请使用两份报告原文，不要引用历史状态快照
+      （<span class="m">docs/project_changes_and_experiment_status_2026-07-12.md</span> 与 <span class="m">general_bench_decisions.md</span> 均已不表示当前协议）。
+    </p>
+    <p style="margin-top:0.9rem">
+      索引规则：新实验先分配编号再运行；预注册与事后追加分开标记；未通过的预注册门槛永久保留。
+    </p>
+  </footer>
+
+</div>
