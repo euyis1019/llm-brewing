@@ -1,0 +1,212 @@
+{
+  "aime24": {
+    "downloaded_at": "2026-10-17T17:48:01",
+    "files": {
+      "data/train-00000-of-00001.parquet": {
+        "bytes": 81670,
+        "local_path": "aime24/data/train-00000-of-00001.parquet",
+        "sha256": "26139847601a5037c237d5928b195e7260ca8074cf4f264b794af42847f79ccf"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-01-26 16:17:13+00:00",
+    "repo_id": "HuggingFaceH4/aime_2024",
+    "revision": "2fe88a2f1091d5048c0f36abc874fb997b3dd99a",
+    "status": "ok"
+  },
+  "aime24_maxwelljia": {
+    "downloaded_at": "2026-10-17T17:48:05",
+    "files": {
+      "aime_2024_problems.parquet": {
+        "bytes": 37189,
+        "local_path": "aime24_maxwelljia/aime_2024_problems.parquet",
+        "sha256": "3cb34696a75837f848ea16f15a42f4130be655d5995e8cd24efcc54f4e6e1524"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-02-18 06:39:19+00:00",
+    "repo_id": "Maxwell-Jia/AIME_2024",
+    "revision": "8d88b2876a82a080e2f172cc9b25d0d9d2cb4792",
+    "status": "ok"
+  },
+  "aime25": {
+    "downloaded_at": "2026-10-17T17:48:09",
+    "files": {
+      "data/train-00000-of-00001.parquet": {
+        "bytes": 14313,
+        "local_path": "aime25/data/train-00000-of-00001.parquet",
+        "sha256": "9f9066ff48ad2e31f9bf1b1ac6d5e80693195f987985f2859f89dd25ffa51c2d"
+      }
+    },
+    "gated": false,
+    "last_modified": "2026-05-15 17:06:24+00:00",
+    "repo_id": "MathArena/aime_2025",
+    "revision": "c94da77eb22bbd6439e62a323bec18493a421302",
+    "status": "ok"
+  },
+  "aime25_opencompass": {
+    "downloaded_at": "2026-10-17T17:48:13",
+    "files": {
+      "aime2025-I.jsonl": {
+        "bytes": 5764,
+        "local_path": "aime25_opencompass/aime2025-I.jsonl",
+        "sha256": "b91b3c96f05d9635d2a0692b124ebe023c1ff59cb19c074275e6c4b349d0659e"
+      },
+      "aime2025-II.jsonl": {
+        "bytes": 6285,
+        "local_path": "aime25_opencompass/aime2025-II.jsonl",
+        "sha256": "16a2dcfbbf9db1b11f8a69a3ba5e4cac73e3641b19a37e2307e9c12240bbed5e"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-02-25 10:28:55+00:00",
+    "repo_id": "opencompass/AIME2025",
+    "revision": "a6ad95f611d72cf628a80b58bd0432ef6638f958",
+    "status": "ok"
+  },
+  "aime26": {
+    "downloaded_at": "2026-10-17T17:48:15",
+    "files": {
+      "data/train-00000-of-00001.parquet": {
+        "bytes": 10065,
+        "local_path": "aime26/data/train-00000-of-00001.parquet",
+        "sha256": "d91db799651b4cc1f0734f52792a695c9cc60dac342524b3d8e5b2ff31c3e957"
+      }
+    },
+    "gated": false,
+    "last_modified": "2026-05-15 17:06:34+00:00",
+    "repo_id": "MathArena/aime_2026",
+    "revision": "d2de22f3c656b4f56cf8981212186377d1e23bc3",
+    "status": "ok"
+  },
+  "amc": {
+    "downloaded_at": "2026-10-17T17:48:19",
+    "files": {
+      "data/train-00000-of-00001.parquet": {
+        "bytes": 19141,
+        "local_path": "amc/data/train-00000-of-00001.parquet",
+        "sha256": "4de056fd006062cee46e3900727dd5d00094b8592ed0bfd6b5dfae2267f72dd7"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-05-07 06:40:39+00:00",
+    "repo_id": "AI-MO/aimo-validation-amc",
+    "revision": "69d78a4a2c840e82d69af6bc742bda09005f6316",
+    "status": "ok"
+  },
+  "gpqa_jingzeshi": {
+    "downloaded_at": "2026-10-17T17:48:28",
+    "files": {
+      "data/test-00000-of-00001.parquet": {
+        "bytes": 801812,
+        "local_path": "gpqa_jingzeshi/data/test-00000-of-00001.parquet",
+        "sha256": "aff8ed2d886cb7cec4f09967432b8d419598c52bf82f3d6c82ea53e0ee841476"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-03-27 11:57:25+00:00",
+    "repo_id": "JingzeShi/gpqa_diamond",
+    "revision": "5c5df1db90ca5a951530b2817577775bdb59da37",
+    "status": "ok"
+  },
+  "gpqa_official": {
+    "downloaded_at": "2026-10-17T17:48:27",
+    "error": "GatedRepoError: 401 Client Error. (Request ID: Root=1-6ad3b4ec-1a50a1b5320ae52b7dee597c;41dfc7f8-969f-4df4-8acf-d77f7e6ce56a)\n\nCannot access gated repo for url https://huggingface.co/datasets/Idavidrein/gpqa/resolve/83022cefff930aea54f654c0b282e74b9eeda5c6/gpqa_diamond.csv.\nAccess to dataset Idavidrein/gpqa is restricted. You must have access to it and be authenticated to access it. Please log in.",
+    "files": {},
+    "gated": "auto",
+    "last_modified": "2026-09-21 22:29:06+00:00",
+    "repo_id": "Idavidrein/gpqa",
+    "revision": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+    "status": "failed"
+  },
+  "gpqa_talzoomanzoo": {
+    "downloaded_at": "2026-10-17T17:48:32",
+    "files": {
+      "data/train-00000-of-00001.parquet": {
+        "bytes": 63951,
+        "local_path": "gpqa_talzoomanzoo/data/train-00000-of-00001.parquet",
+        "sha256": "ca0c0f3a392bd49708d8f2c9c8f5c2c45ac9bcaeeef28fb909601eba16b94a8a"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-09-01 04:33:12+00:00",
+    "repo_id": "talzoomanzoo/gpqa_diamond_raw",
+    "revision": "3ac0c05b7e67fad1df3e16bc3ab312c549999647",
+    "status": "ok"
+  },
+  "gsm8k": {
+    "downloaded_at": "2026-10-17T17:47:55",
+    "files": {
+      "main/test-00000-of-00001.parquet": {
+        "bytes": 419088,
+        "local_path": "gsm8k/main/test-00000-of-00001.parquet",
+        "sha256": "ee7b8da9e381df27b9e3f7758a159ab2bdaa4dbaa910546cbbc47e0cb44e4f59"
+      }
+    },
+    "gated": false,
+    "last_modified": "2026-03-23 10:18:13+00:00",
+    "repo_id": "openai/gsm8k",
+    "revision": "740312add88f781978c0658806c59bc2815b9866",
+    "status": "ok"
+  },
+  "math500": {
+    "downloaded_at": "2026-10-17T17:47:59",
+    "files": {
+      "test.jsonl": {
+        "bytes": 446564,
+        "local_path": "math500/test.jsonl",
+        "sha256": "35dc41080a3680858b27fa7e0533d2d547825316fc5dafe5d316f4ccc5a06132"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-12-15 11:01:40+00:00",
+    "repo_id": "HuggingFaceH4/MATH-500",
+    "revision": "6e4ed1a2a79af7d8630a6b768ec859cb5af4d3be",
+    "status": "ok"
+  },
+  "minerva": {
+    "downloaded_at": "2026-10-17T17:48:26",
+    "files": {
+      "test.jsonl": {
+        "bytes": 130303,
+        "local_path": "minerva/test.jsonl",
+        "sha256": "e04ec2bc1d8f80a0091b4b1989f1ffb366f3583f5bae381546a066d4ccc26e3d"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-02-15 20:35:28+00:00",
+    "repo_id": "math-ai/minervamath",
+    "revision": "ee46ddc498933b1977577953250ca5c66be64f96",
+    "status": "ok"
+  },
+  "olympiad": {
+    "downloaded_at": "2026-10-17T17:48:22",
+    "files": {
+      "OlympiadBench/OE_TO_maths_en_COMP/OE_TO_maths_en_COMP.parquet": {
+        "bytes": 723850,
+        "local_path": "olympiad/OlympiadBench/OE_TO_maths_en_COMP/OE_TO_maths_en_COMP.parquet",
+        "sha256": "7c17ca2662b3ea77cddcb66a64b04ad9b53d3d32fa372d444a4884739eb1638d"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-06-08 16:20:05+00:00",
+    "repo_id": "Hothan/OlympiadBench",
+    "revision": "91184b52131e7fc9455fef848035173aea8cc01a",
+    "status": "ok"
+  },
+  "olympiad_knoveleng": {
+    "downloaded_at": "2026-10-17T17:49:25",
+    "files": {
+      "data/train-00000-of-00001.parquet": {
+        "bytes": 635075,
+        "local_path": "olympiad_knoveleng/data/train-00000-of-00001.parquet",
+        "sha256": "d8339244049d5654321ad2066a2a54d7bcdcfa0e8b9ce0c10ba1e9a9a30ef02d"
+      }
+    },
+    "gated": false,
+    "last_modified": "2025-03-14 20:41:03+00:00",
+    "repo_id": "knoveleng/OlympiadBench",
+    "revision": "7c37e02cee035997dfa7f5faa71a126194e3d20d",
+    "status": "ok"
+  }
+}

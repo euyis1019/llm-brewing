@@ -1,0 +1,54 @@
+{
+ "seed": 20261016,
+ "sources": {
+  "gsm_mc": {
+   "n_test_valid": 1319,
+   "n_used": 1319,
+   "demo_from": "train.jsonl"
+  },
+  "math_mc": {
+   "n_test_valid": 4817,
+   "n_used": 1000,
+   "demo_from": "train.jsonl"
+  },
+  "pythonio": {
+   "n_test_valid": 1684,
+   "n_used": 1000,
+   "demo_from": "train.jsonl"
+  },
+  "mmlu_pro": {
+   "n_rows": 12032,
+   "n_valid_4opt": 12011,
+   "n_used": 1000,
+   "demo_from": "other rows"
+  },
+  "ceval": {
+   "n_rows": 1346,
+   "n_valid": 1343,
+   "n_used": 1340,
+   "demo_from": "3 held-out val rows"
+  }
+ },
+ "n_questions": 5659,
+ "by_source": {
+  "gsm_mc": 1319,
+  "math_mc": 1000,
+  "pythonio": 1000,
+  "mmlu_pro": 1000,
+  "ceval": 1340
+ },
+ "answer_dist": {
+  "2": 1469,
+  "3": 1386,
+  "1": 1419,
+  "0": 1385
+ },
+ "fold_dist": {
+  "1": 1130,
+  "4": 1138,
+  "2": 1143,
+  "3": 1119,
+  "0": 1129
+ },
+ "script_md5": "fe176b2f185258753a43debc35a935f7"
+}

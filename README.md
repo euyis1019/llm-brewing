@@ -1,170 +1,65 @@
-# Brewing
+# Brewing — `unsupervised-metrics` branch
 
-Implementation for the experiments in *"From Brewing to Resolution: Tracing the
-Internal Lifecycle of Code Reasoning in LLMs"*.
+[中文版](README_CN.md)
 
-Standard accuracy only tells you whether a model got the answer right, not how
-that answer formed inside the network. Brewing studies code reasoning as an
-internal **layer-wise lifecycle**: answers often become linearly readable from
-hidden states *before* the model itself can decode them. That intermediate
-regime is what we call `brewing`.
+Brewing studies when an LLM's answer forms across depth. Two readouts bracket it at every layer: a cross-validated linear probe tells whether the answer is already **externally decodable** from the hidden state, and Patchscope-style context-stripped decoding (CSD) tells whether the model's own remaining layers can already decode it (**self-decodable**). The answer reaches the first condition several layers before the second.
 
-Two complementary views track this lifecycle:
+**Emission layer.** Each model has one layer at which the answer is written into the output-readable direction in a single step. Before it, a probe can already read the answer, but the answer lies outside the four letter-readout directions; at it, the model's own readout jumps to the answer. The layer is fixed per model: it does not move with the question source, the outcome class, or post-training (Qwen3-4B L24, Qwen2.5-7B L19–20, Llama-3.1-8B L17).
 
-- `linear_probing` (Φ_P) — **information availability**: is the answer already
-  linearly readable from the hidden state?
-- `csd` (Φ_C) — **information readiness**: can the model itself decode the answer
-  from that state?
+This branch holds the code and data for the October 2026 follow-up to the EACL paper ([arXiv 2606.17648](https://arxiv.org/abs/2606.17648)). The paper used six synthetic code-reasoning tasks; this round moves to cross-domain multiple-choice benchmarks, asks whether label-free signals can replace the trained probe, and tests whether those signals can drive early exit and layer looping. The scripts are the ones that produced the October numbers, with machine paths made configurable. How we got here is in [docs/TRAJECTORY.md](docs/TRAJECTORY.md).
 
-Their gap over the layer axis (the *brewing gap*) sorts each example into one of
-four outcomes: `resolved`, `overprocessed`, `misresolved`, `unresolved`.
+## Results in one table
 
-> 🚧 Next up (2026-07-10): a more essential, more *general* line of research.
+Answer position, 5,659 questions × 4 cyclic option permutations. A class counts only when all four permutations agree on the same content.
 
-## Design Philosophy: Config-Driven
+| Model, prompt | Accuracy | R | O | U | M | NB | Probe-readable (median layer) | Self-decodable (median layer) |
+|---|---|---|---|---|---|---|---|---|
+| Qwen3-4B-Base, 1-shot | 66.1% | 47.4% | 1.4% | 4.2% | 0.1% | 46.8% | 21 | 24 |
+| Qwen3-4B, 1-shot | 59.1% | 37.6% | 0.5% | 5.4% | 0.0% | 56.4% | 21 | 24 |
+| Qwen3-4B, chat | 56.8% | 32.1% | 0.3% | 8.1% | 0.0% | 59.5% | 21 | 24 |
+| Qwen2.5-7B, 1-shot | 62.5% | 43.8% | 0.8% | 4.2% | 0.2% | 51.1% | 19 | 20 |
+| Qwen2.5-7B-Instruct, chat | 58.6% | 37.5% | 0.4% | 4.7% | 0.0% | 57.3% | 19 | 19 |
+| Llama-3.1-8B, 1-shot | 41.0% | 14.8% | 0.9% | 6.7% | 0.0% | 77.5% | 15 | 17 |
 
-Brewing is **config-driven**. There is exactly one entry point —
+R: self-decodable and correct at the output. O: was self-decodable, lost by the output. U: probe-readable, never self-decodable. M: probe-readable, consistently wrong. NB: never probe-readable. Layer medians are over R questions.
+
+What the interventions showed:
+
+- **Label-free readouts work.** A probe trained on the model's own four-permutation consensus, with no gold labels, tracks the gold-label probe layer by layer within 0.6 points on the Qwen3 lines.
+- **Early exit at the answer position saves depth, not accuracy.** At 99% agreement with full-depth output, exit features built from the CSD jump stop at layer 25.2 on Qwen3-4B chat (confidence alone: 30.7, oracle: 23.5). Accuracy stays within a point. No rule turns wrong answers right once matched against a decoy control.
+- **Looping middle layers barely helps.** Post-trained models gain under a point; base models do not gain. No label-free gate beats looping every question.
+- **In generation both actions fail.** With exit decisions that never pick a different token than full depth, MATH-500 accuracy drops from 66.4% to 27.9%. Later tokens read the exited tokens' deep keys and values, which the frozen model never saw. The pre-registered loop arm loses 3.3 points.
+
+The bottleneck is executing the action on a frozen model, not deciding when to act.
+
+## Layout
+
+```
+scripts/depth_intervention/   answer-position study: extraction, probes, taxonomy, early exit, loop, label-free features
+scripts/gen_depth/            generation study: custom per-token-depth decoder, policies, grading, comparisons
+scripts/make_subset.py        stratified question subsets for fast runs
+scripts/_workspace.py         data / model path resolution
+experiments/depth_intervention/data/bench/   question sets, few-shot demos, per-model few-shot settings
+experiments/gen_depth/data/   generation problem pool and the fixed selection lists
+vendor/gen_depth_grading/     vendored math_verify grader
+docs/                         reproduction guide, research trajectory, original experiment logs
+```
+
+Runs write to `experiments/<study>/results/`, which is not tracked.
+
+## Quick start
 
 ```bash
-python -m brewing --config path/to/config.yaml [--verbose]
+pip install -r requirements.txt
+export BREWING_MODEL_ROOT=/path/to/models   # holds Qwen3-4B-Base/, Qwen3-4B/, Meta-Llama-3.1-8B-nous/, huggingface/Qwen/...
+export BREW_BENCH=core500                   # 500-question subset; unset for the full set
+
+cd experiments/depth_intervention
+python scripts/extract.py          --model qwen3-4b-base --fmt base_fewshot
+python scripts/save_lens_params.py --model qwen3-4b-base --fmt base_fewshot
+python scripts/train_probe.py      --model qwen3-4b-base --fmt base_fewshot
+python scripts/classify.py         --model qwen3-4b-base --fmt base_fewshot --probe full --csd raw --last_layer output --out classify
+python scripts/early_exit.py       --model qwen3-4b-base --fmt base_fewshot --probe full --classify_dir classify
 ```
 
-— and a single YAML file declares everything about a run: which `mode` to
-execute, which benchmark and subsets, which model, which methods, and where
-outputs land. The CLI parses no behavioral flags; it only loads the config,
-decides whether a model must be brought online, and hands off to the
-orchestrator. This has a few consequences worth knowing:
-
-- **A run is fully described by its config.** No hidden CLI state, no
-  environment-dependent branching. The same YAML reproduces the same run, which
-  is why the configs under `brewing/config/experiments/` *are* the experiment
-  record.
-- **Modes compose into a pipeline, not a monolith.** Each run does one stage
-  (`cache_only`, `train_probing`, `eval`, `diagnostics`, `causal_validation`).
-  You chain them by running configs in sequence; intermediate artifacts on disk
-  are the interface between stages.
-- **Resolve-or-build everywhere.** Datasets, caches, and probe artifacts are
-  keyed deterministically (benchmark × split × subset × seed × model × method).
-  If an artifact already exists it is loaded, not recomputed — so reruns are
-  cheap and interrupted jobs resume naturally.
-- **Diagnostics are decoupled.** `diagnostics` reads saved method results from
-  disk and needs no model. The expensive GPU stages and the cheap analysis stage
-  never have to run together.
-
-The framework keeps its interface boundaries (`BenchmarkSpec`,
-`AnalysisMethod`, `MethodResult`) generic so new benchmarks and methods slot in
-without touching the orchestrator.
-
-## Pipeline
-
-```
-S0  Dataset resolve / build
-S1  Hidden-state cache extraction
-S2  Method run (Probing / CSD) → MethodResult on disk
-─── pipeline boundary ───
-S3  Diagnostics (independent post-processing): FPCL / FJC / outcome labels
-```
-
-| Mode | Purpose | Needs online model |
-| --- | --- | --- |
-| `cache_only` | Build/load dataset and extract hidden-state caches | Yes, unless all caches exist |
-| `train_probing` | Train per-layer probe artifacts from train-split caches | Yes, unless required caches exist |
-| `eval` | Run `linear_probing` / `csd` on eval data | Depends on selected methods |
-| `diagnostics` | Compute FPCL, FJC, brewing gap, outcome labels from saved results | No |
-| `causal_validation` | Intervention experiments over existing S0–S3 artifacts | Yes |
-
-Typical end-to-end flow: `cache_only` → `train_probing` → `eval` →
-`diagnostics` → (optionally) `causal_validation`.
-
-## Installation
-
-```bash
-pip install -e .            # minimal
-pip install -e .[model]     # model-backed runs (cache extraction, CSD, causal)
-pip install -e .[dev]       # test dependencies
-```
-
-Python `>=3.10` is required.
-
-## Quick Start
-
-The smallest runnable path uses the built-in fixture (no model, no setup):
-
-```bash
-python -m brewing --config brewing/config/example_single_task.yaml
-```
-
-That config sets `use_fixture: true`, one subset (`value_tracking`), and one
-method (`linear_probing`) — the fastest way to verify the CLI and output layout.
-
-Other example configs:
-
-```text
-brewing/config/example_single_task.yaml
-brewing/config/example_probing_tune.yaml
-brewing/config/example_local_model.yaml
-brewing/config/example_full_reference.yaml
-brewing/config/experiments/*.yaml
-```
-
-## Benchmark
-
-The default benchmark is `CUE-Bench`, six code-reasoning subsets, all with
-single-digit answers (0–9):
-
-`value_tracking`, `computing`, `conditional`, `function_call`, `loop`,
-`loop_unrolled`.
-
-## Outputs
-
-All artifacts go under `output_root` (default `brewing_output/`), organized by
-benchmark / split / subset / seed / model / method:
-
-```text
-datasets/...    caches/...    artifacts/...    results/...    run_summary.json
-```
-
-Path logic lives in `brewing/resources.py`.
-
-## Repository Layout
-
-```text
-brewing/
-  benchmarks/   Benchmark specs, builders, adapters, built-in data
-  causal/       Causal intervention backends and validators
-  config/       Example and experiment YAML configs
-  diagnostics/  Outcome taxonomy and aggregate metrics (S3)
-  methods/      Linear probing and CSD
-  pipelines/    cache_only / train_probing / eval / diagnostics / causal_validation
-  schema/       Shared dataclasses and serialization
-  cli.py        CLI entry point for `python -m brewing`
-docs/           Architecture notes and per-mode behavior
-scripts/        Smoke tests and experiment helpers
-tests/          Unit and integration tests
-```
-
-## Documentation
-
-- [docs/project_overview.md](docs/project_overview.md) — high-level architecture
-- [docs/running_modes.md](docs/running_modes.md) — per-mode behavior
-- [brewing/config/README.md](brewing/config/README.md) — config reference
-
-## Tests
-
-```bash
-pytest                              # unit + integration suite
-python scripts/test_e2e_smoke.py    # model-backed end-to-end (assumes local assets)
-```
-
-## Citation
-
-```bibtex
-@misc{brewing2026,
-  title={From Brewing to Resolution: Tracing the Internal Lifecycle of Code Reasoning in LLMs},
-  author={Chen, Siyue and Guo, Yifu and Lu, Yuquan and Xu, Zishan and Lin, Jiaye and
-          Lin, Jianbo and Zhang, Siyu and Yang, Cheng and Li, Junxin and Li, Yujia and
-          Huo, Yu and Wang, Ruixuan},
-  year={2026},
-  note={Under review},
-}
-```
+On one RTX 4090 the subset takes about three minutes per model through this point. Every step, the loop and generation studies, expected numbers and how they were checked against October are in [docs/REPRODUCTION.md](docs/REPRODUCTION.md).

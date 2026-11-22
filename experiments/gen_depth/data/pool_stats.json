@@ -1,0 +1,1160 @@
+{
+ "generated_at": "2026-10-18T04:19:08",
+ "script": "scripts/data/build_pool.py",
+ "total": 3044,
+ "counts": {
+  "gsm8k": 1319,
+  "math500": 500,
+  "aime24": 30,
+  "aime25": 30,
+  "aime26": 30,
+  "amc": 83,
+  "olympiad": 582,
+  "minerva": 272,
+  "gpqa": 198
+ },
+ "candidates_before_drops": {
+  "gsm8k": 1319,
+  "math500": 500,
+  "aime24": 30,
+  "aime25": 30,
+  "aime26": 30,
+  "amc": 83,
+  "olympiad": 675,
+  "minerva": 272,
+  "gpqa": 198
+ },
+ "expected_candidates": {
+  "gsm8k": 1319,
+  "math500": 500,
+  "aime24": 30,
+  "aime25": 30,
+  "aime26": 30,
+  "amc": 83,
+  "olympiad": 675,
+  "minerva": 272,
+  "gpqa": 198
+ },
+ "answer_type_counts": {
+  "math": 2846,
+  "mcq": 198
+ },
+ "dropped": {
+  "gsm8k": {
+   "count": 0,
+   "by_reason": {},
+   "items": []
+  },
+  "math500": {
+   "count": 0,
+   "by_reason": {},
+   "items": []
+  },
+  "aime24": {
+   "count": 0,
+   "by_reason": {},
+   "items": []
+  },
+  "aime25": {
+   "count": 0,
+   "by_reason": {},
+   "items": []
+  },
+  "aime26": {
+   "count": 0,
+   "by_reason": {},
+   "items": []
+  },
+  "amc": {
+   "count": 0,
+   "by_reason": {},
+   "items": []
+  },
+  "olympiad": {
+   "count": 93,
+   "by_reason": {
+    "multiple_answers": 91,
+    "multi_part_answer": 1,
+    "free_text_answer": 1
+   },
+   "items": [
+    {
+     "pid": "olympiad:5",
+     "orig_id": "1618",
+     "answer": "$(1,8,19), (2,7,13), (4,5,7)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:13",
+     "orig_id": "1664",
+     "answer": "$69$,$84$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:17",
+     "orig_id": "1687",
+     "answer": "$f(n)=n$, $g(n)=1$",
+     "is_multiple_answer": false,
+     "reason": "multi_part_answer"
+    },
+    {
+     "pid": "olympiad:21",
+     "orig_id": "1709",
+     "answer": "1,3,5",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:27",
+     "orig_id": "1737",
+     "answer": "$(6,3),(9,3),(9,5),(54,5)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:31",
+     "orig_id": "1760",
+     "answer": "$\\angle B E A_{1}=90$,$\\angle A E B_{1}=90$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:32",
+     "orig_id": "1766",
+     "answer": "$(0,2),(0,-2),(4,23),(4,-23)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:37",
+     "orig_id": "1800",
+     "answer": "1,3",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:38",
+     "orig_id": "1807",
+     "answer": "$-2,0,2$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:64",
+     "orig_id": "1929",
+     "answer": "$(1,1), (3,2)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:65",
+     "orig_id": "1930",
+     "answer": "$(1,2,3),(1,3,2),(2,1,3),(2,3,1),(3,1,2),(3,2,1)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:66",
+     "orig_id": "1938",
+     "answer": "$f(x)=-1$,$f(x)=x+1$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:68",
+     "orig_id": "1940",
+     "answer": "$f(x)=x$,$f(x)=2-x$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:71",
+     "orig_id": "1962",
+     "answer": "$(2,2,2),(2,2,3),(2,3,2),(3,2,2),(2,6,11),(2,11,6),(6,2,11),(6,11,2),(11,2,6),(11,6,2),(3,5,7),(3,7,5),(5,3,7),(5,7,3),(7,3,5),(7,5,3)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:81",
+     "orig_id": "2000",
+     "answer": "2,3,4",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:86",
+     "orig_id": "2012",
+     "answer": "2500,7500",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:89",
+     "orig_id": "2024",
+     "answer": "$(2,2,2),(3,4,3)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:103",
+     "orig_id": "2099",
+     "answer": "$90^{\\circ}$,$60^{\\circ}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:104",
+     "orig_id": "2111",
+     "answer": "1,2,3,4",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:113",
+     "orig_id": "2171",
+     "answer": "$f(x)=x,f(x)=-x$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:117",
+     "orig_id": "2193",
+     "answer": "1,2",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:119",
+     "orig_id": "2203",
+     "answer": "$(0,1,1),(0,-1,-1),(1,0,1),(-1,0,-1),(1,1,0)$,$(-1,-1,0),\\left(\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}\\right)$,$\\left(-\\frac{1}{\\sqrt{3}},-\\frac{1}{\\sqrt{3}},-\\frac{1}{\\sqrt{3}}\\right)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:122",
+     "orig_id": "2216",
+     "answer": "11,13",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:125",
+     "orig_id": "2235",
+     "answer": "10,11,12,13,14,-2,-1,0,1,2",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:127",
+     "orig_id": "2238",
+     "answer": "-1,0,1",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:137",
+     "orig_id": "2254",
+     "answer": "$\\frac{32}{9}$,$\\frac{1}{2}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:147",
+     "orig_id": "2268",
+     "answer": "5,1",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:150",
+     "orig_id": "2277",
+     "answer": "7,14,18",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:153",
+     "orig_id": "2282",
+     "answer": "1,-1,7,-7",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:156",
+     "orig_id": "2287",
+     "answer": "$a=2$, $a=-6-4 \\sqrt{2}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:158",
+     "orig_id": "2289",
+     "answer": "$\\frac{1}{6} \\pi, \\frac{5}{6} \\pi, \\frac{1}{4} \\pi, \\frac{3}{4} \\pi$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:159",
+     "orig_id": "2292",
+     "answer": "$(3,2),(-3,2),(3,-2),(-3,-2)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:162",
+     "orig_id": "2301",
+     "answer": "1,2,5,8,9",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:163",
+     "orig_id": "2303",
+     "answer": "$(10^{4}, 10^{3}, 10^{10}),(10^{2}, 10^{-1}, 10^{-2})$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:165",
+     "orig_id": "2313",
+     "answer": "$(3,0),(-3,1)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:167",
+     "orig_id": "2317",
+     "answer": "-3,0",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:168",
+     "orig_id": "2318",
+     "answer": "(4,2,3,2,4,3,1,1),(1,1,3,4,2,3,2,4),(4,1,1,3,4,2,3,2),(2,3,2,4,3,1,1,4),(3,4,2,3,2,4,1,1),(1,1,4,2,3,2,4,3)",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:172",
+     "orig_id": "2323",
+     "answer": "1, 3, 5, 15",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:174",
+     "orig_id": "2326",
+     "answer": "-2,-1,1,2",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:178",
+     "orig_id": "2330",
+     "answer": "(1,-4,-2),(3,2,3),(13,2,-2)",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:180",
+     "orig_id": "2332",
+     "answer": "$(45^{\\circ}, 60^{\\circ}),(135^{\\circ}, 60^{\\circ})$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:183",
+     "orig_id": "2336",
+     "answer": "(1,7,103, 105), (3, 5, 101, 107)",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:184",
+     "orig_id": "2338",
+     "answer": "$-1$,$2$,$-2$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:186",
+     "orig_id": "2340",
+     "answer": "$8$,$4$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:192",
+     "orig_id": "2346",
+     "answer": "$10^{100}$,$10^{1 / 100}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:193",
+     "orig_id": "2349",
+     "answer": "$221,$8$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:198",
+     "orig_id": "2356",
+     "answer": "16,3,1,1",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:201",
+     "orig_id": "2369",
+     "answer": "7,4",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:202",
+     "orig_id": "2370",
+     "answer": "-6,-8,-10",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:205",
+     "orig_id": "2375",
+     "answer": "$1$,$\\frac{3 + \\sqrt{21}}{2}$,$\\frac{3 - \\sqrt{21}}{2}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:206",
+     "orig_id": "2376",
+     "answer": "$(1,0),(\\frac{1}{100},-8),(100,8)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:209",
+     "orig_id": "2382",
+     "answer": "2,4,3",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:213",
+     "orig_id": "2391",
+     "answer": "5,15",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:215",
+     "orig_id": "2397",
+     "answer": "$100,\\frac{1}{100}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:224",
+     "orig_id": "2420",
+     "answer": "$2,-1,-18$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:225",
+     "orig_id": "2421",
+     "answer": "-5,7",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:227",
+     "orig_id": "2423",
+     "answer": "1,3,9,11",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:230",
+     "orig_id": "2427",
+     "answer": "$(22+8 \\sqrt{6}, 22-8 \\sqrt{6})$,$(22-8 \\sqrt{6}, 22+8 \\sqrt{6})$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:236",
+     "orig_id": "2439",
+     "answer": "$5,-2$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:240",
+     "orig_id": "2443",
+     "answer": "11,19,37,73",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:242",
+     "orig_id": "2445",
+     "answer": "$10^{3},10$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:243",
+     "orig_id": "2453",
+     "answer": "8,32,44,68,80",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:247",
+     "orig_id": "2460",
+     "answer": "$(1,1006),(3,331),(11,31)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:252",
+     "orig_id": "2467",
+     "answer": "$1.68,0.45$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:254",
+     "orig_id": "2472",
+     "answer": "19,0,1",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:259",
+     "orig_id": "2486",
+     "answer": "$0,-1,-\\frac{3}{2}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:261",
+     "orig_id": "2490",
+     "answer": "$6764$,$10945$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:266",
+     "orig_id": "2498",
+     "answer": "$\\frac{1}{2},\\sqrt{x}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:268",
+     "orig_id": "2501",
+     "answer": "$x=\\frac{1}{6} \\pi+\\pi k, \\frac{1}{3} \\pi+\\pi k, \\frac{2}{3} \\pi+\\pi k, \\frac{5}{6} \\pi+\\pi k$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:274",
+     "orig_id": "2509",
+     "answer": "$\\frac{1}{3},-2,5$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:277",
+     "orig_id": "2521",
+     "answer": "2400, 1350, 864",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:279",
+     "orig_id": "2523",
+     "answer": "$(0,0),(0, \\frac{5}{2}),(\\frac{1}{2}, 0),(-\\frac{1}{2}, 0),(\\frac{3}{2}, 4),(-1, \\frac{3}{2})$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:280",
+     "orig_id": "2524",
+     "answer": "$2^{-2 / 3}$, $8$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:284",
+     "orig_id": "2532",
+     "answer": "-2,-2",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:286",
+     "orig_id": "2536",
+     "answer": "3,4",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:287",
+     "orig_id": "2539",
+     "answer": "$64,\\frac{1}{4}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:288",
+     "orig_id": "2544",
+     "answer": "(2,32), (8,18)",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:291",
+     "orig_id": "2549",
+     "answer": "$3,1,-1,1+\\sqrt{2}, 1-\\sqrt{2}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:298",
+     "orig_id": "2560",
+     "answer": "$(-1,-9),(4+2 \\sqrt{2}, 8),(4-2 \\sqrt{2}, 8)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:300",
+     "orig_id": "2568",
+     "answer": "$-1,-9$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:302",
+     "orig_id": "2570",
+     "answer": "$(27,20,13), (18,20,22)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:305",
+     "orig_id": "2574",
+     "answer": "$2,-\\log _{10} 250$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:306",
+     "orig_id": "2575",
+     "answer": "$1,2,3$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:380",
+     "orig_id": "2679",
+     "answer": "$\\frac{1}{3},1,\\frac{1}{9}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:382",
+     "orig_id": "2684",
+     "answer": "27,54,108,135,189,216,270,297,351,378",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:385",
+     "orig_id": "2702",
+     "answer": "$\\frac{1}{3}, 1, 9$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:427",
+     "orig_id": "2753",
+     "answer": "1,2",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:428",
+     "orig_id": "2754",
+     "answer": "1,3",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:440",
+     "orig_id": "2771",
+     "answer": "$\\sqrt{2}-1$,$\\frac{3-\\sqrt{2}}{7}$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:511",
+     "orig_id": "2862",
+     "answer": "$41352,42351,51342$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:512",
+     "orig_id": "2863",
+     "answer": "$352146,362145,452136,562134$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": "olympiad:555",
+     "orig_id": "2950",
+     "answer": "$(-6,6)$, $(2,6)$",
+     "is_multiple_answer": true,
+     "reason": "multiple_answers"
+    },
+    {
+     "pid": null,
+     "orig_id": "1965",
+     "answer": "$f(x)=a x+b$, where $b$ is an arbitrary integer, and $a$ is an arbitrary positive integer with $\\mho(a)=0$",
+     "is_multiple_answer": true,
+     "reason": "free_text_answer",
+     "note": "present only in the knoveleng copy (absent from Hothan/OlympiadBench); answer is a function family with free-text conditions"
+    }
+   ]
+  },
+  "minerva": {
+   "count": 0,
+   "by_reason": {},
+   "items": []
+  },
+  "gpqa": {
+   "count": 0,
+   "by_reason": {},
+   "items": []
+  }
+ },
+ "drop_reasons": {
+  "multiple_answers": "is_multiple_answer=True and the final answer lists more than one value / tuple / function (top-level comma-separated); not a single answer, and last-\\boxed extraction cannot grade lists",
+  "multi_part_answer": "is_multiple_answer=False but the final answer has several parts (\"$f(n)=n$, $g(n)=1$\")",
+  "free_text_answer": "answer is a family of objects described with free-text conditions"
+ },
+ "answer_fixes": {
+  "olympiad": [
+   {
+    "pid": "olympiad:34",
+    "orig_id": "1782",
+    "raw": "$m_{\\max }=n^{2}-n-1$",
+    "answer": "n^{2}-n-1",
+    "why": "gold \"m_{\\max }=n^{2}-n-1\" (does not parse); kept the value of m_max"
+   },
+   {
+    "pid": "olympiad:75",
+    "orig_id": "1970",
+    "raw": "$(-\\infty, 0) \\cup\\{1\\}$.",
+    "answer": "(-\\infty, 0) \\cup\\{1\\}",
+    "why": "generic cleanup: trailing period / \\quad outside the math"
+   },
+   {
+    "pid": "olympiad:95",
+    "orig_id": "2045",
+    "raw": "$t(0,4]$",
+    "answer": "(0,4]",
+    "why": "gold \"t(0,4]\" has a stray variable name before the interval (t in (0,4])"
+   },
+   {
+    "pid": "olympiad:517",
+    "orig_id": "2891",
+    "raw": "$\\quad(2+\\sqrt{2}, 1+\\sqrt{2})$",
+    "answer": "(2+\\sqrt{2}, 1+\\sqrt{2})",
+    "why": "generic cleanup: trailing period / \\quad outside the math"
+   }
+  ],
+  "minerva": [
+   {
+    "pid": "minerva:5",
+    "raw": "np.arcsin(10/13)",
+    "answer": "\\arcsin(10/13)",
+    "why": "numpy syntax \"np.arcsin(10/13)\""
+   },
+   {
+    "pid": "minerva:38",
+    "raw": "-1./3",
+    "answer": "-1/3",
+    "why": "python float syntax \"-1./3\""
+   },
+   {
+    "pid": "minerva:49",
+    "raw": "-3./2",
+    "answer": "-3/2",
+    "why": "python float syntax \"-3./2\""
+   },
+   {
+    "pid": "minerva:72",
+    "raw": "x_{0} \\cos (\\omega t)+$ $\\dot{x}_{0} \\sin (\\omega t) / \\omega",
+    "answer": "x_{0} \\cos (\\omega t)+\\dot{x}_{0} \\sin (\\omega t) / \\omega",
+    "why": "stray \"$ $\" inside the answer"
+   }
+  ]
+ },
+ "sources": {
+  "gsm8k": {
+   "gsm8k": {
+    "repo_id": "openai/gsm8k",
+    "revision": "740312add88f781978c0658806c59bc2815b9866",
+    "status": "ok",
+    "files": {
+     "main/test-00000-of-00001.parquet": "ee7b8da9e381df27b9e3f7758a159ab2bdaa4dbaa910546cbbc47e0cb44e4f59"
+    }
+   }
+  },
+  "math500": {
+   "math500": {
+    "repo_id": "HuggingFaceH4/MATH-500",
+    "revision": "6e4ed1a2a79af7d8630a6b768ec859cb5af4d3be",
+    "status": "ok",
+    "files": {
+     "test.jsonl": "35dc41080a3680858b27fa7e0533d2d547825316fc5dafe5d316f4ccc5a06132"
+    }
+   }
+  },
+  "aime24": {
+   "aime24": {
+    "repo_id": "HuggingFaceH4/aime_2024",
+    "revision": "2fe88a2f1091d5048c0f36abc874fb997b3dd99a",
+    "status": "ok",
+    "files": {
+     "data/train-00000-of-00001.parquet": "26139847601a5037c237d5928b195e7260ca8074cf4f264b794af42847f79ccf"
+    }
+   },
+   "aime24_maxwelljia": {
+    "repo_id": "Maxwell-Jia/AIME_2024",
+    "revision": "8d88b2876a82a080e2f172cc9b25d0d9d2cb4792",
+    "status": "ok",
+    "files": {
+     "aime_2024_problems.parquet": "3cb34696a75837f848ea16f15a42f4130be655d5995e8cd24efcc54f4e6e1524"
+    }
+   }
+  },
+  "aime25": {
+   "aime25": {
+    "repo_id": "MathArena/aime_2025",
+    "revision": "c94da77eb22bbd6439e62a323bec18493a421302",
+    "status": "ok",
+    "files": {
+     "data/train-00000-of-00001.parquet": "9f9066ff48ad2e31f9bf1b1ac6d5e80693195f987985f2859f89dd25ffa51c2d"
+    }
+   },
+   "aime25_opencompass": {
+    "repo_id": "opencompass/AIME2025",
+    "revision": "a6ad95f611d72cf628a80b58bd0432ef6638f958",
+    "status": "ok",
+    "files": {
+     "aime2025-I.jsonl": "b91b3c96f05d9635d2a0692b124ebe023c1ff59cb19c074275e6c4b349d0659e",
+     "aime2025-II.jsonl": "16a2dcfbbf9db1b11f8a69a3ba5e4cac73e3641b19a37e2307e9c12240bbed5e"
+    }
+   }
+  },
+  "aime26": {
+   "aime26": {
+    "repo_id": "MathArena/aime_2026",
+    "revision": "d2de22f3c656b4f56cf8981212186377d1e23bc3",
+    "status": "ok",
+    "files": {
+     "data/train-00000-of-00001.parquet": "d91db799651b4cc1f0734f52792a695c9cc60dac342524b3d8e5b2ff31c3e957"
+    }
+   }
+  },
+  "amc": {
+   "amc": {
+    "repo_id": "AI-MO/aimo-validation-amc",
+    "revision": "69d78a4a2c840e82d69af6bc742bda09005f6316",
+    "status": "ok",
+    "files": {
+     "data/train-00000-of-00001.parquet": "4de056fd006062cee46e3900727dd5d00094b8592ed0bfd6b5dfae2267f72dd7"
+    }
+   }
+  },
+  "olympiad": {
+   "olympiad": {
+    "repo_id": "Hothan/OlympiadBench",
+    "revision": "91184b52131e7fc9455fef848035173aea8cc01a",
+    "status": "ok",
+    "files": {
+     "OlympiadBench/OE_TO_maths_en_COMP/OE_TO_maths_en_COMP.parquet": "7c17ca2662b3ea77cddcb66a64b04ad9b53d3d32fa372d444a4884739eb1638d"
+    }
+   },
+   "olympiad_knoveleng": {
+    "repo_id": "knoveleng/OlympiadBench",
+    "revision": "7c37e02cee035997dfa7f5faa71a126194e3d20d",
+    "status": "ok",
+    "files": {
+     "data/train-00000-of-00001.parquet": "d8339244049d5654321ad2066a2a54d7bcdcfa0e8b9ce0c10ba1e9a9a30ef02d"
+    }
+   }
+  },
+  "minerva": {
+   "minerva": {
+    "repo_id": "math-ai/minervamath",
+    "revision": "ee46ddc498933b1977577953250ca5c66be64f96",
+    "status": "ok",
+    "files": {
+     "test.jsonl": "e04ec2bc1d8f80a0091b4b1989f1ffb366f3583f5bae381546a066d4ccc26e3d"
+    }
+   }
+  },
+  "gpqa": {
+   "gpqa_jingzeshi": {
+    "repo_id": "JingzeShi/gpqa_diamond",
+    "revision": "5c5df1db90ca5a951530b2817577775bdb59da37",
+    "status": "ok",
+    "files": {
+     "data/test-00000-of-00001.parquet": "aff8ed2d886cb7cec4f09967432b8d419598c52bf82f3d6c82ea53e0ee841476"
+    }
+   },
+   "gpqa_talzoomanzoo": {
+    "repo_id": "talzoomanzoo/gpqa_diamond_raw",
+    "revision": "3ac0c05b7e67fad1df3e16bc3ab312c549999647",
+    "status": "ok",
+    "files": {
+     "data/train-00000-of-00001.parquet": "ca0c0f3a392bd49708d8f2c9c8f5c2c45ac9bcaeeef28fb909601eba16b94a8a"
+    }
+   },
+   "gpqa_official": {
+    "repo_id": "Idavidrein/gpqa",
+    "revision": "83022cefff930aea54f654c0b282e74b9eeda5c6",
+    "status": "failed",
+    "files": {},
+    "error": "GatedRepoError: 401 Client Error. (Request ID: Root=1-6ad3b4ec-1a50a1b5320ae52b7dee597c;41dfc7f8-969f-4df4-8acf-d77f7e6ce56a)\n\nCannot access gated repo for url https://huggingface.co/datasets/Idavidre"
+   }
+  }
+ },
+ "raw_files_sha256_verified": [
+  "aime24/data/train-00000-of-00001.parquet",
+  "aime24_maxwelljia/aime_2024_problems.parquet",
+  "aime25/data/train-00000-of-00001.parquet",
+  "aime25_opencompass/aime2025-I.jsonl",
+  "aime25_opencompass/aime2025-II.jsonl",
+  "aime26/data/train-00000-of-00001.parquet",
+  "amc/data/train-00000-of-00001.parquet",
+  "gpqa_jingzeshi/data/test-00000-of-00001.parquet",
+  "gpqa_talzoomanzoo/data/train-00000-of-00001.parquet",
+  "gsm8k/main/test-00000-of-00001.parquet",
+  "math500/test.jsonl",
+  "minerva/test.jsonl",
+  "olympiad/OlympiadBench/OE_TO_maths_en_COMP/OE_TO_maths_en_COMP.parquet",
+  "olympiad_knoveleng/data/train-00000-of-00001.parquet"
+ ],
+ "cross_checks": {
+  "aime24": {
+   "copies": [
+    "HuggingFaceH4/aime_2024 (used)",
+    "Maxwell-Jia/AIME_2024"
+   ],
+   "aligned_by": "AoPS url -> ID",
+   "n_compared": 30,
+   "answer_value_mismatches": [],
+   "leading_zero_answers_normalized": [
+    {
+     "orig_id": "2024-I-2",
+     "raw": "025",
+     "answer": "25"
+    },
+    {
+     "orig_id": "2024-II-1",
+     "raw": "073",
+     "answer": "73"
+    },
+    {
+     "orig_id": "2024-II-12",
+     "raw": "023",
+     "answer": "23"
+    },
+    {
+     "orig_id": "2024-II-3",
+     "raw": "045",
+     "answer": "45"
+    },
+    {
+     "orig_id": "2024-II-4",
+     "raw": "033",
+     "answer": "33"
+    },
+    {
+     "orig_id": "2024-II-5",
+     "raw": "080",
+     "answer": "80"
+    },
+    {
+     "orig_id": "2024-II-6",
+     "raw": "055",
+     "answer": "55"
+    }
+   ],
+   "problem_word_jaccard_min": 0.534,
+   "note": "problem texts differ only in formatting / [asy] figures (checked by eye for the lowest-similarity pairs)"
+  },
+  "aime25": {
+   "copies": [
+    "MathArena/aime_2025 (used)",
+    "opencompass/AIME2025 (I + II jsonl)"
+   ],
+   "aligned_by": "position (problem_idx 1-15 = I, 16-30 = II); confirmed: each MathArena problem is most similar to its aligned opencompass problem",
+   "n_compared": 30,
+   "answer_value_mismatches": [],
+   "answer_format_only_mismatches": [
+    {
+     "orig_id": "2025-II-5",
+     "MathArena": "336",
+     "opencompass": "336^\\circ"
+    }
+   ],
+   "problem_word_jaccard_min": 0.559,
+   "note": "MathArena statements include TikZ figure code for figure problems; opencompass are text-only"
+  },
+  "aime26": {
+   "copies": [
+    "MathArena/aime_2026 (only copy)"
+   ],
+   "note": "no second copy; answers not cross-checked"
+  },
+  "olympiad": {
+   "copies": [
+    "Hothan/OlympiadBench OE_TO_maths_en_COMP (used, 674 rows)",
+    "knoveleng/OlympiadBench (675 rows = official 674 + id 1965)"
+   ],
+   "ids_only_in_knoveleng": [
+    1965
+   ],
+   "question_text_differs": [
+    2720,
+    2721,
+    2722,
+    2723,
+    2724,
+    2726,
+    2727,
+    2728,
+    2729,
+    2730,
+    2731,
+    2856,
+    2857,
+    2859,
+    2860
+   ],
+   "question_text_differs_note": "knoveleng keeps the relay placeholder \"Let $T=T N Y W R$\" (unsolvable); the official copy substitutes the value of T",
+   "final_answer_differs": [
+    {
+     "id": 2817,
+     "official": "$44$",
+     "knoveleng": "$44^{\\circ}$"
+    }
+   ]
+  },
+  "gpqa": {
+   "official": "Idavidrein/gpqa gpqa_diamond.csv is gated (401) -> not downloaded",
+   "copies": [
+    "JingzeShi/gpqa_diamond (used; full original GPQA csv columns)",
+    "talzoomanzoo/gpqa_diamond_raw (Question / Correct Choice only; Choices column is null)"
+   ],
+   "n_rows": 198,
+   "unique_record_ids": 198,
+   "all_rows_have_gpqa_canary": true,
+   "all_rows_1_correct_3_incorrect_nonempty": true,
+   "correct_equals_an_incorrect": 0,
+   "rows_with_duplicate_incorrect_options": [
+    {
+     "pid": "gpqa:89",
+     "record_id": "recZSGUkn56v9kEp1",
+     "options": [
+      "3,4-dimethyl-5,6-dioxooctanoic acid",
+      "4,5-dimethylnonane-2,6,7-trione",
+      "3,4-dimethyl-5,6-dioxooctanal",
+      "4,5-dimethylnonane-2,6,7-trione"
+     ]
+    },
+    {
+     "pid": "gpqa:126",
+     "record_id": "recnGEpF1srQpaqWq",
+     "options": [
+      "4-ethyl-3-methyldeca-1,5-diene",
+      "5-ethylundeca-2,6-diene",
+      "5-ethyl-4-methyldeca-2,6-diene",
+      "5-ethyl-4-methyldeca-2,6-diene"
+     ]
+    }
+   ],
+   "second_mirror_same_question_same_order": 198,
+   "second_mirror_same_correct_answer": 198,
+   "domains": {
+    "Physics": 86,
+    "Chemistry": 93,
+    "Biology": 19
+   },
+   "diamond_criteria": {
+    "expert_validator_1_correct": 198,
+    "expert_validator_2_correct": 161,
+    "ev2_wrong_post_hoc_agree": 36,
+    "ev2_wrong_post_hoc_disagree": 1,
+    "majority_non_experts_incorrect": 190
+   },
+   "shuffle": "perm = [0,1,2,3] (0 = correct); random.Random(1234 + idx).shuffle(perm); option at display position j is original option perm[j]",
+   "answer_letter_counts": {
+    "A": 48,
+    "B": 55,
+    "C": 41,
+    "D": 54
+   }
+  }
+ },
+ "notes": {
+  "gsm8k": {
+   "answers_with_thousands_commas_stripped": 14
+  },
+  "math500": {
+   "levels": {
+    "1": 43,
+    "2": 90,
+    "3": 105,
+    "4": 128,
+    "5": 134
+   },
+   "subjects": {
+    "Precalculus": 56,
+    "Intermediate Algebra": 97,
+    "Algebra": 124,
+    "Number Theory": 62,
+    "Prealgebra": 82,
+    "Geometry": 41,
+    "Counting & Probability": 38
+   }
+  },
+  "amc": {
+   "years": {
+    "2022": 43,
+    "2023": 40
+   },
+   "note": "hf \"id\" column is not unique (49 distinct); orig_id = AoPS page name"
+  }
+ },
+ "gold_not_parsed_by_math_verify": [
+  {
+   "pid": "minerva:27",
+   "answer": "\\frac{dM}{dt}=\\frac{10^{5} L_{\\odot}}{0.007 c^{2} M_{\\odot}^{6}} M^{6}"
+  },
+  {
+   "pid": "minerva:269",
+   "answer": "E_{1},E_{2}"
+  }
+ ]
+}

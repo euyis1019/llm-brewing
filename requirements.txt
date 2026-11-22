@@ -1,0 +1,10 @@
+# Versions used for the October 2026 runs (Python 3.11, CUDA 13).
+torch==2.11.0
+transformers==5.13.0
+numpy==2.3.5
+scipy==1.17.1
+scikit-learn==1.9.0
+pandas==3.0.3
+sympy==1.14.0
+# math_verify, latex2sympy2_extended and antlr4 for the generation grader are vendored
+# under vendor/gen_depth_grading and loaded from experiments/gen_depth/pylib.

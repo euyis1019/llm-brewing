@@ -1,0 +1,218 @@
+{
+ "generated_at": "2026-10-18T04:18:43",
+ "script": "scripts/data/check_prompts.py",
+ "transformers": "5.13.0",
+ "n_items": 3044,
+ "suffix": {
+  "math": "\nPlease reason step by step, and put your final answer within \\boxed{}.",
+  "mcq": "\nPlease reason step by step, and put the letter of your final answer (A, B, C, or D) within \\boxed{}."
+ },
+ "families": {
+  "qwen3": {
+   "tokenizer": "/nvme0/if/models/Qwen3-4B",
+   "chat_template_kwargs": {
+    "enable_thinking": false
+   },
+   "apply_chat_template_tokenize_returns": "BatchEncoding",
+   "example_pid": "gsm8k:1",
+   "example_prompt_text": "<|im_start|>user\nA robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?\nPlease reason step by step, and put your final answer within \\boxed{}.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+   "example_prompt_ids_len": 53,
+   "ids_equal_tokenized_text_mismatches": [],
+   "qwen3_prompts_not_ending_with_empty_think": [],
+   "token_length_by_source": {
+    "gsm8k": {
+     "n": 1319,
+     "min": 50,
+     "mean": 88.3,
+     "median": 84,
+     "p90": 119,
+     "p99": 155,
+     "max": 215
+    },
+    "math500": {
+     "n": 500,
+     "min": 36,
+     "mean": 98.2,
+     "median": 78,
+     "p90": 168,
+     "p99": 369,
+     "max": 818
+    },
+    "aime24": {
+     "n": 30,
+     "min": 75,
+     "mean": 134.4,
+     "median": 113,
+     "p90": 179,
+     "p99": 420,
+     "max": 420
+    },
+    "aime25": {
+     "n": 30,
+     "min": 56,
+     "mean": 216.5,
+     "median": 132,
+     "p90": 511,
+     "p99": 795,
+     "max": 795
+    },
+    "aime26": {
+     "n": 30,
+     "min": 62,
+     "mean": 152.3,
+     "median": 147,
+     "p90": 205,
+     "p99": 379,
+     "max": 379
+    },
+    "amc": {
+     "n": 83,
+     "min": 47,
+     "mean": 119.1,
+     "median": 105,
+     "p90": 189,
+     "p99": 242,
+     "max": 385
+    },
+    "olympiad": {
+     "n": 582,
+     "min": 43,
+     "mean": 125.8,
+     "median": 103,
+     "p90": 201,
+     "p99": 475,
+     "max": 1280
+    },
+    "minerva": {
+     "n": 272,
+     "min": 38,
+     "mean": 158.3,
+     "median": 126,
+     "p90": 293,
+     "p99": 388,
+     "max": 419
+    },
+    "gpqa": {
+     "n": 198,
+     "min": 79,
+     "mean": 253.5,
+     "median": 218,
+     "p90": 373,
+     "p99": 797,
+     "max": 2806
+    },
+    "ALL": {
+     "n": 3044,
+     "min": 36,
+     "mean": 117.3,
+     "median": 92,
+     "p90": 202,
+     "p99": 419,
+     "max": 2806
+    }
+   }
+  },
+  "qwen2.5": {
+   "tokenizer": "/nvme0/if/models/huggingface/Qwen/Qwen2.5-7B-Instruct",
+   "chat_template_kwargs": {},
+   "apply_chat_template_tokenize_returns": "BatchEncoding",
+   "example_pid": "gsm8k:1",
+   "example_prompt_text": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nA robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?\nPlease reason step by step, and put your final answer within \\boxed{}.<|im_end|>\n<|im_start|>assistant\n",
+   "example_prompt_ids_len": 70,
+   "ids_equal_tokenized_text_mismatches": [],
+   "qwen3_prompts_not_ending_with_empty_think": null,
+   "token_length_by_source": {
+    "gsm8k": {
+     "n": 1319,
+     "min": 67,
+     "mean": 105.3,
+     "median": 101,
+     "p90": 136,
+     "p99": 172,
+     "max": 232
+    },
+    "math500": {
+     "n": 500,
+     "min": 53,
+     "mean": 115.2,
+     "median": 95,
+     "p90": 185,
+     "p99": 386,
+     "max": 835
+    },
+    "aime24": {
+     "n": 30,
+     "min": 92,
+     "mean": 151.4,
+     "median": 130,
+     "p90": 196,
+     "p99": 437,
+     "max": 437
+    },
+    "aime25": {
+     "n": 30,
+     "min": 73,
+     "mean": 233.5,
+     "median": 149,
+     "p90": 528,
+     "p99": 812,
+     "max": 812
+    },
+    "aime26": {
+     "n": 30,
+     "min": 79,
+     "mean": 169.3,
+     "median": 164,
+     "p90": 222,
+     "p99": 396,
+     "max": 396
+    },
+    "amc": {
+     "n": 83,
+     "min": 64,
+     "mean": 136.1,
+     "median": 122,
+     "p90": 206,
+     "p99": 259,
+     "max": 402
+    },
+    "olympiad": {
+     "n": 582,
+     "min": 60,
+     "mean": 142.8,
+     "median": 120,
+     "p90": 218,
+     "p99": 492,
+     "max": 1297
+    },
+    "minerva": {
+     "n": 272,
+     "min": 55,
+     "mean": 175.3,
+     "median": 143,
+     "p90": 310,
+     "p99": 405,
+     "max": 436
+    },
+    "gpqa": {
+     "n": 198,
+     "min": 96,
+     "mean": 270.5,
+     "median": 235,
+     "p90": 390,
+     "p99": 814,
+     "max": 2823
+    },
+    "ALL": {
+     "n": 3044,
+     "min": 53,
+     "mean": 134.3,
+     "median": 109,
+     "p90": 219,
+     "p99": 436,
+     "max": 2823
+    }
+   }
+  }
+ }
+}

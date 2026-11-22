@@ -1,0 +1,177 @@
+{
+ "gsm_mc": [
+  {
+   "question": "Kim takes 4 classes in school that last 2 hours each.  She drops 1 class.  How many hours of classes does she have now have per day?",
+   "options": [
+    "6",
+    "12",
+    "5",
+    "8"
+   ],
+   "answer": 0,
+   "subject": ""
+  },
+  {
+   "question": "Alison bought some storage tubs for her garage. She bought 3 large ones and 6 small ones, for $48 total. If the large tubs cost $6, how much do the small ones cost?",
+   "options": [
+    "12",
+    "4",
+    "5",
+    "6"
+   ],
+   "answer": 2,
+   "subject": ""
+  },
+  {
+   "question": "Lucy lost one-third of her money. She then spent one-fourth of the remainder, and only left with $15. How much money did Lucy have at the beginning?",
+   "options": [
+    "12.25",
+    "100",
+    "1",
+    "30"
+   ],
+   "answer": 3,
+   "subject": ""
+  }
+ ],
+ "math_mc": [
+  {
+   "question": "Find the sum of all possible positive integer values of $b$ such that the quadratic equation $2x^2 + 5x + b = 0$ has rational roots.",
+   "options": [
+    "n^2+\\boxed{2n}",
+    "4",
+    "5",
+    "3"
+   ],
+   "answer": 2,
+   "subject": "Algebra"
+  },
+  {
+   "question": "When the square root of $x$ is cubed, the answer is 64. What is the value of $x$?",
+   "options": [
+    "64",
+    "16",
+    "4096",
+    "3"
+   ],
+   "answer": 1,
+   "subject": "Algebra"
+  },
+  {
+   "question": "What is the smallest whole number that has a remainder of 1 when divided by 4, a remainder of 1 when divided by 3, and a remainder of 2 when divided by 5?",
+   "options": [
+    "5",
+    "13",
+    "6063",
+    "37"
+   ],
+   "answer": 3,
+   "subject": "Number Theory"
+  }
+ ],
+ "pythonio": [
+  {
+   "question": "Program:\nimport re\ndef remove_char(S):\n  result = re.sub('[\\W_]+', '', S)\n  return result\nInput:\nremove_char(\"123abcjw:, .@! eiw\")\nOutput:",
+   "options": [
+    "\"abcjw\"",
+    "\"123abcjwiw\"",
+    "'123abcjweiw'",
+    "\"123abcjw eiw\""
+   ],
+   "answer": 2,
+   "subject": ""
+  },
+  {
+   "question": "Program:\ndef surfacearea_cylinder(r,h):\n  surfacearea=((2*3.1415*r*r) +(2*3.1415*r*h))\n  return surfacearea\nInput:\nsurfacearea_cylinder(10,5)\nOutput:",
+   "options": [
+    "942.45",
+    "826.6744",
+    "628.35",
+    "157"
+   ],
+   "answer": 0,
+   "subject": ""
+  },
+  {
+   "question": "Program:\ndef min_Num(arr,n):\n    odd = 0\n    for i in range(n):\n        if (arr[i] % 2):\n            odd += 1\n    if (odd % 2):\n        return 1\n    return 2\nInput:\nmin_Num([1,2,3,4,5,6,7,8],8)\nOutput:",
+   "options": [
+    "5",
+    "4",
+    "1",
+    "2"
+   ],
+   "answer": 3,
+   "subject": ""
+  }
+ ],
+ "mmlu_pro": [
+  {
+   "question": "The temperature of a tungsten filament of a light bulb is 6000°R.Calculate the energy emitted by the bulb in the visiblewavelength spectrum from 0.4\\mumto 0.7\\mum, consideringit as a grey body.",
+   "options": [
+    "22.30%",
+    "12.16%",
+    "9.97%",
+    "6.78%"
+   ],
+   "answer": 1,
+   "subject": "engineering"
+  },
+  {
+   "question": "The definition of magnetic inclination is the angle between",
+   "options": [
+    "the earth’s magnetic field at any point and the vertical",
+    "the earth’s magnetic field at any point and the geographic north",
+    "the earth’s magnetic field at any point and the geographic south",
+    "the earth’s magnetic field at any point and the horizontal"
+   ],
+   "answer": 3,
+   "subject": "physics"
+  },
+  {
+   "question": "An object viewed normally through a plate of glass (n = 1.5) with plane parallel faces appears to be five-sixths of an inch nearer than it really is. How thick is the glass?",
+   "options": [
+    "2.5 inches",
+    "0.5 inch",
+    "1.5 inches",
+    "1.75 inches"
+   ],
+   "answer": 0,
+   "subject": "physics"
+  }
+ ],
+ "ceval": [
+  {
+   "question": "提出“电场线”的科学家是____",
+   "options": [
+    "库仑",
+    "法拉第",
+    "麦克斯韦",
+    "爱因斯坦"
+   ],
+   "answer": 1,
+   "subject": "high_school_physics"
+  },
+  {
+   "question": "在802.3标准中，发送帧之前需要____",
+   "options": [
+    "等待冲突",
+    "等待令牌",
+    "监听介质",
+    "接受一个帧"
+   ],
+   "answer": 2,
+   "subject": "computer_network"
+  },
+  {
+   "question": "唯物主义的基本前提是____",
+   "options": [
+    "物质对意识的先在性、客观性、独立性",
+    "意识对物质的派生性、可知性",
+    "意识对物质的能动性",
+    "意识对物质的主观性、独立性"
+   ],
+   "answer": 0,
+   "subject": "marxism"
+  }
+ ]
+}

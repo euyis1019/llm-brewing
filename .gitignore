@@ -1,70 +1,15 @@
-# Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-*.egg
-*.egg-info/
-build/
-dist/
-pip-wheel-metadata/
-
-# Test / tooling caches
-.pytest_cache/
-.coverage
-htmlcov/
-.mypy_cache/
-.ruff_cache/
-
-# Environments
-.env
+.ipynb_checkpoints/
 .venv/
-venv/
-env/
-
-# IDE / editor
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Claude local settings
+.env
 .claude/
 
-# Brewing local outputs and large generated artifacts
-brewing_output
-brewing_output/
-*.npz
-*.npy
-*.pkl
-*.pt
-*.pth
-*.bin
-*.safetensors
-*.ckpt
-*.h5
+# Model weights (point BREWING_MODEL_ROOT at them instead)
+models/
 
-# Local archives / snapshots (never commit large bundles)
-*.zip
-*.tar
-*.tar.gz
-*.tgz
-cue_data_snapshot_*
-
-# Run logs
-*.log
-
-# Local-only working notes and paper-side artifacts (kept off public mirror)
-new.md
-docs_for_paper/
-figures/
-normalized_delta_brew.json
-normalized_delta_brew_README.md
-
-CLAUDE.md
-uv.lock
+# Run outputs: caches, logs and GPU queues are produced locally
+experiments/*/results/
+experiments/*/logs/
+experiments/*/queue/
+experiments/*/report/

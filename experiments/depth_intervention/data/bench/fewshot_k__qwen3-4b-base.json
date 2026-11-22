@@ -1,0 +1,161 @@
+{
+ "k": {
+  "gsm_mc": 1,
+  "math_mc": 1,
+  "pythonio": 1,
+  "mmlu_pro": 1,
+  "ceval": 1
+ },
+ "rule": "uniform k=1: smallest k with 100% compliance on every source (0-shot: math/mmlu_pro 96.5%); rule changed from >=95% on 2026-10-16, see RESULTS.md",
+ "compliance": {
+  "gsm_mc|k=0": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.48,
+   "mean_len": 111.16,
+   "max_len": 161,
+   "noncompliant_top": []
+  },
+  "gsm_mc|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.565,
+   "mean_len": 175.16,
+   "max_len": 225,
+   "noncompliant_top": []
+  },
+  "gsm_mc|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.58,
+   "mean_len": 322.16,
+   "max_len": 372,
+   "noncompliant_top": []
+  },
+  "math_mc|k=0": {
+   "n": 200,
+   "compliance": 0.965,
+   "acc4": 0.555,
+   "mean_len": 121.96,
+   "max_len": 408,
+   "noncompliant_top": [
+    [
+     "To",
+     5
+    ],
+    [
+     "\\",
+     1
+    ],
+    [
+     "The",
+     1
+    ]
+   ]
+  },
+  "math_mc|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.585,
+   "mean_len": 192.96,
+   "max_len": 479,
+   "noncompliant_top": []
+  },
+  "math_mc|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.575,
+   "mean_len": 328.96,
+   "max_len": 615,
+   "noncompliant_top": []
+  },
+  "pythonio|k=0": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.505,
+   "mean_len": 152.36,
+   "max_len": 423,
+   "noncompliant_top": []
+  },
+  "pythonio|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.595,
+   "mean_len": 249.36,
+   "max_len": 520,
+   "noncompliant_top": []
+  },
+  "pythonio|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.58,
+   "mean_len": 460.36,
+   "max_len": 731,
+   "noncompliant_top": []
+  },
+  "mmlu_pro|k=0": {
+   "n": 200,
+   "compliance": 0.965,
+   "acc4": 0.625,
+   "mean_len": 129.78,
+   "max_len": 331,
+   "noncompliant_top": [
+    [
+     "To",
+     4
+    ],
+    [
+     "$",
+     3
+    ]
+   ]
+  },
+  "mmlu_pro|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.62,
+   "mean_len": 228.78,
+   "max_len": 430,
+   "noncompliant_top": []
+  },
+  "mmlu_pro|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.67,
+   "mean_len": 387.78,
+   "max_len": 589,
+   "noncompliant_top": []
+  },
+  "ceval|k=0": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.7,
+   "mean_len": 100.9,
+   "max_len": 225,
+   "noncompliant_top": []
+  },
+  "ceval|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.73,
+   "mean_len": 147.9,
+   "max_len": 272,
+   "noncompliant_top": []
+  },
+  "ceval|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.745,
+   "mean_len": 278.9,
+   "max_len": 403,
+   "noncompliant_top": []
+  }
+ },
+ "k_rule_smallest_ge95": {
+  "gsm_mc": 0,
+  "math_mc": 0,
+  "pythonio": 0,
+  "mmlu_pro": 0,
+  "ceval": 0
+ }
+}

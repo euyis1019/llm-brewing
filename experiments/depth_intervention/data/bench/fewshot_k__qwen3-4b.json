@@ -1,0 +1,10 @@
+{
+ "k": {
+  "gsm_mc": 1,
+  "math_mc": 1,
+  "pythonio": 1,
+  "mmlu_pro": 1,
+  "ceval": 1
+ },
+ "rule": "format control for the B-line model: same uniform k=1 as the A line (qwen3-4b-base)"
+}

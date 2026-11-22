@@ -1,0 +1,34 @@
+{
+ "seed": 20261016,
+ "sources": {
+  "gsm_mc": {
+   "split": "train",
+   "n_valid": 7468,
+   "n_used": 7465
+  },
+  "math_mc": {
+   "split": "test",
+   "n_valid": 4817,
+   "n_used": 3817
+  },
+  "pythonio": {
+   "split": "test",
+   "n_valid": 1684,
+   "n_used": 82
+  }
+ },
+ "n_questions": 11364,
+ "by_source": {
+  "gsm_mc": 7465,
+  "math_mc": 3817,
+  "pythonio": 82
+ },
+ "fold_dist": {
+  "2": 2279,
+  "0": 2274,
+  "4": 2272,
+  "1": 2269,
+  "3": 2270
+ },
+ "script_md5": "e92b070a76df41124c41bc4bf7b5b6a7"
+}

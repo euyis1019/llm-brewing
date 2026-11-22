@@ -1,0 +1,144 @@
+{
+ "k": {
+  "gsm_mc": 1,
+  "math_mc": 1,
+  "pythonio": 1,
+  "mmlu_pro": 1,
+  "ceval": 1
+ },
+ "rule": "uniform k=1 (same rule as qwen3-4b-base: smallest k with 100% compliance on every source)",
+ "compliance": {
+  "gsm_mc|k=0": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.32,
+   "mean_len": 104.36,
+   "max_len": 155,
+   "noncompliant_top": []
+  },
+  "gsm_mc|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.295,
+   "mean_len": 167.36,
+   "max_len": 218,
+   "noncompliant_top": []
+  },
+  "gsm_mc|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.335,
+   "mean_len": 306.36,
+   "max_len": 357,
+   "noncompliant_top": []
+  },
+  "math_mc|k=0": {
+   "n": 200,
+   "compliance": 0.955,
+   "acc4": 0.325,
+   "mean_len": 117.04,
+   "max_len": 398,
+   "noncompliant_top": [
+    [
+     "The",
+     9
+    ]
+   ]
+  },
+  "math_mc|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.375,
+   "mean_len": 188.04,
+   "max_len": 469,
+   "noncompliant_top": []
+  },
+  "math_mc|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.4,
+   "mean_len": 315.04,
+   "max_len": 596,
+   "noncompliant_top": []
+  },
+  "pythonio|k=0": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.32,
+   "mean_len": 142.0,
+   "max_len": 346,
+   "noncompliant_top": []
+  },
+  "pythonio|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.325,
+   "mean_len": 231.0,
+   "max_len": 435,
+   "noncompliant_top": []
+  },
+  "pythonio|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.35,
+   "mean_len": 425.0,
+   "max_len": 629,
+   "noncompliant_top": []
+  },
+  "mmlu_pro|k=0": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.505,
+   "mean_len": 125.86,
+   "max_len": 328,
+   "noncompliant_top": []
+  },
+  "mmlu_pro|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.5,
+   "mean_len": 216.86,
+   "max_len": 419,
+   "noncompliant_top": []
+  },
+  "mmlu_pro|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.535,
+   "mean_len": 374.86,
+   "max_len": 577,
+   "noncompliant_top": []
+  },
+  "ceval|k=0": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.495,
+   "mean_len": 112.7,
+   "max_len": 255,
+   "noncompliant_top": []
+  },
+  "ceval|k=1": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.485,
+   "mean_len": 159.7,
+   "max_len": 302,
+   "noncompliant_top": []
+  },
+  "ceval|k=3": {
+   "n": 200,
+   "compliance": 1.0,
+   "acc4": 0.51,
+   "mean_len": 290.7,
+   "max_len": 433,
+   "noncompliant_top": []
+  }
+ },
+ "k_rule_smallest_ge95": {
+  "gsm_mc": 0,
+  "math_mc": 0,
+  "pythonio": 0,
+  "mmlu_pro": 0,
+  "ceval": 0
+ }
+}
