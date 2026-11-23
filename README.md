@@ -2,6 +2,12 @@
 
 [中文版](README_CN.md)
 
+[![arXiv](https://img.shields.io/badge/arXiv-2606.17648-b31b1b.svg)](https://arxiv.org/abs/2606.17648)
+[![Python](https://img.shields.io/badge/python-3.11-2f6fd0.svg)](requirements.txt)
+[![Reproduction](https://img.shields.io/badge/reproduction-verified%20against%20October%20outputs-2e8b57.svg)](docs/REPRODUCTION.md)
+
+![Teaser](docs/figures/teaser.png)
+
 Brewing studies when an LLM's answer forms across depth. Two readouts bracket it at every layer: a cross-validated linear probe tells whether the answer is already **externally decodable** from the hidden state, and Patchscope-style context-stripped decoding (CSD) tells whether the model's own remaining layers can already decode it (**self-decodable**). The answer reaches the first condition several layers before the second.
 
 **Emission layer.** Each model has one layer at which the answer is written into the output-readable direction in a single step. Before it, a probe can already read the answer, but the answer lies outside the four letter-readout directions; at it, the model's own readout jumps to the answer. The layer is fixed per model: it does not move with the question source, the outcome class, or post-training (Qwen3-4B L24, Qwen2.5-7B L19–20, Llama-3.1-8B L17).

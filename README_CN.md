@@ -1,5 +1,13 @@
 # Brewing：`unsupervised-metrics` 分支
 
+[English](README.md)
+
+[![arXiv](https://img.shields.io/badge/arXiv-2606.17648-b31b1b.svg)](https://arxiv.org/abs/2606.17648)
+[![Python](https://img.shields.io/badge/python-3.11-2f6fd0.svg)](requirements.txt)
+[![Reproduction](https://img.shields.io/badge/reproduction-verified%20against%20October%20outputs-2e8b57.svg)](docs/REPRODUCTION.md)
+
+![Teaser](docs/figures/teaser.png)
+
 Brewing 研究 LLM 的答案在深度上何时形成。每一层用两种读法把它夹住：交叉验证的线性 probe 判断答案能否从隐状态中读出，即**外部可解码**；上下文剥离解码（CSD，Patchscope 的一种）判断模型自己剩下的层能否把它解码出来，即**自身可解码**。前一个条件总是先成立，后一个要晚几层。
 
 **发射层（emission layer）。** 每个模型都有一层，答案在这一层被一步写进可直接读出的输出方向。在它之前，probe 已能读出答案，但答案不在四个字母的读出方向上；到了这一层，模型自己的读出跳到答案。这一层是模型固定的：不随题目来源、结局类别或后训练变化（Qwen3-4B 在 L24，Qwen2.5-7B 在 L19 到 L20，Llama-3.1-8B 在 L17）。
